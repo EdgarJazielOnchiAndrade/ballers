@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tecnología propuesta | Ballers</title>
+  <!-- estás en: src/assets/views/  → CSS global está en ../css/ -->
+  <link rel="stylesheet" href="../css/base.css"/>
+
+  <!-- Estilos locales de esta página -->
+  <style>
+    .section{
+      background: linear-gradient(180deg, rgba(255,106,0,.06), rgba(255,106,0,0) 50%), var(--panel);
+      border:1px solid #23232a; border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); margin:18px 0;
+    }
+    .muted{color:var(--muted)}
+    .grid-2{display:grid; gap:var(--gap)}
+    @media (min-width: 780px){ .grid-2{grid-template-columns:1fr 1fr} }
+    .card--doc{padding:16px}
+    .badge{display:inline-block; padding:4px 10px; border-radius:999px; font-size:.78rem; background:#141419; border:1px solid #2a2a32}
+    .badge.open{border-color:#66ffa6; color:#66ffa6}
+    .badge.closed{border-color:#ffd166; color:#ffd166}
+    .list{margin:.25rem 0 0 1rem}
+    .list li{margin:.2rem 0}
+    .cta{
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
+      border:1px solid #2a2a32; background:linear-gradient(180deg, rgba(255,106,0,.12), rgba(255,106,0,0));
+      color:var(--text); text-decoration:none;
+    }
+
+    /* ===== Vista simulada dinámica ===== */
+    .sim-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:12px}
+    .sim-title{margin:0}
+    .sim-notes{margin:4px 0 0; color:var(--muted); font-size:.95rem}
+    .sim-bullets{margin:.25rem 0 0 1rem}
+    .sim-bullets li{margin:.2rem 0}
+    .sim-grid{display:grid; gap:16px}
+    @media (min-width: 800px){ .sim-grid{grid-template-columns:repeat(4,1fr)} }
+
+    /* Variantes visuales por plataforma */
+    .sim--woo .card{border-color:#3a2a20}
+    .sim--woo .ribbon{position:absolute; top:10px; left:-6px; background:linear-gradient(90deg,#ff6a00,#ff914d); color:#000; font-weight:800; padding:4px 10px; border-radius:8px}
+    .sim--woo .rating{font-size:.9rem; color:#ffd166}
+
+    .sim--presta .card{border-color:#283447}
+    .sim--presta .thumb{position:relative}
+    .sim--presta .quick{position:absolute; bottom:10px; left:10px; right:10px; display:flex; justify-content:space-between; gap:8px}
+    .sim--presta .btn.small{padding:8px 10px; font-size:.9rem}
+
+    .sim--shopify .card{border-color:#2a2f2a}
+    .sim--shopify .vendor{font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:#9aa0a6}
+    .sim--shopify .checkout-fast{font-size:.85rem; color:#9aa0a6}
+
+    .sim--tn .card{border-color:#2e2a3a}
+    .sim--tn .installments{font-size:.9rem; color:#c9ffb2}
+    .sim--tn .shipping{font-size:.85rem; color:#9aa0a6}
+
+    .pulse{ box-shadow: 0 0 0 3px rgba(255,106,0,.5) inset, 0 0 18px rgba(255,106,0,.35); transition: box-shadow .3s ease }
+  </style>
+</head>
+<body>
+  <!-- Header igual al del sitio -->
+  <header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <form class="search" role="search" aria-label="Buscar">
+      <label class="visually-hidden" for="q">Buscar</label>
+      <input id="q" type="search" placeholder="Buscar…" />
+      <button type="submit" aria-label="Buscar">🔍</button>
+    </form>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="../../../index.html">Inicio</a></li>
+        <li><a href="catalog.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+
+        <li class="has-submenu">
+          <button class="submenu__toggle" type="button"
+                  aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+            Documentación <span class="caret" aria-hidden="true">▾</span>
+          </button>
+          <ul id="doc-submenu" class="submenu" role="menu" hidden>
+            <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+            <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+            <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+            <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <!-- Sección 1: Plataformas (2 abiertas, 2 cerradas) -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Plataformas propuestas (simulación)</h2>
+      <p class="muted">Cómo se vería tu catálogo usando la misma data, pero con “sabores” de cada plataforma (solo front, sin back).</p>
+
+      <div class="grid-2" role="list">
+        <!-- Abierta 1 -->
+        <article class="card card--doc" role="listitem" aria-label="WordPress + WooCommerce">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h3 style="margin:0">Opción A — WordPress + WooCommerce</h3>
+            <span class="badge open">Abierta</span>
+          </div>
+          <p class="muted">Plugins, control total y checkout personalizable.</p>
+          <ul class="list">
+            <li>✔ REST API (JSON)</li>
+            <li>✔ Atributos/variaciones</li>
+            <li>✔ Ratings y “Oferta”</li>
+          </ul>
+          <a class="cta" href="#vistas" data-platform="woo">Ver vistas simuladas</a>
+        </article>
+
+        <!-- Abierta 2 -->
+        <article class="card card--doc" role="listitem" aria-label="PrestaShop">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h3 style="margin:0">Opción B — PrestaShop</h3>
+            <span class="badge open">Abierta</span>
+          </div>
+          <p class="muted">Fuerte en e-commerce, con “Vista rápida” y refs.</p>
+          <ul class="list">
+            <li>✔ Quick view</li>
+            <li>✔ Ref. SKU / stock</li>
+            <li>✔ Botón “Añadir” compacto</li>
+          </ul>
+          <a class="cta" href="#vistas" data-platform="presta">Ver vistas simuladas</a>
+        </article>
+
+        <!-- Cerrada 1 -->
+        <article class="card card--doc" role="listitem" aria-label="Shopify">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h3 style="margin:0">Opción C — Shopify</h3>
+            <span class="badge closed">Cerrada</span>
+          </div>
+          <p class="muted">UI minimal, colecciones y “Comprar ahora”.</p>
+          <ul class="list">
+            <li>✔ Vendor/colección</li>
+            <li>✔ Add to cart + comprar ya</li>
+            <li>✔ Pago rápido (sim)</li>
+          </ul>
+          <a class="cta" href="#vistas" data-platform="shopify">Ver vistas simuladas</a>
+        </article>
+
+        <!-- Cerrada 2 -->
+        <article class="card card--doc" role="listitem" aria-label="Tiendanube">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <h3 style="margin:0">Opción D — Tiendanube</h3>
+            <span class="badge closed">Cerrada</span>
+          </div>
+          <p class="muted">Muy usada en LATAM: cuotas y envíos locales.</p>
+          <ul class="list">
+            <li>✔ Cuotas sin interés (sim)</li>
+            <li>✔ Mensajes de envío</li>
+            <li>✔ CTA “Agregar al carrito”</li>
+          </ul>
+          <a class="cta" href="#vistas" data-platform="tn">Ver vistas simuladas</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Sección 2: Vistas simuladas (render dinámico desde JSON) -->
+    <section id="vistas" class="section">
+      <div class="sim-head">
+        <div>
+          <h2 id="sim-title" class="sim-title">Vistas simuladas</h2>
+          <p id="sim-notes" class="sim-notes">Elige una plataforma arriba para ver el mismo catálogo con su estilo.</p>
+        </div>
+        <div id="sim-tags" aria-label="Etiquetas de contexto"></div>
+      </div>
+
+      <ul id="sim-bullets" class="sim-bullets"></ul>
+      <div id="sim-grid" class="sim-grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Sección 3: Comparativa rápida -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Comparativa rápida (resumen)</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>WooCommerce</th>
+            <th>PrestaShop</th>
+            <th>Shopify</th>
+            <th>Tiendanube</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Tipo</td><td>Abierta</td><td>Abierta</td><td>Cerrada</td><td>Cerrada</td></tr>
+          <tr><td>Hosting</td><td>Propio</td><td>Propio</td><td>Incluido</td><td>Incluido</td></tr>
+          <tr><td>Flexibilidad</td><td>Alta (plugins)</td><td>Alta (módulos)</td><td>Media (apps)</td><td>Media</td></tr>
+          <tr><td>Arranque</td><td>Medio</td><td>Medio</td><td>Rápido</td><td>Rápido</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" style="margin-top:6px">*Valores orientativos para el proyecto académico.</p>
+    </section>
+  </main>
+
+  <!-- JS global -->
+  <script src="../js/app.js"></script>
+
+  <!-- JS local: cargar JSON y simular vistas por plataforma -->
+  <script>
+  (async () => {
+    const money = n => Number(n).toLocaleString('es-MX', {style:'currency', currency:'MXN'});
+    const byId  = id => document.getElementById(id);
+
+    const grid   = byId('sim-grid');
+    const title  = byId('sim-title');
+    const notes  = byId('sim-notes');
+    const bullets= byId('sim-bullets');
+    const tags   = byId('sim-tags');
+    const vistas = document.querySelector('#vistas');
+
+    // Cargar productos una sola vez (desde views → data es ../data/)
+    let products = [];
+    try {
+      const res = await fetch('../data/products.json', { cache:'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar products.json');
+      products = await res.json();
+    } catch (err) {
+      grid.innerHTML = '<article class="card" style="padding:16px"><h3>Error</h3><p class="muted">'+err.message+'</p></article>';
+      return;
+    }
+
+    // Config de plataformas: texto y renderer
+    const platforms = {
+      woo: {
+        name: 'WooCommerce',
+        className: 'sim--woo',
+        bullets: [
+          'Tarjetas con “Oferta” y calificación.',
+          'Botón “Añadir al carrito” y precio destacado.',
+          'Estilo de tienda con variaciones (sim).'
+        ],
+        renderCard: (p, i) => {
+          const onSale = p.price >= 2000; // regla simple para simular oferta
+          const rating = (4 + (i % 2) * 0.5).toFixed(1); // 4.0 o 4.5
+          const bg = p.image
+            ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
+            : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+          return `
+            <article class="card" style="position:relative">
+              ${onSale ? `<span class="ribbon">Oferta</span>` : ''}
+              <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg}"></div>
+              <div class="card__body">
+                <h3 class="card__title">${p.name}</h3>
+                <div class="rating">★ ${rating} · ${p.category}</div>
+                <p class="card__price">${money(p.price)}</p>
+                <div class="card__actions">
+                  <button class="btn">Añadir al carrito</button>
+                  <button class="btn btn--ghost">Ver detalles</button>
+                </div>
+              </div>
+            </article>`;
+        }
+      },
+      presta: {
+        name: 'PrestaShop',
+        className: 'sim--presta',
+        bullets: [
+          '“Vista rápida” sobre la imagen.',
+          'Referencia (SKU) y estado “En stock”.',
+          'Botones compactos de acción.'
+        ],
+        renderCard: (p) => {
+          const bg = p.image
+            ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
+            : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+          return `
+            <article class="card">
+              <div class="thumb">
+                <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg}"></div>
+                <div class="quick">
+                  <button class="btn small">Añadir</button>
+                  <button class="btn btn--ghost small">Vista rápida</button>
+                </div>
+              </div>
+              <div class="card__body">
+                <h3 class="card__title">${p.name}</h3>
+                <p class="muted">Ref: ${p.id} · En stock</p>
+                <p class="card__price">${money(p.price)}</p>
+              </div>
+            </article>`;
+        }
+      },
+      shopify: {
+        name: 'Shopify',
+        className: 'sim--shopify',
+        bullets: [
+          'Vendor/colección arriba del título.',
+          'Botón “Comprar ahora” (sim).',
+          'Mensaje de pago rápido (sim).'
+        ],
+        renderCard: (p) => {
+          const bg = p.image
+            ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
+            : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+          return `
+            <article class="card">
+              <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg}"></div>
+              <div class="card__body">
+                <div class="vendor">BALLERS · ${p.category}</div>
+                <h3 class="card__title">${p.name}</h3>
+                <p class="card__price">${money(p.price)}</p>
+                <div class="card__actions">
+                  <button class="btn">Comprar ahora</button>
+                  <button class="btn btn--ghost">Añadir al carrito</button>
+                </div>
+                <div class="checkout-fast">Pago rápido disponible (simulado)</div>
+              </div>
+            </article>`;
+        }
+      },
+      tn: {
+        name: 'Tiendanube',
+        className: 'sim--tn',
+        bullets: [
+          'Mensaje de cuotas sin interés (sim).',
+          'Leyenda de envío a todo el país.',
+          'CTA “Agregar al carrito”.'
+        ],
+        renderCard: (p) => {
+          const bg = p.image
+            ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
+            : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+          return `
+            <article class="card">
+              <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg}"></div>
+              <div class="card__body">
+                <h3 class="card__title">${p.name}</h3>
+                <p class="installments">Hasta 12x sin interés (sim)</p>
+                <p class="card__price">${money(p.price)}</p>
+                <div class="card__actions">
+                  <button class="btn">Agregar al carrito</button>
+                  <button class="btn btn--ghost">Ver más</button>
+                </div>
+                <div class="shipping">Envío a todo México (sim)</div>
+              </div>
+            </article>`;
+        }
+      }
+    };
+
+    function renderPlatform(key){
+      const cfg = platforms[key];
+      if (!cfg) return;
+
+      // título + notas + bullets
+      title.textContent = `Vistas simuladas — enfoque: ${cfg.name}`;
+      notes.textContent = `Mostrando productos desde products.json con características típicas de ${cfg.name} (simulado).`;
+
+      bullets.innerHTML = cfg.bullets.map(b => `<li>${b}</li>`).join('');
+
+      // etiquetas/contexto arriba a la derecha
+      tags.innerHTML = `<span class="badge">${cfg.name}</span>`;
+
+      // grid
+      grid.className = `sim-grid ${cfg.className}`;
+      grid.innerHTML = products.slice(0, 8).map(cfg.renderCard).join('');
+
+      // scroll y realce
+      vistas.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      vistas.classList.add('pulse');
+      setTimeout(() => vistas.classList.remove('pulse'), 900);
+    }
+
+    // Eventos de los botones "Ver vistas simuladas"
+    document.querySelectorAll('a.cta[data-platform]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        renderPlatform(a.dataset.platform);
+      });
+    });
+
+    // Render por defecto (opcional): WooCommerce
+    renderPlatform('woo');
+  })();
+  </script>
+</body>
+</html>

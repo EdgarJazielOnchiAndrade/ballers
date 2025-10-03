@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ballers 🏀👟 | Inicio</title>
+  <link rel="stylesheet" href="src/assets/css/base.css"/>
+</head>
+<body>
+  <!-- Header fijo -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <!-- Buscador -->
+      <form class="search" role="search" aria-label="Buscar productos">
+        <label class="visually-hidden" for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
+        <button type="submit" aria-label="Buscar">🔍</button>
+      </form>
+
+      <!-- Menú -->
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a class="active" href="index.html">Inicio</a></li>
+          <li><a href="src/assets/views/catalog.html">Catálogo</a></li>
+          <li><a href="src/assets/views/cart.html">Carrito</a></li>
+          <li><a href="#">Usuarios</a></li>
+          <li><a href="#">Pedidos</a></li>
+          <li><a href="#">Configuración</a></li>
+
+          <li class="has-submenu">
+            <button class="submenu__toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+              Documentación <span class="caret" aria-hidden="true">▾</span>
+            </button>
+            <ul id="doc-submenu" class="submenu" role="menu" hidden>
+              <li role="none"><a role="menuitem" href="src/assets/views/tecnologia.html">Tecnología propuesta</a></li>
+              <li role="none"><a role="menuitem" href="src/assets/views/infraestructura.html">Infraestructura</a></li>
+              <li role="none"><a role="menuitem" href="src/assets/views/status.html">Status</a></li>
+              <li role="none"><a role="menuitem" href="src/assets/views/disponibilidad.html">Disponibilidad</a></li>
+            </ul>
+
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <h1>Moda urbana inspirada en el básquet</h1>
+        <p>Descubre sneakers, jerseys y accesorios de temporada. Calidad, estilo y envíos rápidos.</p>
+        <a class="btn" href="src/assets/views/catalog.html">Ver catálogo</a>
+      </div>
+      <div class="hero__img" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- Filtros / categorías -->
+  <section class="filters">
+    <div class="container filters__inner">
+      <div class="chips">
+        <button class="chip is-active" data-cat="todo">Todo</button>
+        <button class="chip" data-cat="sneakers">Sneakers</button>
+        <button class="chip" data-cat="jerseys">Jerseys</button>
+        <button class="chip" data-cat="gorras">Gorras</button>
+        <button class="chip" data-cat="accesorios">Accesorios</button>
+      </div>
+      <div class="sort">
+        <label for="orden">Ordenar:</label>
+        <select id="orden">
+          <option value="popular">Más populares</option>
+          <option value="nuevo">Novedades</option>
+          <option value="precio-asc">Precio: bajo a alto</option>
+          <option value="precio-desc">Precio: alto a bajo</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid de productos (cards) -->
+  <main class="container">
+    <section id="home-grid" class="grid" aria-live="polite"></section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Tu JS global (menú, submenú, etc.) -->
+  <script src="src/assets/js/app.js"></script>
+
+  <!-- Script para destacados en portada desde products.json -->
+  <script>
+  (async () => {
+    const grid   = document.getElementById('home-grid');
+    const chips  = Array.from(document.querySelectorAll('.chip'));
+    const select = document.getElementById('orden');
+    const qInput = document.getElementById('q'); // buscador del header (opcional)
+
+    const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
+
+    // Si tu JSON tiene rutas tipo "../img/...", las adaptamos para index.html
+    const fixImg = (path) => {
+      if (!path) return '';
+      if (path.startsWith('src/assets/img/')) return path;             // ya universal
+      if (path.startsWith('../img/')) return 'src/assets/' + path.replace('../',''); // ../img/x -> src/assets/img/x
+      return path;
+    };
+
+    // 1) Cargar productos
+    let products = [];
+    try {
+      const res = await fetch('src/assets/data/products.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar products.json');
+      products = await res.json();
+    } catch (err) {
+      grid.innerHTML = `<article class="card" style="padding:16px">
+        <h3>Error cargando destacados</h3>
+        <p class="muted">${err.message}</p>
+      </article>`;
+      return;
+    }
+
+    // 2) Plantilla de tarjeta (versión portada)
+    function cardTemplate(p) {
+      const img = fixImg(p.image);
+      const bg  = img
+        ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${img}') center/cover no-repeat`
+        : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+
+      return `
+        <article class="card" data-category="${p.category}">
+          <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg};"></div>
+          <div class="card__body">
+            <h3 class="card__title">${p.name}</h3>
+            <p class="card__price">${money(p.price)}</p>
+            <div class="card__actions">
+              <button class="btn btn--ghost" aria-label="Favorito">♡</button>
+              <a class="btn" href="src/assets/views/catalog.html">Ver</a>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    // 3) Estado + filtros + orden
+    let current = [...products];
+
+    function applyFilters() {
+      const active = document.querySelector('.chip.is-active');
+      const cat = active ? active.dataset.cat : 'todo';
+      const term = (qInput?.value || '').trim().toLowerCase();
+
+      current = products.filter(p => {
+        const inCat  = (cat === 'todo') || (p.category === cat);
+        const inText = term === '' ||
+          p.name.toLowerCase().includes(term) ||
+          (p.description || '').toLowerCase().includes(term);
+        return inCat && inText;
+      });
+    }
+
+    function applySort() {
+      const v = select.value;
+      if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
+      if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
+      if (v === 'nuevo')       current.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)); // opcional
+      if (v === 'popular')     current.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));               // opcional
+    }
+
+    function render(list){
+      const slice = list.slice(0, 8); // destacados en portada
+      if (!slice.length) {
+        grid.innerHTML = `<article class="card" style="padding:16px">
+          <h3>Sin destacados</h3>
+          <p class="muted">Ajusta la categoría o el término de búsqueda.</p>
+        </article>`;
+        return;
+      }
+      grid.innerHTML = slice.map(cardTemplate).join('');
+    }
+
+    // Eventos (chips, ordenar, búsqueda)
+    chips.forEach(chip => chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      applyFilters(); applySort(); render(current);
+    }));
+
+    select.addEventListener('change', () => { applySort(); render(current); });
+    qInput?.addEventListener('input', () => { applyFilters(); applySort(); render(current); });
+
+    // 4) Primer pintado
+    applyFilters(); applySort(); render(current);
+  })();
+  </script>
+</body>
+</html>

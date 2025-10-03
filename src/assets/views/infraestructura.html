@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Infraestructura | Ballers</title>
+  <link rel="stylesheet" href="../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);
+      padding:24px;box-shadow:var(--shadow);margin:18px 0
+    }
+    .muted{color:var(--muted)}
+    .table{width:100%;border-collapse:collapse;margin-top:8px}
+    .table th,.table td{border:1px solid #2a2a32;padding:10px;text-align:left}
+    .table th{background:#141419}
+    .notes{margin-top:10px;color:var(--muted)}
+    figure{margin:0}
+    figure img{width:100%;height:auto;border-radius:12px;border:1px solid #23232a}
+    figcaption{font-size:.9rem;color:var(--muted);margin-top:6px}
+    ul.list{margin:.25rem 0 0 1rem}
+    ul.list li{margin:.25rem 0}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <form class="search" role="search" aria-label="Buscar">
+        <label class="visually-hidden" for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Buscar…" />
+        <button type="submit" aria-label="Buscar">🔍</button>
+      </form>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="../../../index.html">Inicio</a></li>
+          <li><a href="catalog.html">Catálogo</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+
+          <li class="has-submenu">
+            <button class="submenu__toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+              Documentación <span class="caret" aria-hidden="true">▾</span>
+            </button>
+            <ul id="doc-submenu" class="submenu" role="menu" hidden>
+              <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+              <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+              <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+              <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <!-- Diagrama -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Diagrama de infraestructura</h2>
+      <p class="muted">Vista mínima de cómo se conectan los componentes. (Imagen de referencia para el portafolio).</p>
+
+      <figure>
+        <!-- Coloca tu imagen en src/assets/img/infra-diagrama.png -->
+        <img src="../img/infra-diagrama.jpg" alt="Diagrama mínimo: Cliente → Internet/ISP → CDN (opcional) → Firewall/WAF → Servidor web (Linux + Nginx/Apache) → Archivos estáticos (HTML/CSS/JS, imágenes)" />
+        <figcaption>Diagrama mínimo propuesto para Ballers. Copia del archivo también en <code>docs/2.1.b_infra-diagrama.png</code>.</figcaption>
+      </figure>
+
+      <!-- Enlace opcional al archivo en /docs para descarga -->
+      <p class="muted" style="margin-top:8px">
+        Descarga del diagrama para el portafolio: 
+        <a href="../../../docs/2.1.b_infra-diagrama.png">docs/2.1.b_infra-diagrama.png</a>
+      </p>
+    </section>
+
+    <!-- Descripción por componente -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Componentes</h2>
+      <ul class="list">
+        <li><strong>Cliente/Usuario:</strong> Navegador (Chrome/Firefox) en computadora o móvil.</li>
+        <li><strong>Internet/ISP:</strong> Medio público que conecta a los usuarios con el servidor.</li>
+        <li><strong>CDN (opcional):</strong> Acelera la entrega de imágenes y archivos estáticos en campañas o picos.</li>
+        <li><strong>Firewall/WAF básico:</strong> Filtra tráfico malicioso (inyecciones, bots simples).</li>
+        <li><strong>Servidor Web/Hosting:</strong> Alojamiento del sitio; en este curso sirve HTML/CSS/JS (solo front).</li>
+        <li><strong>SO y servidor web:</strong> Linux Ubuntu con Nginx o Apache (equilibrio costo/rendimiento).</li>
+        <li><strong>Recursos iniciales:</strong> 2 vCPU, 4 GB RAM, 50 GB SSD, 1 TB/mes — suficiente para PyME en arranque.</li>
+      </ul>
+    </section>
+
+    <!-- Requisitos resumidos (tabla) -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Requisitos mínimos (simulados)</h2>
+      <table class="table" aria-label="Requisitos de infraestructura">
+        <thead><tr><th>Recurso</th><th>Recomendado</th><th>Motivo</th></tr></thead>
+        <tbody>
+          <tr><td>CPU</td><td>2 vCPU</td><td>Servir catálogo y páginas con holgura.</td></tr>
+          <tr><td>RAM</td><td>4 GB</td><td>Procesos del servidor y caché ligera.</td></tr>
+          <tr><td>Almacenamiento</td><td>50 GB SSD</td><td>Activos estáticos optimizados.</td></tr>
+          <tr><td>Transferencia</td><td>1 TB / mes</td><td>Tráfico estimado con margen para picos.</td></tr>
+          <tr><td>Hosting</td><td>VPS o Nube</td><td>Equilibrio entre costo, control y escalabilidad.</td></tr>
+        </tbody>
+      </table>
+      <p class="notes">* Para campañas intensas, subir a 4 vCPU / 8 GB RAM y activar CDN.</p>
+    </section>
+
+    <!-- Justificación -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Justificación (3–4 líneas)</h2>
+      <p>
+        Para Ballers se elige un VPS pequeño con Linux y Nginx por su buen balance costo/rendimiento en etapa inicial.
+        Un firewall básico ofrece protección mínima ante ataques comunes. El CDN queda opcional para campañas estacionales
+        o picos de tráfico. Si el proyecto crece, se escala a más recursos o a nube con balanceo.
+      </p>
+    </section>
+  </main>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

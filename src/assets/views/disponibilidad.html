@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Disponibilidad (SLA) | Ballers</title>
+  <link rel="stylesheet" href="../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin:18px 0}
+    .muted{color:var(--muted)}
+    .table{width:100%;border-collapse:collapse;margin-top:8px}
+    .table th,.table td{border:1px solid #2a2a32;padding:10px;text-align:left}
+    .table th{background:#141419}
+    .policy{margin-top:12px}
+  </style>
+</head>
+<body>
+  <header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <form class="search" role="search" aria-label="Buscar">
+      <label class="visually-hidden" for="q">Buscar</label>
+      <input id="q" type="search" placeholder="Buscar…" />
+      <button type="submit" aria-label="Buscar">🔍</button>
+    </form>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="../../../index.html">Inicio</a></li>
+        <li><a href="catalog.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+
+        <li class="has-submenu">
+          <button class="submenu__toggle" type="button"
+                  aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+            Documentación <span class="caret" aria-hidden="true">▾</span>
+          </button>
+          <ul id="doc-submenu" class="submenu" role="menu" hidden>
+            <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+            <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+            <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+            <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 8px">SLA (Acuerdo de Nivel de Servicio) — Simulado</h2>
+      <p class="muted">Comparativa de disponibilidad y su tiempo de caída estimado por año.</p>
+      <table class="table" aria-label="Tabla de SLA">
+        <thead>
+          <tr><th>Disponibilidad</th><th>Caída al año</th><th>Caída al mes</th><th>Caída por semana</th><th>Caída por día</th></tr>
+        </thead>
+        <tbody id="sla-rows"></tbody>
+      </table>
+      <div class="policy">
+        <strong>Política breve:</strong>
+        <p class="muted">Nuestro objetivo es mantener una disponibilidad de <strong>99.9%</strong> anual. En caso de incidentes, comunicaremos por esta sección el estatus y plan de recuperación.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/app.js"></script>
+  <script>
+    const avail = [99, 99.9, 99.99];
+    const rows = document.getElementById('sla-rows');
+    const MIN_YEAR = 365*24*60; // minutos/año (no bisiesto para simplificar)
+
+    const fmt = (mins) => {
+      const d = Math.floor(mins / (60*24));
+      const h = Math.floor((mins % (60*24)) / 60);
+      const m = Math.floor(mins % 60);
+      return `${d}d ${h}h ${m}m`;
+    };
+
+    avail.forEach(pct => {
+      const downtimeYearMins = (1 - (pct/100)) * MIN_YEAR;
+      const downtimeMonthMins = downtimeYearMins / 12;
+      const downtimeWeekMins  = downtimeYearMins / 52;
+      const downtimeDayMins   = downtimeYearMins / 365;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${pct}%</td>
+        <td>${fmt(downtimeYearMins)}</td>
+        <td>${fmt(downtimeMonthMins)}</td>
+        <td>${fmt(downtimeWeekMins)}</td>
+        <td>${fmt(downtimeDayMins)}</td>
+      `;
+      rows.appendChild(tr);
+    });
+  </script>
+</body>
+</html>

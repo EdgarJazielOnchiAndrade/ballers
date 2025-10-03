@@ -1,0 +1,66 @@
+[
+  {
+    "id": "sku-urban-x",
+    "name": "Sneakers Urban X",
+    "price": 1899,
+    "category": "sneakers",
+    "image": "../img/sneaker-urban-x.jpg",
+    "description": "Zapatilla urbana ligera con amortiguación reactiva."
+  },
+  {
+    "id": "sku-crossover-pro",
+    "name": "Sneakers Crossover Pro",
+    "price": 2499,
+    "category": "sneakers",
+    "image": "../img/sneaker-crossover-pro.jpg",
+    "description": "Tracción avanzada y soporte para cambios de ritmo."
+  },
+  {
+    "id": "sku-jersey-23",
+    "name": "Jersey Baller 23",
+    "price": 1299,
+    "category": "jerseys",
+    "image": "../img/jersey-23.jpg",
+    "description": "Edición clásica con tejido transpirable."
+  },
+  {
+    "id": "sku-jersey-10",
+    "name": "Jersey Street 10",
+    "price": 1199,
+    "category": "jerseys",
+    "image": "../img/jersey-10.jpg",
+    "description": "Corte regular y paneles ventilados."
+  },
+  {
+    "id": "sku-cap-classic",
+    "name": "Gorra Classic",
+    "price": 399,
+    "category": "gorras",
+    "image": "../img/cap-classic.jpg",
+    "description": "Snapback de perfil medio con logo bordado."
+  },
+  {
+    "id": "sku-cap-night",
+    "name": "Gorra Snapback Night",
+    "price": 449,
+    "category": "gorras",
+    "image": "../img/cap-night.jpg",
+    "description": "Acabado mate y visera plana."
+  },
+  {
+    "id": "sku-wrist-pro",
+    "name": "Muñequeras Pro",
+    "price": 249,
+    "category": "accesorios",
+    "image": "../img/wrist-pro.jpg",
+    "description": "Compresión suave y control de sudor."
+  },
+  {
+    "id": "sku-socks-grip",
+    "name": "Calcetas Grip",
+    "price": 199,
+    "category": "accesorios",
+    "image": "../img/socks-grip.jpg",
+    "description": "Agarre antideslizante en la planta."
+  }
+]
