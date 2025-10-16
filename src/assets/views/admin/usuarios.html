@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Control de usuarios | Ballers</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .tabs{display:flex;gap:6px}
+    .tab{border:1px solid #2a2a32;background:#141419;color:var(--text);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .tab[aria-selected="true"]{background:#1f1f27;border-color:#ff6a00}
+
+    .search{display:flex;gap:6px;align-items:center}
+    .search input{padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text);min-width:240px}
+
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border:1px solid #2a2a32;padding:10px;text-align:left}
+    .table th{background:#141419}
+    .badges{display:inline-flex;gap:6px;align-items:center}
+    .badge{border:1px solid #2a2a32;background:#0f0f14;padding:2px 8px;border-radius:999px;font-size:.85rem}
+
+    .actions{display:flex;gap:6px}
+    .btn-sm{padding:6px 10px;border-radius:8px;border:1px solid #2a2a32;background:#141419;color:var(--text);cursor:pointer}
+    .btn-sm:hover{background:#1b1b22}
+    .btn-primary{border-color:#ff6a00}
+    .grid-2{display:grid;gap:12px}
+    @media(min-width:860px){.grid-2{grid-template-columns:1fr 1fr}}
+
+    .card{background:var(--card);border:1px solid #23232a;border-radius:16px;box-shadow:var(--shadow-soft)}
+    .card__body{padding:14px}
+
+    form .row{display:grid;gap:10px;margin-top:10px}
+    @media(min-width:620px){form .row{grid-template-columns:1fr 1fr}}
+    form input, form select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text)}
+    .form-actions{margin-top:10px;display:flex;gap:8px;justify-content:flex-end}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="facturacion.html">Facturación</a></li>
+          <li><a class="active" href="usuarios.html" aria-current="page">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 10px">Control de usuarios</h2>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="tabs" role="tablist" aria-label="Tipo de listado">
+          <button id="tab-clientes" class="tab" role="tab" aria-selected="true" aria-controls="panel-clientes">Clientes</button>
+          <button id="tab-admins" class="tab" role="tab" aria-selected="false" aria-controls="panel-admins">Administradores</button>
+        </div>
+
+        <div class="search" role="search">
+          <input id="q" type="search" placeholder="Buscar por nombre, correo o estado"/>
+          <button id="btn-add-open" class="btn-sm btn-primary">Agregar</button>
+        </div>
+      </div>
+
+      <!-- Alta rápida -->
+      <div id="add-box" class="grid-2" hidden>
+        <article class="card">
+          <div class="card__body">
+            <h3 style="margin:0 0 6px">Nuevo registro</h3>
+            <form id="form-add">
+              <div class="row">
+                <div>
+                  <label for="add-name">Nombre</label>
+                  <input id="add-name" type="text" placeholder="Nombre completo"/>
+                </div>
+                <div>
+                  <label for="add-email">Correo</label>
+                  <input id="add-email" type="email" placeholder="correo@dominio.com"/>
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label for="add-role">Rol</label>
+                  <select id="add-role">
+                    <option value="cliente">Cliente</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="add-status">Estado</label>
+                  <select id="add-status">
+                    <option value="activo">Activo</option>
+                    <option value="bloqueado">Bloqueado</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" id="btn-add-cancel" class="btn-sm">Cancelar</button>
+                <button type="submit" class="btn-sm btn-primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </article>
+      </div>
+
+      <!-- Panel: Clientes -->
+      <div id="panel-clientes" role="tabpanel" aria-labelledby="tab-clientes">
+        <div class="card" style="margin-top:12px">
+          <div class="card__body">
+            <div style="overflow:auto">
+              <table class="table" aria-label="Listado de clientes">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Últ. actividad</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-clientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Administradores -->
+      <div id="panel-admins" role="tabpanel" aria-labelledby="tab-admins" hidden>
+        <div class="card" style="margin-top:12px">
+          <div class="card__body">
+            <div style="overflow:auto">
+              <table class="table" aria-label="Listado de administradores">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Permisos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-admins"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  // Estado local
+  let clientes = [
+    { id: 1, nombre:'Ana López',   correo:'ana@correo.com',   estado:'activo',    ultima:'2025-03-01 12:40' },
+    { id: 2, nombre:'Carlos Ruiz', correo:'carlos@correo.com',estado:'bloqueado', ultima:'2025-02-26 09:15' },
+    { id: 3, nombre:'María Pérez', correo:'maria@correo.com', estado:'activo',    ultima:'2025-03-02 18:22' },
+  ];
+  let admins = [
+    { id: 101, nombre:'Admin Principal', correo:'admin@ballers.mx', permisos:'total', estado:'activo' },
+    { id: 102, nombre:'Soporte',         correo:'soporte@ballers.mx', permisos:'pedidos, usuarios', estado:'activo' },
+  ];
+
+  // Helpers UI
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  const tbodyClientes = $('#tbody-clientes');
+  const tbodyAdmins   = $('#tbody-admins');
+  const qInput        = $('#q');
+
+  function badge(txt){ return `<span class="badge">${txt}</span>`; }
+
+  function renderClientes(list = clientes){
+    const q = (qInput.value || '').toLowerCase();
+    const data = list.filter(r =>
+      r.nombre.toLowerCase().includes(q) ||
+      r.correo.toLowerCase().includes(q) ||
+      r.estado.toLowerCase().includes(q)
+    );
+    tbodyClientes.innerHTML = data.map(r => `
+      <tr>
+        <td>${r.nombre}</td>
+        <td>${r.correo}</td>
+        <td class="badges">${badge(r.estado)}</td>
+        <td>${r.ultima}</td>
+        <td class="actions">
+          <button class="btn-sm" data-act="toggle" data-id="${r.id}">${r.estado==='activo'?'Bloquear':'Desbloquear'}</button>
+          <button class="btn-sm" data-act="reset"  data-id="${r.id}">Reset clave</button>
+          <button class="btn-sm" data-act="delete" data-id="${r.id}">Eliminar</button>
+        </td>
+      </tr>
+    `).join('') || `<tr><td colspan="5">Sin resultados</td></tr>`;
+  }
+
+  function renderAdmins(list = admins){
+    const q = (qInput.value || '').toLowerCase();
+    const data = list.filter(r =>
+      r.nombre.toLowerCase().includes(q) ||
+      r.correo.toLowerCase().includes(q) ||
+      r.estado.toLowerCase().includes(q) ||
+      (r.permisos||'').toLowerCase().includes(q)
+    );
+    tbodyAdmins.innerHTML = data.map(r => `
+      <tr>
+        <td>${r.nombre}</td>
+        <td>${r.correo}</td>
+        <td>${r.permisos}</td>
+        <td class="badges">${badge(r.estado)}</td>
+        <td class="actions">
+          <button class="btn-sm" data-act="toggle-admin" data-id="${r.id}">${r.estado==='activo'?'Bloquear':'Desbloquear'}</button>
+          <button class="btn-sm" data-act="reset-admin"  data-id="${r.id}">Reset clave</button>
+          <button class="btn-sm" data-act="delete-admin" data-id="${r.id}">Eliminar</button>
+        </td>
+      </tr>
+    `).join('') || `<tr><td colspan="5">Sin resultados</td></tr>`;
+  }
+
+  // Render inicial
+  renderClientes();
+  renderAdmins();
+
+  // Buscador
+  qInput.addEventListener('input', () => {
+    const clientesActivos = !$('#panel-clientes').hidden;
+    clientesActivos ? renderClientes() : renderAdmins();
+  });
+
+  // Tabs
+  const tabClientes = $('#tab-clientes');
+  const tabAdmins   = $('#tab-admins');
+  const panelClientes = $('#panel-clientes');
+  const panelAdmins   = $('#panel-admins');
+
+  function selectTab(which){
+    const isClientes = which === 'clientes';
+    tabClientes.setAttribute('aria-selected', isClientes ? 'true' : 'false');
+    tabAdmins.setAttribute('aria-selected', isClientes ? 'false' : 'true');
+    panelClientes.hidden = !isClientes;
+    panelAdmins.hidden   = isClientes;
+    qInput.value = '';
+    (isClientes ? renderClientes : renderAdmins)();
+  }
+  tabClientes.addEventListener('click', () => selectTab('clientes'));
+  tabAdmins.addEventListener('click',   () => selectTab('admins'));
+
+  // Acciones tabla Clientes
+  tbodyClientes.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act]');
+    if(!btn) return;
+    const id = +btn.dataset.id;
+    const act = btn.dataset.act;
+    if (act === 'toggle'){
+      clientes = clientes.map(u => u.id===id ? {...u, estado: u.estado==='activo'?'bloqueado':'activo'} : u);
+      renderClientes();
+    }
+    if (act === 'reset'){
+      // Aquí podrías disparar UI de confirmación
+      alert('Contraseña reiniciada para el usuario #' + id);
+    }
+    if (act === 'delete'){
+      clientes = clientes.filter(u => u.id !== id);
+      renderClientes();
+    }
+  });
+
+  // Acciones tabla Admins
+  tbodyAdmins.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act]');
+    if(!btn) return;
+    const id = +btn.dataset.id;
+    const act = btn.dataset.act;
+    if (act === 'toggle-admin'){
+      admins = admins.map(u => u.id===id ? {...u, estado: u.estado==='activo'?'bloqueado':'activo'} : u);
+      renderAdmins();
+    }
+    if (act === 'reset-admin'){
+      alert('Contraseña reiniciada para el admin #' + id);
+    }
+    if (act === 'delete-admin'){
+      admins = admins.filter(u => u.id !== id);
+      renderAdmins();
+    }
+  });
+
+  // Alta rápida
+  const boxAdd = $('#add-box');
+  $('#btn-add-open').addEventListener('click', () => {
+    boxAdd.hidden = !boxAdd.hidden;
+  });
+  $('#btn-add-cancel').addEventListener('click', () => {
+    boxAdd.hidden = true;
+  });
+
+  $('#form-add').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const nombre = $('#add-name').value.trim();
+    const correo = $('#add-email').value.trim();
+    const rol    = $('#add-role').value;
+    const estado = $('#add-status').value;
+
+    if(!nombre || !correo) return;
+
+    if(rol === 'cliente'){
+      const nuevo = { id: Date.now(), nombre, correo, estado, ultima: new Date().toISOString().slice(0,16).replace('T',' ') };
+      clientes.unshift(nuevo);
+      selectTab('clientes');
+    }else{
+      const nuevo = { id: Date.now(), nombre, correo, permisos:'pedidos, usuarios', estado };
+      admins.unshift(nuevo);
+      selectTab('admins');
+    }
+    // limpia y oculta
+    e.target.reset();
+    boxAdd.hidden = true;
+  });
+  </script>
+</body>
+</html>

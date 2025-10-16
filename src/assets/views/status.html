@@ -6,8 +6,11 @@
   <title>Status del servicio | Ballers</title>
   <link rel="stylesheet" href="../css/base.css"/>
   <style>
-    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
-      border:1px solid #23232a;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin:18px 0}
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);
+      padding:24px;box-shadow:var(--shadow);margin:18px 0
+    }
     .kpis{display:grid;gap:12px}
     @media (min-width:680px){.kpis{grid-template-columns:repeat(4,1fr)}}
     .kpi{background:#111;border:1px solid #23232a;border-radius:12px;padding:16px;text-align:center}
@@ -16,23 +19,39 @@
   </style>
 </head>
 <body>
-  <header class="header">
+<header class="header">
   <div class="container header__inner">
+    <!-- Logo (vuelve al index en la raíz) -->
     <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
-    <form class="search" role="search" aria-label="Buscar">
+    <!-- Buscador -->
+    <form class="search" role="search" aria-label="Buscar productos">
       <label class="visually-hidden" for="q">Buscar</label>
-      <input id="q" type="search" placeholder="Buscar…" />
+      <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
       <button type="submit" aria-label="Buscar">🔍</button>
     </form>
 
+    <!-- Toggle responsive -->
     <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+
+    <!-- Navegación -->
     <nav id="mainnav" class="nav">
       <ul>
         <li><a href="../../../index.html">Inicio</a></li>
         <li><a href="catalog.html">Catálogo</a></li>
-        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="intranet.html">Intranet</a></li>
 
+        <!-- Monito (login) -->
+        <li>
+          <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </a>
+        </li>
+
+        <!-- Submenú Documentación -->
         <li class="has-submenu">
           <button class="submenu__toggle" type="button"
                   aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
@@ -41,7 +60,7 @@
           <ul id="doc-submenu" class="submenu" role="menu" hidden>
             <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
             <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
-            <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+            <li role="none"><a role="menuitem" href="status.html">Estatus</a></li>
             <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
           </ul>
         </li>
@@ -50,33 +69,33 @@
   </div>
 </header>
 
+<main class="container" style="padding:22px 0 64px">
+  <!-- Estado del servicio -->
+  <section class="section">
+    <h2 style="margin:0 0 8px">Estado del servicio (simulado)</h2>
+    <p class="muted">KPIs ficticios para comunicar salud del sistema (no hay back real).</p>
+    <div class="kpis" id="kpis">
+      <div class="kpi"><div class="n" id="uptime">99.9%</div><div class="muted">Uptime</div></div>
+      <div class="kpi"><div class="n" id="lat">120 ms</div><div class="muted">Latencia</div></div>
+      <div class="kpi"><div class="n" id="rpm">240</div><div class="muted">Peticiones/min</div></div>
+      <div class="kpi"><div class="n" id="err">0.4%</div><div class="muted">Errores</div></div>
+    </div>
+    <p class="muted" id="ts" style="margin-top:10px">Actualizado: —</p>
+  </section>
+</main>
 
-  <main class="container" style="padding:22px 0 64px">
-    <section class="section">
-      <h2 style="margin:0 0 8px">Estado del servicio (simulado)</h2>
-      <p class="muted">KPIs ficticios para comunicar salud del sistema (no hay back real).</p>
-      <div class="kpis" id="kpis">
-        <div class="kpi"><div class="n" id="uptime">99.9%</div><div class="muted">Uptime</div></div>
-        <div class="kpi"><div class="n" id="lat">120 ms</div><div class="muted">Latencia</div></div>
-        <div class="kpi"><div class="n" id="rpm">240</div><div class="muted">Peticiones/min</div></div>
-        <div class="kpi"><div class="n" id="err">0.4%</div><div class="muted">Errores</div></div>
-      </div>
-      <p class="muted" id="ts" style="margin-top:10px">Actualizado: —</p>
-    </section>
-  </main>
-
-  <script src="../js/app.js"></script>
-  <script>
-    // Pequeña simulación para dar “vida”
-    const $ = id => document.getElementById(id);
-    function tick(){
-      $('uptime').textContent = '99.9%';
-      $('lat').textContent = (100 + Math.floor(Math.random()*60)) + ' ms';
-      $('rpm').textContent = (200 + Math.floor(Math.random()*120));
-      $('err').textContent = (Math.random()*0.8).toFixed(2) + '%';
-      $('ts').textContent = 'Actualizado: ' + new Date().toLocaleString('es-MX');
-    }
-    tick(); setInterval(tick, 4000);
-  </script>
+<script src="../js/app.js"></script>
+<script>
+  // Simulación de métricas
+  const $ = id => document.getElementById(id);
+  function tick(){
+    $('uptime').textContent = '99.9%';
+    $('lat').textContent = (100 + Math.floor(Math.random()*60)) + ' ms';
+    $('rpm').textContent = (200 + Math.floor(Math.random()*120));
+    $('err').textContent = (Math.random()*0.8).toFixed(2) + '%';
+    $('ts').textContent = 'Actualizado: ' + new Date().toLocaleString('es-MX');
+  }
+  tick(); setInterval(tick, 4000);
+</script>
 </body>
 </html>

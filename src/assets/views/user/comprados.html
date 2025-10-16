@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Productos comprados | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin:18px 0}
+    .toolbar{display:grid;gap:10px}
+    @media (min-width:720px){.toolbar{grid-template-columns:1fr auto auto}}
+    .status-badge{display:inline-block;padding:.2rem .55rem;border-radius:999px;font-size:.85rem;border:1px solid #2a2a32}
+    .ok{background:#11291a;border-color:#2c5d3f;color:#9de2b2}
+    .ship{background:#122433;border-color:#214a6b;color:#98c9f0}
+    .cancel{background:#2a1515;border-color:#6b2a2a;color:#ffbaba}
+    .order{border:1px solid #2a2a32;border-radius:14px;overflow:hidden;margin:10px 0;background:#111}
+    .order__head{padding:14px 16px;display:grid;gap:8px;align-items:center}
+    @media (min-width:760px){.order__head{grid-template-columns:180px 1fr 180px 120px}}
+    .order__body{padding:0 16px 14px 16px;display:none}
+    .order__items{margin-top:10px;border-top:1px solid #23232a;padding-top:10px}
+    .muted{color:var(--muted)}
+    .btn--ghost{background:transparent;border:1px solid #2a2a32}
+  </style>
+</head>
+<body>
+  <!-- Header usuario -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+          <li><a class="active" href="comprados.html" aria-current="page">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 10px">Tus compras</h2>
+      <p class="muted" style="margin:0 0 14px">Vista simulada sin backend. Los datos se generan en el navegador.</p>
+
+      <!-- Filtros -->
+      <div class="toolbar">
+        <label class="visually-hidden" for="q">Buscar por ID</label>
+        <input id="q" type="search" placeholder="Buscar por ID de pedido (ej. #B-1024)" />
+
+        <label class="visually-hidden" for="estado">Estado</label>
+        <select id="estado" title="Filtrar por estado">
+          <option value="todos">Todos los estados</option>
+          <option value="entregado">Entregado</option>
+          <option value="en_transito">En tránsito</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+
+        <button id="limpiar" class="btn btn--ghost" type="button">Limpiar filtros</button>
+      </div>
+    </section>
+
+    <!-- Lista -->
+    <section id="orders"></section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (function(){
+    const money = n => n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+    const byId = s => document.getElementById(s);
+
+    // Mock de pedidos con artículos
+    const ORDERS = [
+      {
+        id: 'B-1024',
+        date: '2025-03-10T14:25:00',
+        status: 'entregado',
+        address: 'CDMX, MX',
+        items: [
+          { name:'Nike Dunk Low “Panda”', qty:1, price: 2899 },
+          { name:'Gorra New Era Lakers', qty:1, price: 699 },
+        ]
+      },
+      {
+        id: 'B-1056',
+        date: '2025-03-28T10:05:00',
+        status: 'en_transito',
+        address: 'GDL, MX',
+        items: [
+          { name:'Jersey Bulls #23 Retro', qty:1, price: 1999 }
+        ]
+      },
+      {
+        id: 'B-1061',
+        date: '2025-04-02T18:42:00',
+        status: 'cancelado',
+        address: 'MTY, MX',
+        items: [
+          { name:'Jordan 1 Mid', qty:1, price: 3499 }
+        ]
+      }
+    ].map(o => ({ ...o, total: o.items.reduce((t,i)=>t+i.price*i.qty,0) }));
+
+    const ordersEl = byId('orders');
+    const qInput   = byId('q');
+    const estado   = byId('estado');
+    const limpiar  = byId('limpiar');
+
+    const badge = (s) => {
+      if (s === 'entregado')   return '<span class="status-badge ok">Entregado</span>';
+      if (s === 'en_transito') return '<span class="status-badge ship">En tránsito</span>';
+      if (s === 'cancelado')   return '<span class="status-badge cancel">Cancelado</span>';
+      return '<span class="status-badge">—</span>';
+    };
+
+    function orderCard(o){
+      const f = new Date(o.date).toLocaleString('es-MX', { dateStyle:'medium', timeStyle:'short' });
+      const itemsHTML = o.items.map(it => `
+        <div style="display:flex;justify-content:space-between;gap:12px">
+          <span>${it.qty} × ${it.name}</span>
+          <strong>${money(it.price * it.qty)}</strong>
+        </div>
+      `).join('');
+
+      return `
+      <article class="order" data-id="${o.id}">
+        <div class="order__head">
+          <div><strong>Pedido</strong><br>#${o.id}</div>
+          <div><strong>Fecha</strong><br><span class="muted">${f}</span></div>
+          <div><strong>Total</strong><br><span>${money(o.total)}</span></div>
+          <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end">
+            ${badge(o.status)}
+            <button class="btn btn--ghost" data-toggle="detalles">Ver detalle</button>
+          </div>
+        </div>
+        <div class="order__body" hidden>
+          <div class="order__items">
+            <h4 style="margin:0 0 8px">Artículos</h4>
+            ${itemsHTML}
+            <div style="margin-top:10px;display:flex;justify-content:space-between;border-top:1px solid #23232a;padding-top:8px">
+              <span class="muted">Envío a: ${o.address}</span>
+              <strong>Total pagado: ${money(o.total)}</strong>
+            </div>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function applyFilters(list){
+      const term = (qInput.value || '').trim().toLowerCase();
+      const est  = estado.value; // 'todos' | 'entregado' | 'en_transito' | 'cancelado'
+      return list.filter(o => {
+        const okId  = term === '' || o.id.toLowerCase().includes(term);
+        const okEst = est === 'todos' || o.status === est;
+        return okId && okEst;
+      });
+    }
+
+    function render(){
+      const data = applyFilters(ORDERS);
+      if (!data.length){
+        ordersEl.innerHTML = `
+          <section class="section">
+            <h3>Sin resultados</h3>
+            <p class="muted">Prueba con otro ID o estado.</p>
+          </section>`;
+        return;
+      }
+      ordersEl.innerHTML = data.map(orderCard).join('');
+    }
+
+    // Interacciones
+    ordersEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-toggle="detalles"]');
+      if (!btn) return;
+      const body = btn.closest('.order').querySelector('.order__body');
+      const isHidden = body.hasAttribute('hidden');
+      if (isHidden) {
+        body.removeAttribute('hidden');
+        body.style.display = 'block';
+        btn.textContent = 'Ocultar detalle';
+      } else {
+        body.setAttribute('hidden','');
+        body.style.display = 'none';
+        btn.textContent = 'Ver detalle';
+      }
+    });
+
+    qInput.addEventListener('input', render);
+    estado.addEventListener('change', render);
+    limpiar.addEventListener('click', () => { qInput.value=''; estado.value='todos'; render(); });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

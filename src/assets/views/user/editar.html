@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar información | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .grid-2{display:grid;gap:14px}
+    @media (min-width:860px){ .grid-2{grid-template-columns:1fr 1fr} }
+    .row{margin-top:12px}
+    .row label{display:block;font-weight:700;margin:0 0 6px}
+    .row input,.row select,.row textarea{
+      width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text)
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .muted{color:var(--muted)}
+    .ok{color:#9de2b2}
+    .warn{color:#ffd4a8}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a class="active" href="editar.html" aria-current="page">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <!-- Datos de contacto -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Datos de contacto</h2>
+
+      <form id="form-contacto" autocomplete="on">
+        <div class="grid-2">
+          <div class="row">
+            <label for="name">Nombre completo</label>
+            <input id="name" name="name" type="text" />
+          </div>
+          <div class="row">
+            <label for="email">Correo</label>
+            <input id="email" name="email" type="email" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="phone">Teléfono</label>
+          <input id="phone" name="phone" type="tel" />
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="submit">Guardar cambios</button>
+          <span id="msg-contacto" class="muted" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Dirección de envío -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Dirección de envío</h2>
+      <form id="form-direccion" autocomplete="on">
+        <div class="row">
+          <label for="street">Calle y número</label>
+          <input id="street" name="street" type="text" />
+        </div>
+
+        <div class="grid-2">
+          <div class="row">
+            <label for="city">Ciudad</label>
+            <input id="city" name="city" type="text" />
+          </div>
+          <div class="row">
+            <label for="state">Estado</label>
+            <input id="state" name="state" type="text" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="row">
+            <label for="zip">C.P.</label>
+            <input id="zip" name="zip" type="text" />
+          </div>
+          <div class="row">
+            <label for="refs">Referencias (opcional)</label>
+            <input id="refs" name="refs" type="text" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="submit">Guardar dirección</button>
+          <span id="msg-dir" class="muted" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Seguridad -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Seguridad</h2>
+
+      <form id="form-pass">
+        <div class="grid-2">
+          <div class="row">
+            <label for="pass1">Nueva contraseña</label>
+            <input id="pass1" name="pass1" type="password" />
+          </div>
+          <div class="row">
+            <label for="pass2">Confirmar contraseña</label>
+            <input id="pass2" name="pass2" type="password" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn--ghost" type="submit">Actualizar contraseña</button>
+          <span id="msg-pass" class="muted" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Sesión -->
+    <section class="section">
+      <h2 style="margin:0 0 8px">Sesión</h2>
+      <div class="actions">
+        <button id="logout" class="btn btn--ghost" type="button">Cerrar sesión</button>
+        <a class="btn" href="index.html">Volver a Inicio</a>
+        <span id="msg-sesion" class="muted" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (function(){
+    const $ = s => document.querySelector(s);
+    const setMsg = (el, text, cls='') => { el.className = 'muted ' + cls; el.textContent = text; };
+
+    function prefill(){
+      $('#name').value  = localStorage.getItem('ballers_user')   || '';
+      $('#email').value = localStorage.getItem('ballers_email')  || '';
+      $('#phone').value = localStorage.getItem('ballers_phone')  || '';
+
+      $('#street').value = localStorage.getItem('ballers_addr_street') || '';
+      $('#city').value   = localStorage.getItem('ballers_addr_city')   || '';
+      $('#state').value  = localStorage.getItem('ballers_addr_state')  || '';
+      $('#zip').value    = localStorage.getItem('ballers_addr_zip')    || '';
+      $('#refs').value   = localStorage.getItem('ballers_addr_refs')   || '';
+    }
+
+    $('#form-contacto').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      localStorage.setItem('ballers_user',  $('#name').value.trim());
+      localStorage.setItem('ballers_email', $('#email').value.trim());
+      localStorage.setItem('ballers_phone', $('#phone').value.trim());
+      setMsg($('#msg-contacto'), 'Datos guardados.', 'ok');
+      await new Promise(r=>setTimeout(r,800));
+      setMsg($('#msg-contacto'), '');
+    });
+
+    $('#form-direccion').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      localStorage.setItem('ballers_addr_street', $('#street').value.trim());
+      localStorage.setItem('ballers_addr_city',   $('#city').value.trim());
+      localStorage.setItem('ballers_addr_state',  $('#state').value.trim());
+      localStorage.setItem('ballers_addr_zip',    $('#zip').value.trim());
+      localStorage.setItem('ballers_addr_refs',   $('#refs').value.trim());
+      setMsg($('#msg-dir'), 'Dirección guardada.', 'ok');
+      await new Promise(r=>setTimeout(r,800));
+      setMsg($('#msg-dir'), '');
+    });
+
+    $('#form-pass').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const p1 = $('#pass1').value, p2 = $('#pass2').value;
+      if (!p1 || !p2) { setMsg($('#msg-pass'),'Completa ambos campos.','warn'); return; }
+      if (p1 !== p2)  { setMsg($('#msg-pass'),'Las contraseñas no coinciden.','warn'); return; }
+      localStorage.setItem('ballers_pass_set','1');
+      $('#pass1').value=''; $('#pass2').value='';
+      setMsg($('#msg-pass'),'Contraseña actualizada.','ok');
+      await new Promise(r=>setTimeout(r,1000));
+      setMsg($('#msg-pass'),'');
+    });
+
+    $('#logout').addEventListener('click', () => {
+      localStorage.removeItem('ballers_auth');
+      localStorage.removeItem('ballers_user');
+      setMsg($('#msg-sesion'),'Sesión cerrada.','warn');
+      setTimeout(()=>{ window.location.href = '../login.html'; }, 700);
+    });
+
+    prefill();
+  })();
+  </script>
+</body>
+</html>

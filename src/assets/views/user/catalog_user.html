@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo (Usuario) | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+</head>
+<body>
+  <!-- Header (usuario) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a class="active" href="catalog_user.html" aria-current="page">Catálogo</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <section class="filters">
+    <div class="container filters__inner">
+      <div class="chips">
+        <button class="chip is-active" data-cat="todo">Todo</button>
+        <button class="chip" data-cat="sneakers">Sneakers</button>
+        <button class="chip" data-cat="jerseys">Jerseys</button>
+        <button class="chip" data-cat="gorras">Gorras</button>
+        <button class="chip" data-cat="accesorios">Accesorios</button>
+      </div>
+      <div class="sort">
+        <label for="orden">Ordenar:</label>
+        <select id="orden">
+          <option value="popular">Más populares</option>
+          <option value="nuevo">Novedades</option>
+          <option value="precio-asc">Precio: bajo a alto</option>
+          <option value="precio-desc">Precio: alto a bajo</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <main class="container">
+    <section id="product-grid" class="grid" aria-live="polite"></section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- JS global -->
+  <script src="../../js/app.js"></script>
+  <script>
+  (async () => {
+    const grid   = document.getElementById('product-grid');
+    const chips  = Array.from(document.querySelectorAll('.chip'));
+    const select = document.getElementById('orden');
+
+    const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
+
+    // Normaliza imágenes para que funcionen desde /views/user/
+    const fixImg = (path) => {
+      if (!path) return '';
+      if (path.startsWith('../img/'))   return '/src/assets/' + path.replace('../','');
+      if (path.startsWith('src/assets/')) return '/' + path;
+      return path;
+    };
+
+    // 1) Cargar JSON (desde user/ a data/)
+    let products = [];
+    try {
+      const res = await fetch('../../data/products.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar products.json');
+      products = await res.json();
+    } catch (err) {
+      grid.innerHTML = `<article class="card" style="padding:16px">
+        <h3>Error cargando catálogo</h3>
+        <p class="muted">${err.message}</p>
+      </article>`;
+      return;
+    }
+
+    // 2) Tarjeta
+    function cardTemplate(p){
+      const bg = p.image
+        ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${fixImg(p.image)}') center/cover no-repeat`
+        : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+
+      return `
+        <article class="card" data-category="${p.category}">
+          <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg};"></div>
+          <div class="card__body">
+            <h3 class="card__title">${p.name}</h3>
+            <p class="card__price">${money(p.price)}</p>
+            <div class="card__actions">
+              <button class="btn btn--ghost" aria-label="Favorito">♡</button>
+              <button class="btn" data-add="${p.id}">Añadir al carrito</button>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    // 3) Estado + filtros + orden (sin búsqueda por texto)
+    let current = [...products];
+
+    function applyFilters() {
+      const active = document.querySelector('.chip.is-active');
+      const cat = active ? active.dataset.cat : 'todo';
+      current = (cat === 'todo') ? [...products] : products.filter(p => p.category === cat);
+    }
+
+    function applySort() {
+      const v = select.value;
+      if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
+      if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
+      if (v === 'nuevo')       current.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      if (v === 'popular')     current.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
+    }
+
+    function render(list){
+      grid.innerHTML = list.length
+        ? list.map(cardTemplate).join('')
+        : `<article class="card" style="padding:16px">
+             <h3>Sin resultados</h3>
+             <p class="muted">Ajusta la categoría u orden.</p>
+           </article>`;
+    }
+
+    // Eventos
+    chips.forEach(chip => chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      applyFilters(); applySort(); render(current);
+    }));
+
+    select.addEventListener('change', () => { applySort(); render(current); });
+
+    // Primer pintado
+    applyFilters(); applySort(); render(current);
+
+    // 4) “Añadir al carrito” → manda al carrito
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-add]');
+      if (!btn) return;
+      window.location.href = 'cart.html';
+    });
+  })();
+  </script>
+</body>
+</html>

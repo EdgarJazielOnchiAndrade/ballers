@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Factura | Ballers (Admin)</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+    .muted{color:var(--muted)}
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.78rem;background:#141419;border:1px solid #2a2a32}
+    .badge--paid{border-color:#2e6a3f;color:#aeeabf}
+    .badge--pending{border-color:#7a4a2c;color:#ffd4a8}
+    .grid-2{display:grid;gap:16px}
+    @media (min-width:860px){.grid-2{grid-template-columns:1fr 1fr}}
+    .kpi{display:grid;gap:6px}
+    .kpi small{color:var(--muted)}
+    .totals{display:grid;gap:8px;max-width:320px;margin-left:auto}
+    .totals .row{display:flex;justify-content:space-between}
+    .totals .row strong{font-size:1.05rem}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a class="active" href="facturacion.html" aria-current="page">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <!-- Breadcrumb -->
+    <nav aria-label="Miga de pan" class="muted" style="font-size:.95rem">
+      <a href="facturacion.html">Facturación</a> / <span>Factura</span>
+    </nav>
+
+    <!-- Encabezado de factura -->
+    <section class="section">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <div>
+          <h2 id="factura-title" style="margin:0 0 6px">Factura</h2>
+          <p class="muted" id="factura-sub">ID: — • Fecha: —</p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="facturacion.html">Volver a facturación</a>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:14px">
+        <div class="card" style="padding:14px">
+          <h3 style="margin:0 0 8px">Emisor</h3>
+          <p style="margin:0">Ballers Store</p>
+          <p class="muted" style="margin:0">RFC: BAL250101XX1</p>
+          <p class="muted" style="margin:0">Av. Centro 123, CDMX</p>
+          <p class="muted" style="margin:0">contacto@ballers.mx</p>
+        </div>
+        <div class="card" style="padding:14px">
+          <h3 style="margin:0 0 8px">Cliente</h3>
+          <p id="cliente-nombre" style="margin:0">Nombre del cliente</p>
+          <p id="cliente-rfc" class="muted" style="margin:0">RFC: —</p>
+          <p id="cliente-dir" class="muted" style="margin:0">Dirección: —</p>
+          <div style="margin-top:8px">
+            <span id="status-badge" class="badge badge--pending">Pendiente de pago</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Detalle de conceptos -->
+    <section class="section">
+      <h3 style="margin:0 0 10px">Conceptos</h3>
+      <div class="table-responsive">
+        <table class="table" id="tabla-conceptos">
+          <thead>
+            <tr>
+              <th style="width:44%">Descripción</th>
+              <th style="width:14%">SKU</th>
+              <th style="width:10%;text-align:right">Cant.</th>
+              <th style="width:16%;text-align:right">P. unit.</th>
+              <th style="width:16%;text-align:right">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Air Max Street Orange</td>
+              <td>SNK-001</td>
+              <td style="text-align:right" data-cant>1</td>
+              <td style="text-align:right" data-unit>2499.00</td>
+              <td style="text-align:right" data-imp>0</td>
+            </tr>
+            <tr>
+              <td>Jersey City Edition</td>
+              <td>JRS-014</td>
+              <td style="text-align:right" data-cant>2</td>
+              <td style="text-align:right" data-unit>1199.00</td>
+              <td style="text-align:right" data-imp>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="totals" style="margin-top:14px">
+        <div class="row"><span>Subtotal</span><span id="t-sub">—</span></div>
+        <div class="row"><span>IVA (16%)</span><span id="t-iva">—</span></div>
+        <div class="row"><strong>Total</strong><strong id="t-total">—</strong></div>
+      </div>
+    </section>
+
+    <!-- Notas -->
+    <section class="section">
+      <div class="kpi">
+        <small>Notas</small>
+        <p id="factura-notas" class="muted" style="margin:0">Gracias por su compra.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (function(){
+    const $ = s => document.querySelector(s);
+    const money = n => Number(n).toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+
+    // Datos desde querystring (?id=F-2025-001&cliente=Juan%20Perez&status=paid)
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || 'F-2025-001';
+    const cliente = params.get('cliente') || 'Juan Pérez';
+    const rfc = params.get('rfc') || 'JUPE800101XX1';
+    const dir = params.get('dir') || 'Calle Siempre Viva 742, CDMX';
+    const status = (params.get('status') || 'pending').toLowerCase();
+    const notas = params.get('notas') || 'Gracias por su compra.';
+
+    // Header de factura
+    $('#factura-title').textContent = 'Factura ' + id;
+    const fecha = new Date().toLocaleDateString('es-MX',{year:'numeric',month:'2-digit',day:'2-digit'});
+    $('#factura-sub').textContent = `ID: ${id} • Fecha: ${fecha}`;
+
+    // Cliente
+    $('#cliente-nombre').textContent = cliente;
+    $('#cliente-rfc').textContent = 'RFC: ' + rfc;
+    $('#cliente-dir').textContent = 'Dirección: ' + dir;
+
+    // Estado
+    const badge = $('#status-badge');
+    if (status === 'paid' || status === 'pagada') {
+      badge.textContent = 'Pagada';
+      badge.classList.remove('badge--pending');
+      badge.classList.add('badge--paid');
+    } else {
+      badge.textContent = 'Pendiente de pago';
+      badge.classList.remove('badge--paid');
+      badge.classList.add('badge--pending');
+    }
+
+    // Notas
+    $('#factura-notas').textContent = notas;
+
+    // Calcular importes y totales
+    const rows = Array.from(document.querySelectorAll('#tabla-conceptos tbody tr'));
+    let subtotal = 0;
+    rows.forEach(tr => {
+      const cant = parseFloat(tr.querySelector('[data-cant]').textContent || '0');
+      const unit = parseFloat(tr.querySelector('[data-unit]').textContent || '0');
+      const imp = cant * unit;
+      subtotal += imp;
+      tr.querySelector('[data-imp]').textContent = money(imp);
+      tr.querySelector('[data-unit]').textContent = money(unit);
+    });
+    const iva = subtotal * 0.16;
+    const total = subtotal + iva;
+
+    $('#t-sub').textContent = money(subtotal);
+    $('#t-iva').textContent = money(iva);
+    $('#t-total').textContent = money(total);
+  })();
+  </script>
+</body>
+</html>

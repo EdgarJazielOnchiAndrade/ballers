@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin | Ballers</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .grid-3{display:grid;gap:16px}
+    @media (min-width:920px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+    .card{background:var(--card);border:1px solid #23232a;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-soft)}
+    .card__body{padding:16px}
+    .muted{color:var(--muted)}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a class="active" href="index.html" aria-current="page">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="facturacion.html">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <!-- Bienvenida -->
+    <section class="section">
+      <h2 style="margin:0 0 6px">Panel administrativo</h2>
+      <p class="muted" style="margin:0">Gestiona inventario, facturación, usuarios, pedidos y productos.</p>
+    </section>
+
+    <!-- Accesos rápidos -->
+    <section class="grid-3">
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Inventario</h3>
+          <p class="muted">Existencias, SKU y ajustes.</p>
+          <p style="margin-top:10px"><a class="btn" href="inventario.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Facturación</h3>
+          <p class="muted">Órdenes, pagos y reportes.</p>
+          <p style="margin-top:10px"><a class="btn" href="facturacion.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Control de usuarios</h3>
+          <p class="muted">Clientes y administradores.</p>
+          <p style="margin-top:10px"><a class="btn" href="usuarios.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Estatus de pedidos</h3>
+          <p class="muted">En preparación, envío y entregas.</p>
+          <p style="margin-top:10px"><a class="btn" href="pedidos.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">CRUD de productos</h3>
+          <p class="muted">Crear, editar y eliminar.</p>
+          <p style="margin-top:10px"><a class="btn" href="productos.html">Abrir</a></p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    // Guard opcional de rol (déjalo comentado si no lo necesitas ahora)
+    // if (localStorage.getItem('ballers_role') !== 'admin') {
+    //   window.location.href = '../intranet.html';
+    // }
+  </script>
+</body>
+</html>

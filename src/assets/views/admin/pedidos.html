@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Estatus de pedidos | Ballers</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .filters input,.filters select{padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text)}
+
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border:1px solid #2a2a32;padding:10px;text-align:left;vertical-align:middle}
+    .table th{background:#141419}
+    .badge{display:inline-block;border:1px solid #2a2a32;background:#0f0f14;padding:2px 8px;border-radius:999px;font-size:.85rem}
+    .badge.recibido{border-color:#888}
+    .badge.preparacion{border-color:#ffd166}
+    .badge.enviado{border-color:#6ec1ff}
+    .badge.entregado{border-color:#6bff88}
+    .badge.cancelado{border-color:#ff6b6b}
+
+    .actions{display:flex;gap:6px;flex-wrap:wrap}
+    .btn-sm{padding:6px 10px;border-radius:8px;border:1px solid #2a2a32;background:#141419;color:var(--text);cursor:pointer}
+    .btn-sm:hover{background:#1b1b22}
+    .btn-primary{border-color:#ff6a00}
+    .muted{color:var(--muted)}
+
+    /* Modal */
+    dialog{border:1px solid #2a2a32;border-radius:16px;background:var(--panel);color:var(--text);max-width:560px;width:96%}
+    dialog::backdrop{background:rgba(0,0,0,.55)}
+    .modal__hd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #2a2a32}
+    .modal__bd{padding:14px 16px}
+    .close{border:1px solid #2a2a32;border-radius:8px;background:#141419;color:var(--text);padding:6px 10px;cursor:pointer}
+    .grid{display:grid;gap:8px}
+    @media(min-width:640px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+    .kv{display:flex;justify-content:space-between;gap:12px}
+    .kv small{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="facturacion.html">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a class="active" href="pedidos.html" aria-current="page">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 10px">Estatus de pedidos</h2>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="filters">
+          <input id="q" type="search" placeholder="Buscar por #pedido, cliente o correo"/>
+          <select id="f-status" aria-label="Filtrar por estatus">
+            <option value="todos">Todos</option>
+            <option value="recibido">Recibido</option>
+            <option value="preparacion">Preparación</option>
+            <option value="enviado">Enviado</option>
+            <option value="entregado">Entregado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+          <select id="f-orden" aria-label="Ordenar">
+            <option value="reciente">Más recientes</option>
+            <option value="antiguo">Más antiguos</option>
+          </select>
+        </div>
+        <div class="muted">Total: <span id="count">0</span></div>
+      </div>
+
+      <!-- Tabla -->
+      <div style="overflow:auto">
+        <table class="table" aria-label="Tabla de pedidos">
+          <thead>
+            <tr>
+              <th># Pedido</th>
+              <th>Cliente</th>
+              <th>Correo</th>
+              <th>Fecha</th>
+              <th>Importe</th>
+              <th>Estatus</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Detalle -->
+  <dialog id="modal">
+    <div class="modal__hd">
+      <strong>Detalle del pedido</strong>
+      <button class="close" id="modal-close">Cerrar</button>
+    </div>
+    <div class="modal__bd" id="modal-body"></div>
+  </dialog>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  // Datos en memoria
+  let pedidos = [
+    { id:'B-10234', cliente:'Ana López',   correo:'ana@correo.com',   fecha:'2025-03-02 12:04', total:1899, estatus:'recibido',
+      items:[{n:'Jordan 1 Mid', c:'sneakers', p:1499, q:1},{n:'Calcetas Pro', c:'accesorios', p:400, q:1}] },
+    { id:'B-10233', cliente:'Carlos Ruiz', correo:'carlos@correo.com',fecha:'2025-03-02 10:21', total:2499, estatus:'preparacion',
+      items:[{n:'Jersey Lakers', c:'jerseys', p:2499, q:1}] },
+    { id:'B-10232', cliente:'María Pérez', correo:'maria@correo.com', fecha:'2025-03-01 18:45', total:3299, estatus:'enviado',
+      items:[{n:'Jordan 4 Retro', c:'sneakers', p:3299, q:1}] },
+    { id:'B-10231', cliente:'Luis Gómez',  correo:'luis@correo.com',  fecha:'2025-02-27 09:12', total:899,  estatus:'entregado',
+      items:[{n:'Gorra Ballers', c:'gorras', p:899, q:1}] },
+    { id:'B-10230', cliente:'Sara Nieto',  correo:'sara@correo.com',  fecha:'2025-02-26 15:03', total:1499, estatus:'cancelado',
+      items:[{n:'Jersey Bulls', c:'jerseys', p:1499, q:1}] },
+  ];
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  const tbody = $('#tbody');
+  const qInput = $('#q');
+  const fStatus = $('#f-status');
+  const fOrden = $('#f-orden');
+  const countEl = $('#count');
+
+  const money = n => n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+
+  const pipeline = ['recibido','preparacion','enviado','entregado'];
+  const badgeClass = s => `badge ${s}`;
+
+  function nextStatus(s){
+    if(s==='cancelado' || s==='entregado') return s;
+    const i = pipeline.indexOf(s);
+    return i>=0 && i<pipeline.length-1 ? pipeline[i+1] : s;
+  }
+
+  function render(){
+    const term = (qInput.value || '').toLowerCase();
+    const s = fStatus.value;
+
+    let list = pedidos.filter(p => {
+      const text = (p.id+' '+p.cliente+' '+p.correo).toLowerCase();
+      const okText = term==='' || text.includes(term);
+      const okStatus = (s==='todos') || (p.estatus===s);
+      return okText && okStatus;
+    });
+
+    if (fOrden.value === 'reciente') {
+      list.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+    } else {
+      list.sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+    }
+
+    countEl.textContent = list.length;
+
+    tbody.innerHTML = list.map(p => `
+      <tr>
+        <td><strong>${p.id}</strong></td>
+        <td>${p.cliente}</td>
+        <td>${p.correo}</td>
+        <td>${p.fecha}</td>
+        <td>${money(p.total)}</td>
+        <td><span class="${badgeClass(p.estatus)}">${labelStatus(p.estatus)}</span></td>
+        <td class="actions">
+          <button class="btn-sm" data-act="ver" data-id="${p.id}">Ver</button>
+          <button class="btn-sm btn-primary" data-act="avanzar" data-id="${p.id}" ${disableAdvance(p.estatus)}>Avanzar</button>
+          <button class="btn-sm" data-act="cancelar" data-id="${p.id}" ${disableCancel(p.estatus)}>Cancelar</button>
+        </td>
+      </tr>
+    `).join('') || `
+      <tr><td colspan="7">Sin resultados</td></tr>
+    `;
+  }
+
+  function labelStatus(s){
+    switch(s){
+      case 'recibido': return 'Recibido';
+      case 'preparacion': return 'Preparación';
+      case 'enviado': return 'Enviado';
+      case 'entregado': return 'Entregado';
+      case 'cancelado': return 'Cancelado';
+      default: return s;
+    }
+  }
+
+  function disableAdvance(s){
+    return (s==='entregado' || s==='cancelado') ? 'disabled aria-disabled="true"' : '';
+  }
+  function disableCancel(s){
+    return (s==='entregado' || s==='cancelado') ? 'disabled aria-disabled="true"' : '';
+  }
+
+  // Listeners UI
+  qInput.addEventListener('input', render);
+  fStatus.addEventListener('change', render);
+  fOrden.addEventListener('change', render);
+
+  // Acciones por fila
+  tbody.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-act]');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const act = btn.dataset.act;
+
+    const idx = pedidos.findIndex(x => x.id === id);
+    if (idx < 0) return;
+
+    if (act === 'avanzar') {
+      const cur = pedidos[idx].estatus;
+      pedidos[idx].estatus = nextStatus(cur);
+      render();
+    }
+    if (act === 'cancelar') {
+      pedidos[idx].estatus = 'cancelado';
+      render();
+    }
+    if (act === 'ver') {
+      openModal(pedidos[idx]);
+    }
+  });
+
+  // Modal
+  const modal = $('#modal');
+  const modalBody = $('#modal-body');
+  $('#modal-close').addEventListener('click', () => modal.close());
+
+  function openModal(p){
+    modalBody.innerHTML = `
+      <div class="grid cols-2">
+        <div class="kv"><small># Pedido</small><span><strong>${p.id}</strong></span></div>
+        <div class="kv"><small>Estatus</small><span><span class="${badgeClass(p.estatus)}">${labelStatus(p.estatus)}</span></span></div>
+        <div class="kv"><small>Cliente</small><span>${p.cliente}</span></div>
+        <div class="kv"><small>Correo</small><span>${p.correo}</span></div>
+        <div class="kv"><small>Fecha</small><span>${p.fecha}</span></div>
+        <div class="kv"><small>Importe</small><span>${money(p.total)}</span></div>
+      </div>
+      <hr style="border-color:#2a2a32;margin:12px 0">
+      <h4 style="margin:0 0 8px">Artículos</h4>
+      <div class="grid">
+        ${p.items.map(it => `
+          <div class="kv"><span>${it.n} (${it.c}) × ${it.q}</span>
+          <span>${money(it.p * it.q)}</span></div>
+        `).join('')}
+      </div>
+    `;
+    modal.showModal();
+  }
+
+  // Primer render
+  render();
+  </script>
+</body>
+</html>

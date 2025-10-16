@@ -7,8 +7,10 @@
   <link rel="stylesheet" href="../css/base.css"/>
 </head>
 <body>
+  <!-- Header -->
   <header class="header">
     <div class="container header__inner">
+      <!-- estás en: src/assets/views/ -->
       <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
       <form class="search" role="search" aria-label="Buscar productos">
@@ -21,17 +23,30 @@
       <nav id="mainnav" class="nav">
         <ul>
           <li><a href="../../../index.html">Inicio</a></li>
-          <li><a class="active" href="catalog.html">Catálogo</a></li>
-          <li><a href="cart.html">Carrito</a></li>
+          <li><a class="active" href="catalog.html" aria-current="page">Catálogo</a></li>
+          <li><a href="intranet.html">Intranet</a></li>
+
+          <!-- Icono usuario -->
+          <li>
+            <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </a>
+          </li>
+
+          <!-- Documentación (desplegable) -->
           <li class="has-submenu">
-            <button class="submenu__toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+            <button class="submenu__toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
               Documentación <span class="caret" aria-hidden="true">▾</span>
             </button>
             <ul id="doc-submenu" class="submenu" role="menu" hidden>
               <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+              <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+              <li role="none"><a role="menuitem" href="status.html">Status</a></li>
               <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
-              <li role="none"><a role="menuitem" href="servicio.html">Servicio</a></li>
-              <li role="none"><a role="menuitem" href="sla.html">SLA</a></li>
             </ul>
           </li>
         </ul>
@@ -78,97 +93,93 @@
   </footer>
 
   <script src="../js/app.js"></script>
-<script>
-(async () => {
-  const grid = document.getElementById('product-grid');
-  const chips = Array.from(document.querySelectorAll('.chip'));
-  const select = document.getElementById('orden');
+  <script>
+  (async () => {
+    const grid = document.getElementById('product-grid');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    const select = document.getElementById('orden');
 
-  // Dinero
-  const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
+    const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
-  // 1) Cargar JSON (sin caché para ver cambios al instante)
-  let products = [];
-  try {
-    const res = await fetch('../data/products.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('No se pudo cargar products.json');
-    products = await res.json();
-  } catch (err) {
-    console.error(err);
-    grid.innerHTML = `<article class="card" style="padding:16px">
-      <h3>Error cargando catálogo</h3>
-      <p class="muted">${err.message}</p>
-    </article>`;
-    return;
-  }
-
-  // 2) Plantilla (OJO: backticks y sin backslash antes de ${...})
-  function cardTemplate(p){
-    const bg = p.image
-      ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
-      : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
-
-    return `
-      <article class="card" data-category="${p.category}">
-        <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg};"></div>
-        <div class="card__body">
-          <h3 class="card__title">${p.name}</h3>
-          <p class="card__price">${money(p.price)}</p>
-          <div class="card__actions">
-            <button class="btn btn--ghost" aria-label="Favorito">♡</button>
-            <button class="btn" data-add="${p.id}">Añadir al carrito</button>
-          </div>
-        </div>
-      </article>`;
-  }
-
-  function render(list){
-    if (!list.length) {
+    // Cargar productos
+    let products = [];
+    try {
+      const res = await fetch('../data/products.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar products.json');
+      products = await res.json();
+    } catch (err) {
       grid.innerHTML = `<article class="card" style="padding:16px">
-        <h3>Sin resultados</h3>
-        <p class="muted">Prueba otra categoría u otro término.</p>
+        <h3>Error cargando catálogo</h3>
+        <p class="muted">${err.message}</p>
       </article>`;
       return;
     }
-    grid.innerHTML = list.map(cardTemplate).join('');
-  }
 
-  // 3) Estado + filtros
-  let current = [...products];
+    // Tarjeta
+    function cardTemplate(p){
+      const bg = p.image
+        ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
+        : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
 
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      const cat = chip.dataset.cat;
-      chips.forEach(c => c.classList.remove('is-active'));
-      chip.classList.add('is-active');
-      current = (cat === 'todo') ? [...products] : products.filter(p => p.category === cat);
-      applySort();
-      render(current);
+      return `
+        <article class="card" data-category="${p.category}">
+          <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg};"></div>
+          <div class="card__body">
+            <h3 class="card__title">${p.name}</h3>
+            <p class="card__price">${money(p.price)}</p>
+            <div class="card__actions">
+              <button class="btn btn--ghost" aria-label="Favorito">♡</button>
+              <button class="btn" data-add="${p.id}">Añadir al carrito</button>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function render(list){
+      if (!list.length) {
+        grid.innerHTML = `<article class="card" style="padding:16px">
+          <h3>Sin resultados</h3>
+          <p class="muted">Prueba otra categoría u otro término.</p>
+        </article>`;
+        return;
+      }
+      grid.innerHTML = list.map(cardTemplate).join('');
+    }
+
+    // Estado + filtros
+    let current = [...products];
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const cat = chip.dataset.cat;
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        current = (cat === 'todo') ? [...products] : products.filter(p => p.category === cat);
+        applySort(); render(current);
+      });
     });
-  });
 
-  // 4) Orden
-  function applySort(){
-    const v = select.value;
-    if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
-    if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
-    // 'popular' y 'nuevo' quedan como no-op si tu JSON no tiene popularity/createdAt
-  }
-  select.addEventListener('change', () => { applySort(); render(current); });
+    // Orden
+    function applySort(){
+      const v = select.value;
+      if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
+      if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
+      // 'popular' y 'nuevo' no hacen nada si tu JSON no trae esos campos
+    }
+    select.addEventListener('change', () => { applySort(); render(current); });
 
-  // 5) Primer render
-  applySort();
-  render(current);
+    // Primer render
+    applySort(); render(current);
 
-  // 6) Feedback visual del botón (el carrito lo haremos después)
-  grid.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-add]');
-    if (!btn) return;
-    btn.textContent = 'Añadido ✓';
-    setTimeout(() => btn.textContent = 'Añadir al carrito', 1200);
-  });
-})();
-</script>
-
+    // Añadir al carrito → pedir login (simulación sin auth)
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-add]');
+      if (!btn) return;
+      const next = encodeURIComponent('catalog.html');
+      const add  = encodeURIComponent(btn.getAttribute('data-add'));
+      window.location.href = `login.html?next=${next}&add=${add}`;
+    });
+  })();
+  </script>
 </body>
 </html>

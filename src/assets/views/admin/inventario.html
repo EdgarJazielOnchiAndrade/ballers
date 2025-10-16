@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventario | Ballers (Admin)</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}
+    .toolbar .grow{flex:1 1 220px}
+    table.inv{width:100%;border-collapse:separate;border-spacing:0 8px}
+    table.inv thead th{font-weight:700;text-align:left;padding:10px 12px;color:var(--muted)}
+    table.inv tbody tr{background:var(--panel);border:1px solid #23232a}
+    table.inv tbody td{padding:12px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.85rem;border:1px solid #2a2a32}
+    .badge.ok{background:#142b18}
+    .badge.off{background:#2a1a1a}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-mini{padding:6px 10px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text);cursor:pointer}
+    .btn-mini:hover{background:#1b1b22}
+    .btn-ghost{background:transparent}
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a class="active" href="inventario.html" aria-current="page">Inventario</a></li>
+          <li><a href="facturacion.html">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0">Inventario</h2>
+      <p class="muted" style="margin:6px 0 0">Gestiona existencias y estado de catálogo.</p>
+
+      <!-- Barra de herramientas -->
+      <div class="toolbar">
+        <input id="q" class="grow" type="search" placeholder="Buscar por nombre o SKU…" />
+        <select id="cat">
+          <option value="all">Todas las categorías</option>
+          <option value="sneakers">Sneakers</option>
+          <option value="jerseys">Jerseys</option>
+          <option value="gorras">Gorras</option>
+          <option value="accesorios">Accesorios</option>
+        </select>
+        <select id="sort">
+          <option value="name-asc">Nombre (A–Z)</option>
+          <option value="name-desc">Nombre (Z–A)</option>
+          <option value="stock-asc">Stock (bajo→alto)</option>
+          <option value="stock-desc">Stock (alto→bajo)</option>
+          <option value="price-asc">Precio (bajo→alto)</option>
+          <option value="price-desc">Precio (alto→bajo)</option>
+        </select>
+        <a class="btn" href="productos.html">Nuevo producto</a>
+      </div>
+
+      <!-- Tabla -->
+      <div style="overflow:auto">
+        <table class="inv" aria-describedby="tbl-info">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Estado</th>
+              <th style="min-width:260px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <!-- filas -->
+          </tbody>
+        </table>
+      </div>
+      <p id="tbl-info" class="muted" style="margin-top:8px"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (async () => {
+    const $ = s => document.querySelector(s);
+    const tbody = $('#tbody');
+    const q = $('#q'); const cat = $('#cat'); const sort = $('#sort');
+    const info = $('#tbl-info');
+
+    const money = n => n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+
+    // Cargar productos
+    let products = [];
+    try{
+      const res = await fetch('../../data/products.json', { cache:'no-store' });
+      if(!res.ok) throw new Error('No se pudo cargar products.json');
+      products = await res.json();
+    }catch(err){
+      tbody.innerHTML = `<tr><td colspan="7"><p class="muted">${err.message}</p></td></tr>`;
+      return;
+    }
+
+    // Asegurar campos para la vista de inventario
+    // stock y status por defecto si no vienen en el JSON
+    products = products.map((p,i) => ({
+      id: p.id ?? i+1,
+      sku: p.sku ?? ('SKU' + String(p.id ?? i+1).padStart(4,'0')),
+      name: p.name ?? 'Producto',
+      category: p.category ?? 'otros',
+      price: Number(p.price ?? 0),
+      stock: Number(p.stock ?? ((i*7)%40 + 5)),
+      active: (p.active ?? true)
+    }));
+
+    let current = [...products];
+
+    function applyFilters(){
+      const term = q.value.trim().toLowerCase();
+      const c = cat.value;
+
+      current = products.filter(p => {
+        const inText = !term || p.name.toLowerCase().includes(term) || String(p.sku).toLowerCase().includes(term);
+        const inCat = (c === 'all') || p.category === c;
+        return inText && inCat;
+      });
+    }
+
+    function applySort(){
+      const v = sort.value;
+      const map = {
+        'name-asc':  (a,b)=>a.name.localeCompare(b.name),
+        'name-desc': (a,b)=>b.name.localeCompare(a.name),
+        'stock-asc': (a,b)=>a.stock-b.stock,
+        'stock-desc':(a,b)=>b.stock-a.stock,
+        'price-asc': (a,b)=>a.price-b.price,
+        'price-desc':(a,b)=>b.price-a.price,
+      };
+      current.sort(map[v] || map['name-asc']);
+    }
+
+    function rowTemplate(p){
+      const badge = p.active
+        ? `<span class="badge ok">Activo</span>`
+        : `<span class="badge off">Inactivo</span>`;
+
+      return `
+        <tr data-id="${p.id}">
+          <td>${p.sku}</td>
+          <td>${p.name}</td>
+          <td>${p.category}</td>
+          <td>${money(p.price)}</td>
+          <td><strong>${p.stock}</strong></td>
+          <td>${badge}</td>
+          <td class="actions">
+            <button class="btn-mini" data-dec="${p.id}">−</button>
+            <button class="btn-mini" data-inc="${p.id}">+</button>
+            <a class="btn-mini" href="productos.html#edit-${p.id}">Editar</a>
+            <button class="btn-mini btn-ghost" data-toggle="${p.id}">${p.active ? 'Desactivar' : 'Activar'}</button>
+          </td>
+        </tr>`;
+    }
+
+    function render(){
+      if(!current.length){
+        tbody.innerHTML = `<tr><td colspan="7"><p class="muted">Sin resultados.</p></td></tr>`;
+        info.textContent = '';
+        return;
+      }
+      tbody.innerHTML = current.map(rowTemplate).join('');
+      info.textContent = `${current.length} producto(s) mostrados`;
+    }
+
+    // Eventos UI
+    q.addEventListener('input', ()=>{ applyFilters(); applySort(); render(); });
+    cat.addEventListener('change', ()=>{ applyFilters(); applySort(); render(); });
+    sort.addEventListener('change', ()=>{ applySort(); render(); });
+
+    // Acciones por fila (delegación)
+    tbody.addEventListener('click', (e)=>{
+      const inc = e.target.closest('[data-inc]');
+      const dec = e.target.closest('[data-dec]');
+      const tog = e.target.closest('[data-toggle]');
+      if(!inc && !dec && !tog) return;
+
+      const id = Number(inc?.dataset.inc || dec?.dataset.dec || tog?.dataset.toggle);
+      const item = products.find(p=>p.id==id);
+      if(!item) return;
+
+      if(inc){ item.stock += 1; }
+      if(dec){ item.stock = Math.max(0, item.stock - 1); }
+      if(tog){ item.active = !item.active; }
+
+      applyFilters(); applySort(); render();
+    });
+
+    // Primer pintado
+    applyFilters(); applySort(); render();
+  })();
+  </script>
+</body>
+</html>

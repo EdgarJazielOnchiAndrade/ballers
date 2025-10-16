@@ -16,47 +16,66 @@
     .table th,.table td{border:1px solid #2a2a32;padding:10px;text-align:left}
     .table th{background:#141419}
     .notes{margin-top:10px;color:var(--muted)}
-    figure{margin:0}
-    figure img{width:100%;height:auto;border-radius:12px;border:1px solid #23232a}
-    figcaption{font-size:.9rem;color:var(--muted);margin-top:6px}
+    figure{margin:0;text-align:center}
+    figure img{
+      width:70%;               
+      max-width:600px;         
+      height:auto;
+      display:block;
+      margin:0 auto;           
+      border-radius:12px;
+      border:1px solid #23232a
+    }
+    figcaption{font-size:.9rem;color:var(--muted);margin-top:6px;text-align:center}
     ul.list{margin:.25rem 0 0 1rem}
     ul.list li{margin:.25rem 0}
   </style>
 </head>
 <body>
   <header class="header">
-    <div class="container header__inner">
-      <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+  <div class="container header__inner">
+    <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
-      <form class="search" role="search" aria-label="Buscar">
-        <label class="visually-hidden" for="q">Buscar</label>
-        <input id="q" type="search" placeholder="Buscar…" />
-        <button type="submit" aria-label="Buscar">🔍</button>
-      </form>
+    <!-- Buscador -->
+    <form class="search" role="search" aria-label="Buscar productos">
+      <label class="visually-hidden" for="q">Buscar</label>
+      <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
+      <button type="submit" aria-label="Buscar">🔍</button>
+    </form>
 
-      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
-      <nav id="mainnav" class="nav">
-        <ul>
-          <li><a href="../../../index.html">Inicio</a></li>
-          <li><a href="catalog.html">Catálogo</a></li>
-          <li><a href="cart.html">Carrito</a></li>
+    <!-- Toggle responsive -->
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
 
-          <li class="has-submenu">
-            <button class="submenu__toggle" type="button"
-                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
-              Documentación <span class="caret" aria-hidden="true">▾</span>
-            </button>
-            <ul id="doc-submenu" class="submenu" role="menu" hidden>
-              <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
-              <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
-              <li role="none"><a role="menuitem" href="status.html">Status</a></li>
-              <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+    <!-- Navegación -->
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="../../../index.html">Inicio</a></li>
+        <li><a href="catalog.html">Catálogo</a></li>
+        <li><a href="intranet.html">Intranet</a></li>
+        <li>
+          <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </a>
+        </li>
+        <li class="has-submenu">
+          <button class="submenu__toggle" type="button"
+                  aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+            Documentación <span class="caret" aria-hidden="true">▾</span>
+          </button>
+          <ul id="doc-submenu" class="submenu" role="menu" hidden>
+            <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+            <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+            <li role="none"><a role="menuitem" href="status.html">Estatus</a></li>
+            <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
   <main class="container" style="padding:22px 0 64px">
     <!-- Diagrama -->
@@ -65,12 +84,10 @@
       <p class="muted">Vista mínima de cómo se conectan los componentes. (Imagen de referencia para el portafolio).</p>
 
       <figure>
-        <!-- Coloca tu imagen en src/assets/img/infra-diagrama.png -->
         <img src="../img/infra-diagrama.jpg" alt="Diagrama mínimo: Cliente → Internet/ISP → CDN (opcional) → Firewall/WAF → Servidor web (Linux + Nginx/Apache) → Archivos estáticos (HTML/CSS/JS, imágenes)" />
         <figcaption>Diagrama mínimo propuesto para Ballers. Copia del archivo también en <code>docs/2.1.b_infra-diagrama.png</code>.</figcaption>
       </figure>
 
-      <!-- Enlace opcional al archivo en /docs para descarga -->
       <p class="muted" style="margin-top:8px">
         Descarga del diagrama para el portafolio: 
         <a href="../../../docs/2.1.b_infra-diagrama.png">docs/2.1.b_infra-diagrama.png</a>
@@ -91,7 +108,7 @@
       </ul>
     </section>
 
-    <!-- Requisitos resumidos (tabla) -->
+    <!-- Requisitos resumidos -->
     <section class="section">
       <h2 style="margin:0 0 8px">Requisitos mínimos (simulados)</h2>
       <table class="table" aria-label="Requisitos de infraestructura">
@@ -115,6 +132,20 @@
         Un firewall básico ofrece protección mínima ante ataques comunes. El CDN queda opcional para campañas estacionales
         o picos de tráfico. Si el proyecto crece, se escala a más recursos o a nube con balanceo.
       </p>
+    </section>
+
+    <!-- 🔹 Configuración técnica (va al final del documento) -->
+    <section class="section" id="config-tecnica">
+      <h2 style="margin:0 0 8px">Configuración técnica</h2>
+      <ul>
+        <li><strong>Dominio:</strong> <code>ballers.mx</code></li>
+        <li><strong>Subdominios:</strong> <code>administracion.ballers.mx</code></li>
+      </ul>
+
+      <figure class="dns-figure">
+        <img src="../img/MapaDNS.png" alt="Mapa DNS de Ballers (Usuario, DNS, Hosting/CDN)">
+        <figcaption>Mapa DNS.</figcaption>
+      </figure>
     </section>
   </main>
 

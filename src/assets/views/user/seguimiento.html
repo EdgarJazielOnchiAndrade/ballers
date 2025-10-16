@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seguimiento de pedido | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin:18px 0}
+    .toolbar{display:grid;gap:10px}
+    @media (min-width:720px){.toolbar{grid-template-columns:1fr 220px 140px}}
+    .status-badge{display:inline-block;padding:.25rem .6rem;border-radius:999px;font-size:.85rem;border:1px solid #2a2a32}
+    .s1{background:#1b2230;border-color:#2c4a7a;color:#a8c4ff}
+    .s2{background:#16261a;border-color:#2e6a3f;color:#aeeabf}
+    .s3{background:#2b1d12;border-color:#7a4a2c;color:#ffd4a8}
+    .s4{background:#122433;border-color:#214a6b;color:#98c9f0}
+    .s5{background:#11291a;border-color:#2c5d3f;color:#9de2b2}
+    .timeline{display:grid;gap:14px;margin-top:12px}
+    .step{display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start}
+    .dot{width:14px;height:14px;border-radius:50%;border:2px solid #444;margin-top:4px}
+    .done .dot{background:#28c76f;border-color:#28c76f}
+    .active .dot{background:#ffa34d;border-color:#ffa34d}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <!-- Header usuario -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a class="active" href="seguimiento.html" aria-current="page">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <!-- Buscador -->
+    <section class="section">
+      <h2 style="margin:0 0 10px">Seguimiento de pedido</h2>
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Ingresa tu ID de pedido (ej. B-1024)"/>
+        <select id="sel" title="Pedidos recientes">
+          <option value="">Pedidos de ejemplo…</option>
+          <option>B-1024</option>
+          <option>B-1056</option>
+          <option>B-1061</option>
+        </select>
+        <button id="btn" class="btn" type="button">Buscar</button>
+      </div>
+    </section>
+
+    <!-- Resultado -->
+    <section id="result"></section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (function(){
+    const $ = s => document.querySelector(s);
+    const result = $('#result');
+    const q = $('#q');
+    const sel = $('#sel');
+    const btn = $('#btn');
+
+    // Pedidos de ejemplo
+    // statusIndex: 0..4
+    const MOCK = {
+      'B-1024': { id:'B-1024', statusIndex:4, carrier:'Ballers Express', eta:'Entregado', city:'CDMX' },
+      'B-1056': { id:'B-1056', statusIndex:2, carrier:'Ballers Express', eta:'Llega mañana', city:'GDL'  },
+      'B-1061': { id:'B-1061', statusIndex:1, carrier:'Ballers Express', eta:'En preparación', city:'MTY'  },
+    };
+
+    const STEPS = [
+      { key:'creado',     title:'Pedido creado',       caption:'Recibimos tu orden en Ballers.', cls:'s1' },
+      { key:'preparando', title:'Preparando pedido',   caption:'Estamos alistando tus artículos.', cls:'s3' },
+      { key:'enviado',    title:'Enviado',             caption:'El paquete salió del almacén.', cls:'s4' },
+      { key:'en_transito',title:'En tránsito',         caption:'En ruta con el transportista.', cls:'s4' },
+      { key:'entregado',  title:'Entregado',           caption:'Gracias por tu compra', cls:'s5' },
+    ];
+
+    function badge(idx){
+      return `<span class="status-badge ${STEPS[idx].cls}">${STEPS[idx].title}</span>`;
+    }
+
+    function timeline(idx){
+      return STEPS.map((s,i)=>`
+        <div class="step ${i<idx?'done':''} ${i===idx?'active':''}">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <strong>${s.title}</strong>
+            <div class="muted">${s.caption}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderNotFound(id){
+      result.innerHTML = `
+        <section class="section">
+          <h3 style="margin:0 0 6px">No encontramos el pedido “${id}”</h3>
+          <p class="muted">Verifica el ID o elige uno de ejemplo en el selector.</p>
+        </section>`;
+    }
+
+    function renderOrder(o){
+      const step = o.statusIndex;
+      result.innerHTML = `
+        <section class="section">
+          <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <h3 style="margin:0 0 6px">Pedido #${o.id}</h3>
+              <p class="muted" style="margin:0">Transportista: ${o.carrier} · ${o.city}</p>
+            </div>
+            <div>${badge(step)}</div>
+          </div>
+
+          <div class="timeline" style="margin-top:14px">${timeline(step)}</div>
+        </section>
+      `;
+    }
+
+    function search(id){
+      if (!id) return;
+      const key = id.trim().toUpperCase();
+      const found = MOCK[key];
+      if (!found) renderNotFound(key); else renderOrder(found);
+    }
+
+    // Eventos
+    btn.addEventListener('click', () => search(q.value || sel.value));
+    sel.addEventListener('change', () => { if (sel.value) { q.value = sel.value; search(sel.value); } });
+    q.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); search(q.value); } });
+
+    // Autocargar si viene ?id=...
+    const params = new URLSearchParams(location.search);
+    if (params.has('id')) {
+      q.value = params.get('id');
+      search(q.value);
+    }
+  })();
+  </script>
+</body>
+</html>

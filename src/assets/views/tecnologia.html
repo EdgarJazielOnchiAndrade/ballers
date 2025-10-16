@@ -62,21 +62,37 @@
   <!-- Header igual al del sitio -->
   <header class="header">
   <div class="container header__inner">
+    <!-- Logo (vuelve al index en la raíz) -->
     <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
-    <form class="search" role="search" aria-label="Buscar">
+    <!-- Buscador -->
+    <form class="search" role="search" aria-label="Buscar productos">
       <label class="visually-hidden" for="q">Buscar</label>
-      <input id="q" type="search" placeholder="Buscar…" />
+      <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
       <button type="submit" aria-label="Buscar">🔍</button>
     </form>
 
+    <!-- Toggle responsive -->
     <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+
+    <!-- Navegación -->
     <nav id="mainnav" class="nav">
       <ul>
         <li><a href="../../../index.html">Inicio</a></li>
         <li><a href="catalog.html">Catálogo</a></li>
-        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="intranet.html">Intranet</a></li>
 
+        <!-- Monito (login) -->
+        <li>
+          <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </a>
+        </li>
+
+        <!-- Submenú Documentación -->
         <li class="has-submenu">
           <button class="submenu__toggle" type="button"
                   aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
@@ -85,7 +101,7 @@
           <ul id="doc-submenu" class="submenu" role="menu" hidden>
             <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
             <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
-            <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+            <li role="none"><a role="menuitem" href="status.html">Estatus</a></li>
             <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
           </ul>
         </li>
@@ -93,7 +109,7 @@
     </nav>
   </div>
 </header>
-</header>
+
 
   <main class="container" style="padding:22px 0 64px">
     <!-- Sección 1: Plataformas (2 abiertas, 2 cerradas) -->

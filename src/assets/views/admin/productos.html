@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CRUD de productos | Ballers</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .filters input,.filters select{padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text)}
+    .btn{cursor:pointer}
+
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border:1px solid #2a2a32;padding:10px;text-align:left;vertical-align:middle}
+    .table th{background:#141419}
+    .tag{display:inline-block;border:1px solid #2a2a32;background:#101018;padding:2px 8px;border-radius:999px;font-size:.85rem}
+    .tag.activo{border-color:#6bff88}
+    .tag.inactivo{border-color:#ff6b6b}
+
+    .actions{display:flex;gap:6px;flex-wrap:wrap}
+    .btn-sm{padding:6px 10px;border-radius:8px;border:1px solid #2a2a32;background:#141419;color:var(--text);cursor:pointer}
+    .btn-sm:hover{background:#1b1b22}
+    .btn-primary{border-color:#ff6a00}
+
+    /* Modal */
+    dialog{border:1px solid #2a2a32;border-radius:16px;background:var(--panel);color:var(--text);max-width:640px;width:96%}
+    dialog::backdrop{background:rgba(0,0,0,.55)}
+    .modal__hd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #2a2a32}
+    .modal__bd{padding:14px 16px}
+    .modal__ft{display:flex;gap:10px;justify-content:flex-end;padding:12px 16px;border-top:1px solid #2a2a32}
+    .close,.ghost{border:1px solid #2a2a32;border-radius:8px;background:#141419;color:var(--text);padding:8px 12px;cursor:pointer}
+    .save{border:1px solid #ff6a00;border-radius:8px;background:#141419;color:var(--text);padding:8px 12px;cursor:pointer}
+    .form-grid{display:grid;gap:10px}
+    @media(min-width:640px){.form-grid.cols-2{grid-template-columns:1fr 1fr}}
+    .field label{display:block;margin:0 0 6px;font-weight:700}
+    .field input,.field select,.field textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text)}
+    .preview{height:120px;border-radius:12px;border:1px dashed #2a2a32;background:#0f0f14;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
+    .muted{color:var(--muted)}
+    .imgcell{width:72px;height:72px;border-radius:10px;background:#101018;object-fit:cover;display:block}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="facturacion.html">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a class="active" href="productos.html" aria-current="page">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 12px">Productos</h2>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="filters">
+          <input id="q" type="search" placeholder="Buscar por nombre, SKU o categoría"/>
+          <select id="f-cat" aria-label="Categoría">
+            <option value="todas">Todas las categorías</option>
+            <option value="sneakers">Sneakers</option>
+            <option value="jerseys">Jerseys</option>
+            <option value="gorras">Gorras</option>
+            <option value="accesorios">Accesorios</option>
+          </select>
+          <select id="f-estado" aria-label="Estado">
+            <option value="todos">Todos</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+          <select id="f-orden" aria-label="Ordenar">
+            <option value="reciente">Más recientes</option>
+            <option value="precio-asc">Precio: bajo a alto</option>
+            <option value="precio-desc">Precio: alto a bajo</option>
+            <option value="stock-asc">Stock: bajo a alto</option>
+            <option value="stock-desc">Stock: alto a bajo</option>
+          </select>
+        </div>
+        <button id="btn-new" class="btn btn-primary">+ Nuevo producto</button>
+      </div>
+
+      <!-- Tabla -->
+      <div style="overflow:auto">
+        <table class="table" aria-label="Tabla de productos">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>SKU</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p class="muted" id="count" style="margin-top:8px">Total: 0</p>
+    </section>
+  </main>
+
+  <!-- Modal form -->
+  <dialog id="modal">
+    <div class="modal__hd">
+      <strong id="modal-title">Nuevo producto</strong>
+      <button class="close" id="modal-close">Cerrar</button>
+    </div>
+    <form id="form" class="modal__bd">
+      <input type="hidden" id="pid"/>
+      <div class="form-grid cols-2">
+        <div class="field">
+          <label for="name">Nombre</label>
+          <input id="name" type="text" placeholder="Ej. Jordan 1 Mid"/>
+        </div>
+        <div class="field">
+          <label for="sku">SKU</label>
+          <input id="sku" type="text" placeholder="Ej. J1-MID-BLK"/>
+        </div>
+        <div class="field">
+          <label for="cat">Categoría</label>
+          <select id="cat">
+            <option value="sneakers">Sneakers</option>
+            <option value="jerseys">Jerseys</option>
+            <option value="gorras">Gorras</option>
+            <option value="accesorios">Accesorios</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="price">Precio (MXN)</label>
+          <input id="price" type="number" min="0" step="0.01" placeholder="0.00"/>
+        </div>
+        <div class="field">
+          <label for="stock">Stock</label>
+          <input id="stock" type="number" min="0" step="1" placeholder="0"/>
+        </div>
+        <div class="field">
+          <label for="status">Estado</label>
+          <select id="status">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="img">Imagen (URL)</label>
+          <input id="img" type="url" placeholder="https://.../producto.jpg"/>
+          <div id="preview" class="preview" style="margin-top:8px">Sin vista previa</div>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="desc">Descripción</label>
+          <textarea id="desc" rows="3" placeholder="Detalle breve del producto..."></textarea>
+        </div>
+      </div>
+    </form>
+    <div class="modal__ft">
+      <button class="ghost" id="modal-clear">Limpiar</button>
+      <button class="save" id="modal-save">Guardar</button>
+    </div>
+  </dialog>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  // Estado inicial (puedes reemplazar/expandir)
+  let products = [
+    {id:'p1', name:'Jordan 1 Mid', sku:'J1-MID-BLK', category:'sneakers', price:3299, stock:12, status:'activo', image:'', description:'Clásico de media caña.'},
+    {id:'p2', name:'Jersey Lakers 24', sku:'JR-LAL-24', category:'jerseys', price:2499, stock:5, status:'activo', image:'', description:'Edición homenaje.'},
+    {id:'p3', name:'Gorra Ballers Negra', sku:'CAP-BLK', category:'gorras', price:899, stock:22, status:'inactivo', image:'', description:'Logo bordado.'},
+    {id:'p4', name:'Calcetas Pro', sku:'SOX-PRO', category:'accesorios', price:299, stock:48, status:'activo', image:'', description:'Acolchado y transpirable.'},
+  ];
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const money = n => Number(n||0).toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+
+  const tbody = $('#tbody');
+  const countEl = $('#count');
+  const q = $('#q'), fCat = $('#f-cat'), fEstado = $('#f-estado'), fOrden = $('#f-orden');
+
+  function render(){
+    const term = (q.value||'').toLowerCase();
+    const cat = fCat.value, est = fEstado.value, ord = fOrden.value;
+
+    let list = products.filter(p=>{
+      const t = (p.name+' '+p.sku+' '+p.category).toLowerCase();
+      const okText = term==='' || t.includes(term);
+      const okCat = (cat==='todas') || (p.category===cat);
+      const okEst = (est==='todos') || (p.status===est);
+      return okText && okCat && okEst;
+    });
+
+    if (ord==='reciente'){ list = list.slice().reverse(); }
+    if (ord==='precio-asc'){ list.sort((a,b)=>a.price-b.price); }
+    if (ord==='precio-desc'){ list.sort((a,b)=>b.price-a.price); }
+    if (ord==='stock-asc'){ list.sort((a,b)=>a.stock-b.stock); }
+    if (ord==='stock-desc'){ list.sort((a,b)=>b.stock-a.stock); }
+
+    countEl.textContent = 'Total: ' + list.length;
+
+    tbody.innerHTML = list.map(p=>`
+      <tr data-id="${p.id}">
+        <td>${p.image ? `<img class="imgcell" src="${p.image}" alt="${p.name}">` : '<span class="muted">—</span>'}</td>
+        <td>${p.name}</td>
+        <td><small>${p.sku}</small></td>
+        <td>${p.category}</td>
+        <td>${money(p.price)}</td>
+        <td>${p.stock}</td>
+        <td><span class="tag ${p.status}">${p.status==='activo'?'Activo':'Inactivo'}</span></td>
+        <td class="actions">
+          <button class="btn-sm" data-act="edit">Editar</button>
+          <button class="btn-sm" data-act="delete">Eliminar</button>
+        </td>
+      </tr>
+    `).join('') || `
+      <tr><td colspan="8">Sin resultados</td></tr>
+    `;
+  }
+
+  // Filtros/orden/búsqueda
+  q.addEventListener('input', render);
+  fCat.addEventListener('change', render);
+  fEstado.addEventListener('change', render);
+  fOrden.addEventListener('change', render);
+
+  // Modal
+  const modal = $('#modal');
+  const modalTitle = $('#modal-title');
+  const modalClose = $('#modal-close');
+  const form = $('#form');
+  const pid = $('#pid');
+  const nameI = $('#name');
+  const skuI = $('#sku');
+  const catI = $('#cat');
+  const priceI = $('#price');
+  const stockI = $('#stock');
+  const statusI = $('#status');
+  const imgI = $('#img');
+  const descI = $('#desc');
+  const preview = $('#preview');
+
+  function openNew(){
+    modalTitle.textContent = 'Nuevo producto';
+    pid.value = '';
+    form.reset();
+    preview.textContent = 'Sin vista previa';
+    preview.style.backgroundImage = '';
+    modal.showModal();
+  }
+  function openEdit(id){
+    const p = products.find(x=>x.id===id);
+    if(!p) return;
+    modalTitle.textContent = 'Editar producto';
+    pid.value = p.id;
+    nameI.value = p.name || '';
+    skuI.value = p.sku || '';
+    catI.value = p.category || 'sneakers';
+    priceI.value = p.price || 0;
+    stockI.value = p.stock || 0;
+    statusI.value = p.status || 'activo';
+    imgI.value = p.image || '';
+    descI.value = p.description || '';
+    setPreview(imgI.value);
+    modal.showModal();
+  }
+  function setPreview(url){
+    if(url){
+      preview.textContent = '';
+      preview.style.background = `#0f0f14 url('${url}') center/cover no-repeat`;
+      preview.style.borderStyle = 'solid';
+    }else{
+      preview.textContent = 'Sin vista previa';
+      preview.style.background = '';
+      preview.style.borderStyle = 'dashed';
+    }
+  }
+  imgI.addEventListener('input', ()=> setPreview(imgI.value));
+
+  $('#btn-new').addEventListener('click', openNew);
+  modalClose.addEventListener('click', ()=> modal.close());
+  $('#modal-clear').addEventListener('click', (e)=>{ e.preventDefault(); form.reset(); setPreview(''); });
+
+  $('#modal-save').addEventListener('click', (e)=>{
+    e.preventDefault();
+    const data = {
+      id: pid.value || ('p'+(Date.now())),
+      name: nameI.value.trim(),
+      sku: skuI.value.trim(),
+      category: catI.value,
+      price: parseFloat(priceI.value||0),
+      stock: parseInt(stockI.value||0,10),
+      status: statusI.value,
+      image: imgI.value.trim(),
+      description: descI.value.trim()
+    };
+    if(pid.value){
+      const i = products.findIndex(x=>x.id===pid.value);
+      if(i>=0) products[i] = data;
+    }else{
+      products.push(data);
+    }
+    modal.close();
+    render();
+  });
+
+  // Acciones por fila
+  tbody.addEventListener('click',(e)=>{
+    const btn = e.target.closest('button[data-act]');
+    if(!btn) return;
+    const tr = btn.closest('tr');
+    const id = tr?.dataset.id;
+    const act = btn.dataset.act;
+
+    if(act==='edit') openEdit(id);
+    if(act==='delete'){
+      // confirmación sencilla
+      if(confirm('¿Eliminar este producto?')){
+        products = products.filter(p=>p.id!==id);
+        render();
+      }
+    }
+  });
+
+  // Primer render
+  render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrito | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+</head>
+<body>
+  <!-- Header (usuario) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a class="active" href="cart.html" aria-current="page">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 8px">Carrito</h2>
+    
+
+      <div id="cart-list"></div>
+      <div id="cart-total" style="margin-top:14px;font-weight:800"></div>
+      <p id="cart-msg" class="muted" style="margin-top:10px"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (async () => {
+    const listEl  = document.getElementById('cart-list');
+    const totalEl = document.getElementById('cart-total');
+    const msgEl   = document.getElementById('cart-msg');
+
+    // Cargar productos: OJO con la ruta desde /views/user/
+    let products = [];
+    try {
+      const res = await fetch('../../data/products.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('No se pudo cargar products.json');
+      products = await res.json();
+    } catch (err) {
+      listEl.innerHTML = `<article class="card" style="padding:16px">
+        <h3>Error</h3><p class="muted">${err.message}</p>
+      </article>`;
+      return;
+    }
+
+    // Simulación de carrito: tomamos 3 items del JSON
+    const cart = products.slice(0, 3).map(p => ({ id: p.id, name: p.name, price: p.price, image: p.image, qty: 1 }));
+
+    const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
+
+    const fixImg = (path) => {
+      if (!path) return '';
+      if (path.startsWith('../img/')) return '/src/assets/' + path.replace('../','');
+      if (path.startsWith('src/assets/')) return '/' + path;
+      return path;
+    };
+
+    function rowTemplate(item){
+      const bg = item.image
+        ? `linear-gradient(135deg, rgba(255,106,0,.14), rgba(255,209,102,.14)), url('${fixImg(item.image)}') center/cover no-repeat`
+        : `linear-gradient(135deg, rgba(255,106,0,.18), rgba(255,209,102,.18)), linear-gradient(160deg,#23232a,#1a1a20)`;
+      return `
+        <article class="card" data-id="${item.id}" style="display:grid;grid-template-columns:120px 1fr auto;gap:12px;align-items:center">
+          <div class="card__img" aria-label="${item.name}" style="height:88px;background:${bg};"></div>
+          <div class="card__body">
+            <h3 class="card__title" style="margin:0 0 4px">${item.name}</h3>
+            <p class="card__price" style="margin:0">${money(item.price)} <span class="muted">x <strong>${item.qty}</strong></span></p>
+          </div>
+          <div class="card__actions" style="display:flex;gap:8px">
+            <button class="btn btn--ghost" data-act="dec">–</button>
+            <button class="btn btn--ghost" data-act="inc">+</button>
+            <button class="btn" data-act="del">Eliminar</button>
+          </div>
+        </article>`;
+    }
+
+    function render(){
+      if (!cart.length){
+        listEl.innerHTML = `<article class="card" style="padding:16px">
+          <h3>Tu carrito está vacío</h3>
+          <p class="muted">Explora el <a href="catalog_user.html">catálogo</a> para agregar productos.</p>
+        </article>`;
+        totalEl.textContent = '';
+        msgEl.textContent = '';
+        return;
+      }
+      listEl.innerHTML = cart.map(rowTemplate).join('');
+      const total = cart.reduce((t, i) => t + i.price * i.qty, 0);
+      totalEl.textContent = 'Total: ' + money(total);
+    }
+
+    // Eventos de +/–/Eliminar (solo front)
+    listEl.addEventListener('click', (e) => {
+      const actBtn = e.target.closest('button[data-act]');
+      if (!actBtn) return;
+      const act = actBtn.dataset.act;
+      const card = e.target.closest('[data-id]');
+      const id   = Number(card.dataset.id);
+      const item = cart.find(x => x.id === id);
+      if (!item) return;
+
+      if (act === 'inc') item.qty++;
+      if (act === 'dec') item.qty = Math.max(1, item.qty - 1);
+      if (act === 'del') {
+        const idx = cart.findIndex(x => x.id === id);
+        cart.splice(idx, 1);
+      }
+      render();
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

@@ -3,64 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ballers 🏀👟 | Inicio</title>
-  <link rel="stylesheet" href="src/assets/css/base.css"/>
+  <title>Mi cuenta | Ballers</title>
+  <!-- Estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    /* Header limpio con navegación a la derecha */
+    .header__inner{ display:flex; align-items:center; gap:12px; }
+    .nav{ margin-left:auto; }
+  </style>
 </head>
 <body>
-  <!-- Header fijo -->
+  <!-- Header (desde user/ a raíz: ../../../../index.html) -->
   <header class="header">
     <div class="container header__inner">
-      <a class="logo" href="index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
-
-      <form class="search" role="search" aria-label="Buscar productos">
-        <label class="visually-hidden" for="q">Buscar</label>
-        <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
-        <button type="submit" aria-label="Buscar">🔍</button>
-      </form>
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
       <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
-
       <nav id="mainnav" class="nav">
         <ul>
           <li><a class="active" href="index.html" aria-current="page">Inicio</a></li>
-          <li><a href="src/assets/views/catalog.html">Catálogo</a></li>
-          <li><a href="src/assets/views/intranet.html">Intranet</a></li>
-
-          <!-- Monito (login) -->
-          <li>
-            <a class="nav__user" href="src/assets/views/login.html" aria-label="Iniciar sesión">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
-              </svg>
-            </a>
-          </li>
-
-          <!-- Submenú Documentación -->
-          <li class="has-submenu">
-            <button class="submenu__toggle" type="button"
-                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
-              Documentación <span class="caret" aria-hidden="true">▾</span>
-            </button>
-            <ul id="doc-submenu" class="submenu" role="menu" hidden>
-              <li role="none"><a role="menuitem" href="src/assets/views/tecnologia.html">Tecnología propuesta</a></li>
-              <li role="none"><a role="menuitem" href="src/assets/views/infraestructura.html">Infraestructura</a></li>
-              <li role="none"><a role="menuitem" href="src/assets/views/status.html">Estatus</a></li>
-              <li role="none"><a role="menuitem" href="src/assets/views/disponibilidad.html">Disponibilidad</a></li>
-            </ul>
-          </li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- Hero -->
+  <!-- Hero (igual que la portada, pero “Ver catálogo” va a catalog_user.html) -->
   <section class="hero">
     <div class="container hero__inner">
       <div class="hero__copy">
         <h1>Moda urbana inspirada en el básquet</h1>
         <p>Descubre sneakers, jerseys y accesorios de temporada. Calidad, estilo y envíos rápidos.</p>
-        <a class="btn" href="src/assets/views/catalog.html">Ver catálogo</a>
+        <a class="btn" href="catalog_user.html">Ver catálogo</a>
       </div>
       <div class="hero__img" aria-hidden="true"></div>
     </div>
@@ -88,9 +66,15 @@
     </div>
   </section>
 
-  <!-- Grid de productos (cards) -->
+  <!-- Grid de productos -->
   <main class="container">
     <section id="home-grid" class="grid" aria-live="polite"></section>
+
+    <!-- Ancla para “Ver productos comprados” -->
+    <section id="comprados" style="margin-top:28px">
+      <h2 style="margin:0 0 10px">Tus productos comprados</h2>
+      <p class="muted">Aquí podrás ver el historial de tus compras (vista placeholder).</p>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -105,31 +89,30 @@
     </div>
   </footer>
 
-  <!-- Tu JS global (menú, submenú, etc.) -->
-  <script src="src/assets/js/app.js"></script>
+  <!-- JS global -->
+  <script src="../../js/app.js"></script>
 
-  <!-- Script para destacados en portada desde products.json -->
+  <!-- Script: destacados en “Inicio de usuario” desde products.json -->
   <script>
   (async () => {
     const grid   = document.getElementById('home-grid');
     const chips  = Array.from(document.querySelectorAll('.chip'));
     const select = document.getElementById('orden');
-    const qInput = document.getElementById('q'); // buscador del header (opcional)
 
     const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
-    // Si tu JSON tiene rutas tipo "../img/...", las adaptamos para index.html
+    // Normaliza rutas de imagen del JSON para usarlas desde /views/user/
     const fixImg = (path) => {
       if (!path) return '';
-      if (path.startsWith('src/assets/img/')) return path;
-      if (path.startsWith('../img/')) return 'src/assets/' + path.replace('../','');
+      if (path.startsWith('../img/')) return '/src/assets/' + path.replace('../','');
+      if (path.startsWith('src/assets/')) return '/' + path;
       return path;
     };
 
-    // 1) Cargar productos
+    // 1) Cargar productos (desde /views/user/ hacia /assets/data/)
     let products = [];
     try {
-      const res = await fetch('src/assets/data/products.json', { cache: 'no-store' });
+      const res = await fetch('../../data/products.json', { cache: 'no-store' });
       if (!res.ok) throw new Error('No se pudo cargar products.json');
       products = await res.json();
     } catch (err) {
@@ -140,7 +123,7 @@
       return;
     }
 
-    // 2) Plantilla de tarjeta (versión portada)
+    // 2) Tarjeta (idéntica a portada)
     function cardTemplate(p) {
       const img = fixImg(p.image);
       const bg  = img
@@ -155,7 +138,7 @@
             <p class="card__price">${money(p.price)}</p>
             <div class="card__actions">
               <button class="btn btn--ghost" aria-label="Favorito">♡</button>
-              <a class="btn" href="src/assets/views/catalog.html">Ver</a>
+              <a class="btn" href="catalog_user.html">Ver</a>
             </div>
           </div>
         </article>`;
@@ -167,15 +150,8 @@
     function applyFilters() {
       const active = document.querySelector('.chip.is-active');
       const cat = active ? active.dataset.cat : 'todo';
-      const term = (qInput?.value || '').trim().toLowerCase();
 
-      current = products.filter(p => {
-        const inCat  = (cat === 'todo') || (p.category === cat);
-        const inText = term === '' ||
-          p.name.toLowerCase().includes(term) ||
-          (p.description || '').toLowerCase().includes(term);
-        return inCat && inText;
-      });
+      current = products.filter(p => (cat === 'todo') || (p.category === cat));
     }
 
     function applySort() {
@@ -187,26 +163,22 @@
     }
 
     function render(list){
-      const slice = list.slice(0, 8); // destacados en portada
-      if (!slice.length) {
-        grid.innerHTML = `<article class="card" style="padding:16px">
-          <h3>Sin destacados</h3>
-          <p class="muted">Ajusta la categoría o el término de búsqueda.</p>
-        </article>`;
-        return;
-      }
-      grid.innerHTML = slice.map(cardTemplate).join('');
+      const slice = list.slice(0, 8);
+      grid.innerHTML = slice.length
+        ? slice.map(cardTemplate).join('')
+        : `<article class="card" style="padding:16px">
+             <h3>Sin destacados</h3>
+             <p class="muted">Ajusta los filtros.</p>
+           </article>`;
     }
 
-    // Eventos (chips, ordenar, búsqueda)
+    // Eventos de UI
     chips.forEach(chip => chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('is-active'));
       chip.classList.add('is-active');
       applyFilters(); applySort(); render(current);
     }));
-
     select.addEventListener('change', () => { applySort(); render(current); });
-    qInput?.addEventListener('input', () => { applyFilters(); applySort(); render(current); });
 
     // 4) Primer pintado
     applyFilters(); applySort(); render(current);

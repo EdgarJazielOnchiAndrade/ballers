@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intranet (Admin) | Ballers</title>
+  <link rel="stylesheet" href="../css/base.css"/>
+  <style>
+    .auth-wrap{min-height:calc(100dvh - 80px);display:grid;place-items:center;padding:24px 0}
+    .auth-card{width:100%;max-width:520px;background:var(--panel);border:1px solid #23232a;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .auth-card h2{margin:0 0 8px}
+    .auth-row{margin-top:12px}
+    .auth-row label{display:block;font-weight:700;margin:0 0 8px}
+    .auth-row input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text)}
+    .auth-actions{margin-top:18px;display:flex;justify-content:center}
+    .auth-actions .btn{min-width:160px;text-align:center}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <form class="search" role="search" aria-label="Buscar">
+        <label class="visually-hidden" for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Buscar…" />
+        <button type="submit" aria-label="Buscar">🔍</button>
+      </form>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="../../../index.html">Inicio</a></li>
+          <li><a href="catalog.html">Catálogo</a></li>
+          <li><a class="active" href="intranet.html" aria-current="page">Intranet</a></li>
+
+          <!-- Icono usuario -->
+          <li>
+            <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </a>
+          </li>
+
+          <!-- Documentación (desplegable) -->
+          <li class="has-submenu">
+            <button class="submenu__toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+              Documentación <span class="caret" aria-hidden="true">▾</span>
+            </button>
+            <ul id="doc-submenu" class="submenu" role="menu" hidden>
+              <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+              <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+              <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+              <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <main class="container auth-wrap">
+    <section class="auth-card" aria-labelledby="titulo-login">
+      <h2 id="titulo-login">Acceso administrativo</h2>
+
+      <!-- Sin restricciones: campos libres y redirección directa al panel -->
+      <form id="login-form" autocomplete="on">
+        <div class="auth-row">
+          <label for="user">Usuario</label>
+          <input id="user" name="user" type="text" autocomplete="username" />
+        </div>
+
+        <div class="auth-row">
+          <label for="pass">Contraseña</label>
+          <input id="pass" name="pass" type="password" autocomplete="current-password" />
+        </div>
+
+        <div class="auth-actions">
+          <button class="btn" type="submit" id="btn-login">Entrar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="../js/app.js"></script>
+  <script>
+    // Redirige al panel de admin sin validaciones (vista)
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      localStorage.setItem('ballers_auth', 'true');
+      localStorage.setItem('ballers_user', (document.getElementById('user').value || 'admin'));
+      localStorage.setItem('ballers_role', 'admin');
+      // desde views/intranet.html → views/admin/index.html
+      window.location.href = 'admin/index.html';
+    });
+
+    // Evita recarga por el buscador del header
+    document.querySelector('.search')?.addEventListener('submit', e => e.preventDefault());
+  </script>
+</body>
+</html>

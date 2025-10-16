@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facturación | Ballers (Admin)</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:18px 0}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}
+    .toolbar .grow{flex:1 1 220px}
+    .kpis{display:grid;gap:12px;margin:10px 0 4px}
+    @media (min-width:860px){.kpis{grid-template-columns:repeat(4,1fr)}}
+    .kpi{background:var(--card);border:1px solid #23232a;border-radius:14px;padding:14px}
+    .kpi .n{font-weight:800;font-size:1.2rem}
+    .muted{color:var(--muted)}
+
+    .table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .table thead th{font-weight:700;text-align:left;padding:10px 12px;color:var(--muted)}
+    .table tbody tr{background:var(--panel);border:1px solid #23232a}
+    .table tbody td{padding:12px;vertical-align:top}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.85rem;border:1px solid #2a2a32}
+    .badge.paid{background:#142b18}
+    .badge.pending{background:#2a2a1a}
+    .badge.refunded{background:#2a1a1a}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-mini{padding:6px 10px;border-radius:10px;border:1px solid #2a2a32;background:#141419;color:var(--text);cursor:pointer}
+    .btn-mini:hover{background:#1b1b22}
+    .btn-ghost{background:transparent}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a class="active" href="facturacion.html" aria-current="page">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0">Facturación</h2>
+      <p class="muted" style="margin:6px 0 0">Órdenes, pagos, reembolsos y exportación.</p>
+
+      <!-- KPIs -->
+      <div class="kpis" id="kpis">
+        <div class="kpi"><div class="muted">Ingresos</div><div class="n" id="kpi-revenue">$0.00</div></div>
+        <div class="kpi"><div class="muted">Pagadas</div><div class="n" id="kpi-paid">0</div></div>
+        <div class="kpi"><div class="muted">Pendientes</div><div class="n" id="kpi-pending">0</div></div>
+        <div class="kpi"><div class="muted">Reembolsadas</div><div class="n" id="kpi-refunded">0</div></div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="toolbar">
+        <input id="q" class="grow" type="search" placeholder="Buscar por cliente u orden (#)"/>
+        <label>De <input id="from" type="date"/></label>
+        <label>A <input id="to" type="date"/></label>
+        <select id="status">
+          <option value="all">Estado: todos</option>
+          <option value="paid">Pagada</option>
+          <option value="pending">Pendiente</option>
+          <option value="refunded">Reembolsada</option>
+        </select>
+        <select id="sort">
+          <option value="date-desc">Más recientes</option>
+          <option value="date-asc">Más antiguas</option>
+          <option value="total-desc">Total (alto→bajo)</option>
+          <option value="total-asc">Total (bajo→alto)</option>
+        </select>
+        <button id="btn-export" class="btn">Exportar CSV</button>
+      </div>
+
+      <!-- Tabla -->
+      <div style="overflow:auto">
+        <table class="table" aria-describedby="tbl-info">
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th style="min-width:270px">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p id="tbl-info" class="muted" style="margin-top:8px"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <small>© 2025 Ballers. Todos los derechos reservados.</small>
+      <nav aria-label="Legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  (async () => {
+    const $ = s => document.querySelector(s);
+    const tbody = $('#tbody');
+    const info  = $('#tbl-info');
+    const kpiRevenue  = $('#kpi-revenue');
+    const kpiPaid     = $('#kpi-paid');
+    const kpiPending  = $('#kpi-pending');
+    const kpiRefunded = $('#kpi-refunded');
+
+    const q = $('#q'); const fromI = $('#from'); const toI = $('#to');
+    const statusI = $('#status'); const sortI = $('#sort');
+    const exportBtn = $('#btn-export');
+
+    const money = n => n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+
+    // Datos de ejemplo (puedes reemplazar con fetch si luego conectas)
+    const sample = [
+      { id:'#1009', date:'2025-03-02', customer:'María López', items:[{name:'Jordan Zoom', qty:1}],             total:2499,  status:'paid'     },
+      { id:'#1008', date:'2025-03-01', customer:'Luis Pérez',  items:[{name:'Gorra Lakers', qty:2}],           total: 798,   status:'pending'  },
+      { id:'#1007', date:'2025-02-28', customer:'Karla Díaz',  items:[{name:'Jersey Bulls', qty:1},{name:'Calcetas',qty:3}], total:1899,  status:'paid'     },
+      { id:'#1006', date:'2025-02-27', customer:'Jorge Ríos',  items:[{name:'Sneakers Pro', qty:1}],          total:3299,  status:'refunded' },
+      { id:'#1005', date:'2025-02-27', customer:'Ana Gómez',   items:[{name:'Mochila Ballers', qty:1}],       total:1099,  status:'paid'     },
+      { id:'#1004', date:'2025-02-26', customer:'Pedro Cruz',  items:[{name:'Jersey Warriors', qty:1}],       total:1599,  status:'pending'  }
+    ];
+
+    let orders = sample.map(o => ({...o}));
+    let current = [...orders];
+
+    function inRange(d, from, to){
+      const x = new Date(d).setHours(0,0,0,0);
+      const a = from ? new Date(from).setHours(0,0,0,0) : null;
+      const b = to   ? new Date(to).setHours(0,0,0,0)   : null;
+      if (a && x < a) return false;
+      if (b && x > b) return false;
+      return true;
+    }
+
+    function applyFilters(){
+      const term = q.value.trim().toLowerCase();
+      const from = fromI.value;
+      const to   = toI.value;
+      const st   = statusI.value;
+
+      current = orders.filter(o => {
+        const matchText = !term
+          || o.id.toLowerCase().includes(term)
+          || o.customer.toLowerCase().includes(term);
+        const matchState = (st === 'all') || (o.status === st);
+        const matchDate = inRange(o.date, from, to);
+        return matchText && matchState && matchDate;
+      });
+    }
+
+    function applySort(){
+      const v = sortI.value;
+      const map = {
+        'date-desc': (a,b)=> new Date(b.date) - new Date(a.date),
+        'date-asc':  (a,b)=> new Date(a.date) - new Date(b.date),
+        'total-desc':(a,b)=> b.total - a.total,
+        'total-asc': (a,b)=> a.total - b.total,
+      };
+      current.sort(map[v] || map['date-desc']);
+    }
+
+    function badge(state){
+      const m = {
+        paid:     '<span class="badge paid">Pagada</span>',
+        pending:  '<span class="badge pending">Pendiente</span>',
+        refunded: '<span class="badge refunded">Reembolsada</span>',
+      };
+      return m[state] || state;
+    }
+
+    function row(o){
+      const itemsText = o.items.map(it => `${it.name} ×${it.qty}`).join('<br/>');
+      return `
+        <tr data-id="${o.id}">
+          <td>${o.id}</td>
+          <td>${new Date(o.date).toLocaleDateString('es-MX')}</td>
+          <td>${o.customer}</td>
+          <td>${itemsText}</td>
+          <td><strong>${money(o.total)}</strong></td>
+          <td>${badge(o.status)}</td>
+          <td class="actions">
+            <button class="btn-mini" data-paid="${o.id}">Marcar pagada</button>
+            <button class="btn-mini" data-refund="${o.id}">Reembolsar</button>
+            <a class="btn-mini btn-ghost" href="factura.html#${encodeURIComponent(o.id)}">Ver factura</a>
+          </td>
+        </tr>`;
+    }
+
+    function render(){
+      if(!current.length){
+        tbody.innerHTML = `<tr><td colspan="7"><p class="muted">Sin resultados para los filtros actuales.</p></td></tr>`;
+        info.textContent = '';
+      }else{
+        tbody.innerHTML = current.map(row).join('');
+        info.textContent = `${current.length} orden(es) mostradas`;
+      }
+      // KPIs
+      const paidSum = orders.filter(o=>o.status==='paid').reduce((a,b)=>a+b.total,0);
+      const paidCnt = orders.filter(o=>o.status==='paid').length;
+      const pendCnt = orders.filter(o=>o.status==='pending').length;
+      const refdCnt = orders.filter(o=>o.status==='refunded').length;
+      kpiRevenue.textContent  = money(paidSum);
+      kpiPaid.textContent     = paidCnt;
+      kpiPending.textContent  = pendCnt;
+      kpiRefunded.textContent = refdCnt;
+    }
+
+    function setStatus(id, state){
+      const idx = orders.findIndex(o=>o.id===id);
+      if (idx === -1) return;
+      orders[idx].status = state;
+      applyFilters(); applySort(); render();
+    }
+
+    // Eventos filtros
+    [q, fromI, toI, statusI].forEach(el => el.addEventListener('input', ()=>{ applyFilters(); applySort(); render(); }));
+    sortI.addEventListener('change', ()=>{ applySort(); render(); });
+
+    // Acciones de fila
+    tbody.addEventListener('click', (e)=>{
+      const paid = e.target.closest('[data-paid]');
+      const refd = e.target.closest('[data-refund]');
+      if(!paid && !refd) return;
+      const id = paid?.dataset.paid || refd?.dataset.refund;
+      if (paid) setStatus(id, 'paid');
+      if (refd) setStatus(id, 'refunded');
+    });
+
+    // Exportar CSV
+    exportBtn.addEventListener('click', ()=>{
+      const head = ['Orden','Fecha','Cliente','Items','Total','Estado'];
+      const lines = current.map(o=>{
+        const items = o.items.map(it=>`${it.name} x${it.qty}`).join(' | ');
+        return [
+          o.id,
+          o.date,
+          o.customer.replace(/,/g,' '),
+          items.replace(/,/g,' '),
+          o.total,
+          o.status
+        ].join(',');
+      });
+      const csv = [head.join(','), ...lines].join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `facturacion_ballers_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // Inicializar
+    applyFilters(); applySort(); render();
+  })();
+  </script>
+</body>
+</html>
