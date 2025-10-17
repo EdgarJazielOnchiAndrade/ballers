@@ -3,25 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catálogo (Usuario) | Ballers</title>
-  <!-- estás en: src/assets/views/user/ -->
-  <link rel="stylesheet" href="../../css/base.css"/>
+  <title>Catálogo | Ballers</title>
+  <link rel="stylesheet" href="../css/base.css"/>
 </head>
 <body>
-  <!-- Header (usuario) -->
+  <!-- Header -->
   <header class="header">
     <div class="container header__inner">
-      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+      <!-- estás en: src/assets/views/ -->
+      <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <form class="search" role="search" aria-label="Buscar productos">
+        <label class="visually-hidden" for="q">Buscar</label>
+        <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
+        <button type="submit" aria-label="Buscar">🔍</button>
+      </form>
 
       <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
       <nav id="mainnav" class="nav">
         <ul>
-          <li><a href="index.html">Inicio</a></li>
-          <li><a class="active" href="catalog_user.html" aria-current="page">Catálogo</a></li>
-          <li><a href="cart.html">Carrito</a></li>
-          <li><a href="comprados.html">Ver productos comprados</a></li>
-          <li><a href="seguimiento.html">Seguimiento</a></li>
-          <li><a href="editar.html">Editar información</a></li>
+          <li><a href="../../../index.html">Inicio</a></li>
+          <li><a class="active" href="catalog.html" aria-current="page">Catálogo</a></li>
+          <li><a href="intranet.html">Intranet</a></li>
+
+          <!-- Icono usuario -->
+          <li>
+            <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </a>
+          </li>
+
+          <!-- Documentación (desplegable) -->
+          <li class="has-submenu">
+            <button class="submenu__toggle" type="button"
+                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
+              Documentación <span class="caret" aria-hidden="true">▾</span>
+            </button>
+            <ul id="doc-submenu" class="submenu" role="menu" hidden>
+              <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
+              <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
+              <li role="none"><a role="menuitem" href="status.html">Status</a></li>
+              <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
+            </ul>
+          </li>
         </ul>
       </nav>
     </div>
@@ -54,7 +81,6 @@
     <section id="product-grid" class="grid" aria-live="polite"></section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container footer__inner">
       <small>© 2025 Ballers. Todos los derechos reservados.</small>
@@ -66,28 +92,19 @@
     </div>
   </footer>
 
-  <!-- JS global -->
-  <script src="../../js/app.js"></script>
+  <script src="../js/app.js"></script>
   <script>
   (async () => {
-    const grid   = document.getElementById('product-grid');
-    const chips  = Array.from(document.querySelectorAll('.chip'));
+    const grid = document.getElementById('product-grid');
+    const chips = Array.from(document.querySelectorAll('.chip'));
     const select = document.getElementById('orden');
 
     const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
-    // Normaliza imágenes para que funcionen desde /views/user/
-    const fixImg = (path) => {
-      if (!path) return '';
-      if (path.startsWith('../img/'))   return '/src/assets/' + path.replace('../','');
-      if (path.startsWith('src/assets/')) return '/' + path;
-      return path;
-    };
-
-    // 1) Cargar JSON (desde user/ a data/)
+    // Cargar productos
     let products = [];
     try {
-      const res = await fetch('../../data/products.json', { cache: 'no-store' });
+      const res = await fetch('../data/products.json', { cache: 'no-store' });
       if (!res.ok) throw new Error('No se pudo cargar products.json');
       products = await res.json();
     } catch (err) {
@@ -98,10 +115,10 @@
       return;
     }
 
-    // 2) Tarjeta
+    // Tarjeta
     function cardTemplate(p){
       const bg = p.image
-        ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${fixImg(p.image)}') center/cover no-repeat`
+        ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${p.image}') center/cover no-repeat`
         : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
 
       return `
@@ -118,49 +135,49 @@
         </article>`;
     }
 
-    // 3) Estado + filtros + orden (sin búsqueda por texto)
-    let current = [...products];
-
-    function applyFilters() {
-      const active = document.querySelector('.chip.is-active');
-      const cat = active ? active.dataset.cat : 'todo';
-      current = (cat === 'todo') ? [...products] : products.filter(p => p.category === cat);
+    function render(list){
+      if (!list.length) {
+        grid.innerHTML = `<article class="card" style="padding:16px">
+          <h3>Sin resultados</h3>
+          <p class="muted">Prueba otra categoría u otro término.</p>
+        </article>`;
+        return;
+      }
+      grid.innerHTML = list.map(cardTemplate).join('');
     }
 
-    function applySort() {
+    // Estado + filtros
+    let current = [...products];
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const cat = chip.dataset.cat;
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        current = (cat === 'todo') ? [...products] : products.filter(p => p.category === cat);
+        applySort(); render(current);
+      });
+    });
+
+    // Orden
+    function applySort(){
       const v = select.value;
       if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
       if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
-      if (v === 'nuevo')       current.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      if (v === 'popular')     current.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
+      // 'popular' y 'nuevo' quedan como no-op si tu JSON no trae popularity/createdAt
     }
-
-    function render(list){
-      grid.innerHTML = list.length
-        ? list.map(cardTemplate).join('')
-        : `<article class="card" style="padding:16px">
-             <h3>Sin resultados</h3>
-             <p class="muted">Ajusta la categoría u orden.</p>
-           </article>`;
-    }
-
-    // Eventos
-    chips.forEach(chip => chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('is-active'));
-      chip.classList.add('is-active');
-      applyFilters(); applySort(); render(current);
-    }));
-
     select.addEventListener('change', () => { applySort(); render(current); });
 
-    // Primer pintado
-    applyFilters(); applySort(); render(current);
+    // Primer render
+    applySort(); render(current);
 
-    // 4) “Añadir al carrito” → manda al carrito
+    // Añadir al carrito → pedir login (simulación sin auth)
     grid.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-add]');
       if (!btn) return;
-      window.location.href = 'cart.html';
+      const next = encodeURIComponent('catalog.html');
+      const add  = encodeURIComponent(btn.getAttribute('data-add'));
+      window.location.href = `login.html?next=${next}&add=${add}`;
     });
   })();
   </script>
