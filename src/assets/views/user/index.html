@@ -32,7 +32,7 @@
     </div>
   </header>
 
-  <!-- Hero (igual que la portada, pero “Ver catálogo” va a catalog_user.html) -->
+  <!-- Hero -->
   <section class="hero">
     <div class="container hero__inner">
       <div class="hero__copy">
@@ -92,7 +92,7 @@
   <!-- JS global -->
   <script src="../../js/app.js"></script>
 
-  <!-- Script: destacados en “Inicio de usuario” desde products.json -->
+  <!-- Script: destacados en “Inicio de usuario” -->
   <script>
   (async () => {
     const grid   = document.getElementById('home-grid');
@@ -101,15 +101,16 @@
 
     const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
-    // Normaliza rutas de imagen del JSON para usarlas desde /views/user/
+    // Rutas de imagen correctas para GitHub Pages (sin '/')
+    // Desde: src/assets/views/user/  →  src/assets/img/  = ../../img/
     const fixImg = (path) => {
       if (!path) return '';
-      if (path.startsWith('../img/')) return '/src/assets/' + path.replace('../','');
-      if (path.startsWith('src/assets/')) return '/' + path;
-      return path;
+      if (path.startsWith('../img/'))        return '../../' + path.replace('../', '');
+      if (path.startsWith('src/assets/'))    return '../../' + path.replace('src/assets/', '');
+      return path; // ya relativa o absoluta http(s)
     };
 
-    // 1) Cargar productos (desde /views/user/ hacia /assets/data/)
+    // 1) Cargar productos (desde /views/user/ → ../../data/products.json)
     let products = [];
     try {
       const res = await fetch('../../data/products.json', { cache: 'no-store' });
@@ -123,7 +124,7 @@
       return;
     }
 
-    // 2) Tarjeta (idéntica a portada)
+    // 2) Tarjeta
     function cardTemplate(p) {
       const img = fixImg(p.image);
       const bg  = img
@@ -150,7 +151,6 @@
     function applyFilters() {
       const active = document.querySelector('.chip.is-active');
       const cat = active ? active.dataset.cat : 'todo';
-
       current = products.filter(p => (cat === 'todo') || (p.category === cat));
     }
 
@@ -172,15 +172,16 @@
            </article>`;
     }
 
-    // Eventos de UI
+    // Eventos UI
     chips.forEach(chip => chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('is-active'));
       chip.classList.add('is-active');
       applyFilters(); applySort(); render(current);
     }));
+
     select.addEventListener('change', () => { applySort(); render(current); });
 
-    // 4) Primer pintado
+    // Primer pintado
     applyFilters(); applySort(); render(current);
   })();
   </script>
