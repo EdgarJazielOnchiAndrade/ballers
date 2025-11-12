@@ -7,7 +7,71 @@
   <link rel="stylesheet" href="src/assets/css/base.css"/>
 </head>
 <body>
-  <!-- Header fijo -->
+
+  <!-- 🔔 Banner de Cookies -->
+  <div id="cookie-banner" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 15px;
+    z-index: 1000;
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
+    animation: slideUp 0.6s ease-out;
+  ">
+    <p style="max-width: 800px; margin: 0 auto 15px;">
+      Nuestras cookies te ofrecen una excelente experiencia online y hacen que nuestro sitio web funcione. 
+      También las usamos para analizar cómo se usa nuestra web y ofrecer contenido online personalizado. 
+      Para más información, <a href="src/assets/views/aviso_privacidad.html" style="color:#ffd166; text-decoration:underline;">consulta nuestro Aviso de Privacidad</a>.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+      <button id="accept-cookies" style="
+        background-color: #0a7d46;
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 24px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+      ">
+        Aceptar todas las cookies
+      </button>
+      <button id="only-necessary" style="
+        background-color: #000;
+        color: #fff;
+        border: 2px solid #333;
+        border-radius: 50px;
+        padding: 10px 24px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+      ">
+        Cookies estrictamente necesarias
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('accept-cookies');
+    const necessaryBtn = document.getElementById('only-necessary');
+    acceptBtn.addEventListener('click', () => banner.style.display = 'none');
+    necessaryBtn.addEventListener('click', () => banner.style.display = 'none');
+  </script>
+
+  <style>
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+
+  <!-- Header -->
   <header class="header">
     <div class="container header__inner">
       <a class="logo" href="index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
@@ -66,7 +130,7 @@
     </div>
   </section>
 
-  <!-- Filtros / categorías -->
+  <!-- Filtros -->
   <section class="filters">
     <div class="container filters__inner">
       <div class="chips">
@@ -88,37 +152,43 @@
     </div>
   </section>
 
-  <!-- Grid de productos (cards) -->
+  <!-- Grid de productos -->
   <main class="container">
     <section id="home-grid" class="grid" aria-live="polite"></section>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <small>© 2025 Ballers. Todos los derechos reservados.</small>
-      <nav aria-label="Legal">
-        <a href="#">Términos</a>
-        <a href="#">Privacidad</a>
-        <a href="#">Contacto</a>
-      </nav>
-    </div>
-  </footer>
+  <!-- Footer actualizado -->
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
 
-  <!-- Tu JS global (menú, submenú, etc.) -->
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="src/assets/views/aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="src/assets/views/terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="src/assets/views/cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
+    </div>
+  </div>
+</footer>
+
+  <!-- JS global -->
   <script src="src/assets/js/app.js"></script>
 
-  <!-- Script para destacados en portada desde products.json -->
+  <!-- Script de productos -->
   <script>
   (async () => {
     const grid   = document.getElementById('home-grid');
     const chips  = Array.from(document.querySelectorAll('.chip'));
     const select = document.getElementById('orden');
-    const qInput = document.getElementById('q'); // buscador del header (opcional)
+    const qInput = document.getElementById('q');
 
     const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
-    // Si tu JSON tiene rutas tipo "../img/...", las adaptamos para index.html
     const fixImg = (path) => {
       if (!path) return '';
       if (path.startsWith('src/assets/img/')) return path;
@@ -126,7 +196,6 @@
       return path;
     };
 
-    // 1) Cargar productos
     let products = [];
     try {
       const res = await fetch('src/assets/data/products.json', { cache: 'no-store' });
@@ -140,7 +209,6 @@
       return;
     }
 
-    // 2) Plantilla de tarjeta (versión portada)
     function cardTemplate(p) {
       const img = fixImg(p.image);
       const bg  = img
@@ -161,7 +229,6 @@
         </article>`;
     }
 
-    // 3) Estado + filtros + orden
     let current = [...products];
 
     function applyFilters() {
@@ -187,7 +254,7 @@
     }
 
     function render(list){
-      const slice = list.slice(0, 8); // destacados en portada
+      const slice = list.slice(0, 8);
       if (!slice.length) {
         grid.innerHTML = `<article class="card" style="padding:16px">
           <h3>Sin destacados</h3>
@@ -198,7 +265,6 @@
       grid.innerHTML = slice.map(cardTemplate).join('');
     }
 
-    // Eventos (chips, ordenar, búsqueda)
     chips.forEach(chip => chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('is-active'));
       chip.classList.add('is-active');
@@ -208,7 +274,6 @@
     select.addEventListener('change', () => { applySort(); render(current); });
     qInput?.addEventListener('input', () => { applyFilters(); applySort(); render(current); });
 
-    // 4) Primer pintado
     applyFilters(); applySort(); render(current);
   })();
   </script>

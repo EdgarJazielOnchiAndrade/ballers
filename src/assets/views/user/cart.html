@@ -30,7 +30,6 @@
   <main class="container" style="padding:22px 0 64px">
     <section class="section">
       <h2 style="margin:0 0 8px">Carrito</h2>
-    
 
       <div id="cart-list"></div>
       <div id="cart-total" style="margin-top:14px;font-weight:800"></div>
@@ -38,16 +37,25 @@
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <small>© 2025 Ballers. Todos los derechos reservados.</small>
-      <nav aria-label="Legal">
-        <a href="#">Términos</a>
-        <a href="#">Privacidad</a>
-        <a href="#">Contacto</a>
-      </nav>
+  <!-- Footer CORREGIDO FINAL -->
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
     </div>
-  </footer>
+  </div>
+</footer>
+
 
   <script src="../../js/app.js"></script>
   <script>
@@ -56,7 +64,7 @@
     const totalEl = document.getElementById('cart-total');
     const msgEl   = document.getElementById('cart-msg');
 
-    // Cargar productos: OJO con la ruta desde /views/user/
+    // 1) Cargar productos
     let products = [];
     try {
       const res = await fetch('../../data/products.json', { cache: 'no-store' });
@@ -69,16 +77,25 @@
       return;
     }
 
-    // Simulación de carrito: tomamos 3 items del JSON
-    const cart = products.slice(0, 3).map(p => ({ id: p.id, name: p.name, price: p.price, image: p.image, qty: 1 }));
+    // 2) Carrito de ejemplo (3 items)
+    const cart = products.slice(0, 3).map(p => ({
+      id: String(p.id),
+      name: p.name,
+      price: p.price,
+      image: p.image,
+      qty: 1
+    }));
 
-    const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
+    const money = n => Number(n).toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
+    // Rutas de imagen compatibles local/GitHub Pages
     const fixImg = (path) => {
       if (!path) return '';
-      if (path.startsWith('../img/')) return '/src/assets/' + path.replace('../','');
-      if (path.startsWith('src/assets/')) return '/' + path;
-      return path;
+      if (/^https?:\/\//i.test(path)) return path;                 // URL absoluta
+      if (path.startsWith('../img/')) return '../../' + path.replace('../','');
+      if (path.startsWith('src/assets/img/')) return '../../' + path.replace('src/assets/','');
+      if (path.startsWith('/src/assets/')) return '../../' + path.replace('/src/assets/',''); // quitar slash inicial
+      return path; // ya relativa correcta
     };
 
     function rowTemplate(item){
@@ -111,26 +128,24 @@
         return;
       }
       listEl.innerHTML = cart.map(rowTemplate).join('');
-      const total = cart.reduce((t, i) => t + i.price * i.qty, 0);
+      const total = cart.reduce((t, i) => t + Number(i.price) * i.qty, 0);
       totalEl.textContent = 'Total: ' + money(total);
     }
 
-    // Eventos de +/–/Eliminar (solo front)
+    // 3) Controles + / – / Eliminar
     listEl.addEventListener('click', (e) => {
       const actBtn = e.target.closest('button[data-act]');
       if (!actBtn) return;
       const act = actBtn.dataset.act;
       const card = e.target.closest('[data-id]');
-      const id   = Number(card.dataset.id);
-      const item = cart.find(x => x.id === id);
-      if (!item) return;
+      const id   = String(card.dataset.id);
+      const idx  = cart.findIndex(x => String(x.id) === id);
+      if (idx === -1) return;
 
-      if (act === 'inc') item.qty++;
-      if (act === 'dec') item.qty = Math.max(1, item.qty - 1);
-      if (act === 'del') {
-        const idx = cart.findIndex(x => x.id === id);
-        cart.splice(idx, 1);
-      }
+      if (act === 'inc') cart[idx].qty++;
+      if (act === 'dec') cart[idx].qty = Math.max(1, cart[idx].qty - 1);
+      if (act === 'del') cart.splice(idx, 1);
+
       render();
     });
 

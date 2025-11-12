@@ -4,16 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mi cuenta | Ballers</title>
-  <!-- Estás en: src/assets/views/user/ -->
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
-    /* Header limpio con navegación a la derecha */
     .header__inner{ display:flex; align-items:center; gap:12px; }
     .nav{ margin-left:auto; }
   </style>
 </head>
 <body>
-  <!-- Header (desde user/ a raíz: ../../../../index.html) -->
+  <!-- Header -->
   <header class="header">
     <div class="container header__inner">
       <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
@@ -32,7 +30,7 @@
     </div>
   </header>
 
-  <!-- Hero (igual que la portada, pero “Ver catálogo” va a catalog_user.html) -->
+  <!-- Hero -->
   <section class="hero">
     <div class="container hero__inner">
       <div class="hero__copy">
@@ -66,50 +64,52 @@
     </div>
   </section>
 
-  <!-- Grid de productos -->
+  <!-- Grid de productos (ya sin el bloque de texto) -->
   <main class="container">
     <section id="home-grid" class="grid" aria-live="polite"></section>
-
-    <!-- Ancla para “Ver productos comprados” -->
-    <section id="comprados" style="margin-top:28px">
-      <h2 style="margin:0 0 10px">Tus productos comprados</h2>
-      <p class="muted">Aquí podrás ver el historial de tus compras (vista placeholder).</p>
-    </section>
   </main>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <small>© 2025 Ballers. Todos los derechos reservados.</small>
-      <nav aria-label="Legal">
-        <a href="#">Términos</a>
-        <a href="#">Privacidad</a>
-        <a href="#">Contacto</a>
-      </nav>
+<!-- Footer CORREGIDO -->
+<!-- Footer CORREGIDO FINAL -->
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
     </div>
-  </footer>
+  </div>
+</footer>
+
+
 
   <!-- JS global -->
   <script src="../../js/app.js"></script>
 
-  <!-- Script: destacados en “Inicio de usuario” desde products.json -->
+  <!-- Script: destacados -->
   <script>
   (async () => {
     const grid   = document.getElementById('home-grid');
     const chips  = Array.from(document.querySelectorAll('.chip'));
     const select = document.getElementById('orden');
-
     const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
 
-    // Normaliza rutas de imagen del JSON para usarlas desde /views/user/
     const fixImg = (path) => {
       if (!path) return '';
-      if (path.startsWith('../img/')) return '/src/assets/' + path.replace('../','');
-      if (path.startsWith('src/assets/')) return '/' + path;
+      if (path.startsWith('../img/')) return '../../' + path.replace('../', '');
+      if (path.startsWith('src/assets/')) return '../../' + path.replace('src/assets/', '');
       return path;
     };
 
-    // 1) Cargar productos (desde /views/user/ hacia /assets/data/)
     let products = [];
     try {
       const res = await fetch('../../data/products.json', { cache: 'no-store' });
@@ -123,13 +123,11 @@
       return;
     }
 
-    // 2) Tarjeta (idéntica a portada)
     function cardTemplate(p) {
       const img = fixImg(p.image);
       const bg  = img
         ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${img}') center/cover no-repeat`
         : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
-
       return `
         <article class="card" data-category="${p.category}">
           <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg};"></div>
@@ -144,22 +142,20 @@
         </article>`;
     }
 
-    // 3) Estado + filtros + orden
     let current = [...products];
 
     function applyFilters() {
       const active = document.querySelector('.chip.is-active');
       const cat = active ? active.dataset.cat : 'todo';
-
       current = products.filter(p => (cat === 'todo') || (p.category === cat));
     }
 
     function applySort() {
       const v = select.value;
-      if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
+      if (v === 'precio-asc') current.sort((a,b) => a.price - b.price);
       if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
-      if (v === 'nuevo')       current.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      if (v === 'popular')     current.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
+      if (v === 'nuevo') current.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      if (v === 'popular') current.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
     }
 
     function render(list){
@@ -167,20 +163,18 @@
       grid.innerHTML = slice.length
         ? slice.map(cardTemplate).join('')
         : `<article class="card" style="padding:16px">
-             <h3>Sin destacados</h3>
-             <p class="muted">Ajusta los filtros.</p>
-           </article>`;
+            <h3>Sin destacados</h3>
+            <p class="muted">Ajusta los filtros.</p>
+          </article>`;
     }
 
-    // Eventos de UI
     chips.forEach(chip => chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('is-active'));
       chip.classList.add('is-active');
       applyFilters(); applySort(); render(current);
     }));
-    select.addEventListener('change', () => { applySort(); render(current); });
 
-    // 4) Primer pintado
+    select.addEventListener('change', () => { applySort(); render(current); });
     applyFilters(); applySort(); render(current);
   })();
   </script>

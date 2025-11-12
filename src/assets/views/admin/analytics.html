@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analíticos | Ballers (Admin)</title>
+  <!-- Estás en: src/assets/views/admin/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;border-radius:var(--radius);
+      padding:22px;box-shadow:var(--shadow);margin:18px 0
+    }
+    .kpis{display:grid;gap:12px;margin:18px 0}
+    @media (min-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
+    .kpi{border:1px solid #2a2a32;border-radius:14px;padding:14px;background:#141419}
+    .kpi h3{margin:0 0 6px;font-size:.95rem;color:var(--muted);font-weight:600}
+    .kpi .val{font-size:1.4rem;font-weight:800}
+    .grid-2{display:grid;gap:16px}
+    @media (min-width:1100px){.grid-2{grid-template-columns:1.2fr .8fr}}
+    .card{background:#141419;border:1px solid #2a2a32;border-radius:14px}
+    .card__body{padding:14px}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{padding:10px 12px;background:#141419;border:1px solid #2a2a32}
+    th{text-align:left;color:#bfbfc7}
+    .muted{color:var(--muted)}
+    canvas{width:100%;height:320px}
+    .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+    .legend span{display:inline-flex;align-items:center;gap:6px;font-size:.92rem}
+    .dot{width:10px;height:10px;border-radius:50%}
+  </style>
+</head>
+<body>
+  <!-- Header admin -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="facturacion.html">Facturación</a></li>
+          <li><a href="usuarios.html">Control de usuarios</a></li>
+          <li><a href="pedidos.html">Estatus de pedidos</a></li>
+          <li><a href="productos.html">CRUD de productos</a></li>
+          <li><a class="active" href="analytics.html" aria-current="page">Analíticos</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h1 style="margin:0 0 6px">Analíticos</h1>
+      <p class="muted" style="margin:0">Resumen de sesiones, carrito y dispositivos.</p>
+    </section>
+
+    <!-- KPIs (3) -->
+    <section class="kpis">
+      <article class="kpi">
+        <h3>Usuarios únicos</h3>
+        <div class="val" id="k-users">—</div>
+        <div class="muted" id="k-sessions">—</div>
+      </article>
+
+      <article class="kpi">
+        <h3>Items agregados al carrito</h3>
+        <div class="val" id="k-adds">0</div>
+        <div class="muted" id="k-adds-sub">—</div>
+      </article>
+
+      <article class="kpi">
+        <h3>Tiempo promedio por sesión</h3>
+        <div class="val" id="k-avg">00:00</div>
+        <div class="muted" id="k-total">—</div>
+      </article>
+    </section>
+
+    <!-- Gráficas + detalles -->
+    <section class="grid-2">
+      <article class="card">
+        <div class="card__body">
+          <h2 style="margin:0 0 8px">Top productos agregados</h2>
+          <canvas id="chartProducts" width="800" height="320"></canvas>
+          <div class="legend" id="legProducts"></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h2 style="margin:0 0 8px">Dispositivos</h2>
+          <canvas id="chartDevices" width="600" height="320"></canvas>
+          <div class="legend" id="legDevices"></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="section">
+      <h2 style="margin:0 0 8px">Sesiones por día (últimos 7)</h2>
+      <canvas id="chartSessions" width="1000" height="320"></canvas>
+    </section>
+
+    <section class="section">
+      <h2 style="margin:0 0 8px">Últimos eventos</h2>
+      <table id="tblEvents">
+        <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Página</th><th>Acción</th><th>Producto</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+    <!-- Footer CORREGIDO FINAL -->
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
+    </div>
+  </div>
+</footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+  // ---------- Helpers ----------
+  const pad = n => String(n).padStart(2,'0');
+  const fmtMinSec = ms => {
+    const m = Math.floor(ms/60000), s = Math.floor((ms%60000)/1000);
+    return `${pad(m)}:${pad(s)}`;
+  };
+
+  // ---------- Semilla si no hay datos ----------
+  (function seedIfEmpty(){
+    const hasData = localStorage.getItem('ballers_events') && localStorage.getItem('ballers_sessions');
+    if (hasData) return;
+    const users = ['edgar','jaziel','ana','luis','maria','juan'];
+    const prods = [
+      {id:101,name:'Sneakers Urban X'},
+      {id:205,name:'Jersey Baller 23'},
+      {id:309,name:'Gorra Street'},
+      {id:412,name:'Sneakers Crossover Pro'},
+      {id:518,name:'Calcetas Pro Pack'}
+    ];
+    const devices = ['Windows','Android','iPhone','Mac','Linux'];
+    const pages = ['/', '/catalog', '/user/index', '/user/catalog', '/user/cart'];
+
+    const sessions = [];
+    const events = [];
+    const now = Date.now();
+    for (let d=6; d>=0; d--){
+      const dayStart = now - d*24*3600*1000;
+      const daySessions = 5 + Math.floor(Math.random()*6);
+      for (let i=0; i<daySessions; i++){
+        const user = users[Math.floor(Math.random()*users.length)];
+        const device = devices[Math.floor(Math.random()*devices.length)];
+        const start = dayStart + Math.floor(Math.random()* (20*3600*1000));
+        const dur   = 2*60*1000 + Math.floor(Math.random()* (12*60*1000));
+        const end   = start + dur;
+        sessions.push({user, start, end, device});
+
+        const steps = 3 + Math.floor(Math.random()*5);
+        for (let s=0; s<steps; s++){
+          const page = pages[Math.floor(Math.random()*pages.length)];
+          const kind = Math.random() < 0.4 ? 'add_to_cart' : 'view';
+          const prod = prods[Math.floor(Math.random()*prods.length)];
+          events.push({
+            ts: start + Math.floor(Math.random()*dur),
+            user, page, action: kind,
+            productId: kind==='add_to_cart'? prod.id : null,
+            productName: kind==='add_to_cart'? prod.name : null,
+            device
+          });
+        }
+      }
+    }
+    localStorage.setItem('ballers_sessions', JSON.stringify(sessions));
+    localStorage.setItem('ballers_events', JSON.stringify(events));
+  })();
+
+  const sessions = JSON.parse(localStorage.getItem('ballers_sessions')||'[]');
+  const events = JSON.parse(localStorage.getItem('ballers_events')||'[]');
+
+  // ---------- Agregados ----------
+  const usersSet = new Set(sessions.map(s=>s.user));
+  const totalSessions = sessions.length;
+  const totalTimeMs = sessions.reduce((t,s)=> t + (s.end - s.start), 0);
+  const avgTimeMs = totalSessions ? totalTimeMs/totalSessions : 0;
+
+  const adds = events.filter(e=>e.action==='add_to_cart');
+  const addsByProduct = {};
+  adds.forEach(e=>{
+    const key = e.productName || ('ID '+e.productId);
+    addsByProduct[key] = (addsByProduct[key]||0) + 1;
+  });
+
+  const deviceCounts = {};
+  sessions.forEach(s=>{
+    deviceCounts[s.device || 'Otro'] = (deviceCounts[s.device || 'Otro']||0) + 1;
+  });
+
+  // sesiones por día (últimos 7)
+  const last7 = [];
+  for (let i=6;i>=0;i--){
+    const day = new Date(Date.now()-i*24*3600*1000);
+    const key = day.toISOString().slice(0,10);
+    const count = sessions.filter(s=>{
+      const d = new Date(s.start).toISOString().slice(0,10);
+      return d===key;
+    }).length;
+    last7.push({label:key.slice(5), value:count}); // MM-DD
+  }
+
+  // ---------- KPIs ----------
+  document.getElementById('k-users').textContent = usersSet.size;
+  document.getElementById('k-sessions').textContent = `${totalSessions} sesiones`;
+  document.getElementById('k-adds').textContent = adds.length;
+  document.getElementById('k-adds-sub').textContent = `${Object.keys(addsByProduct).length} productos con actividad`;
+  document.getElementById('k-avg').textContent = fmtMinSec(avgTimeMs);
+  document.getElementById('k-total').textContent = `Total: ${fmtMinSec(totalTimeMs)}`;
+
+  // ---------- Tabla eventos ----------
+  const pad2 = n => String(n).padStart(2,'0');
+  const tbody = document.querySelector('#tblEvents tbody');
+  const latest = events.sort((a,b)=>b.ts-a.ts).slice(0,20);
+  tbody.innerHTML = latest.map(e=>{
+    const d = new Date(e.ts);
+    const dt = `${d.toLocaleDateString()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    return `<tr>
+      <td>${dt}</td>
+      <td>${e.user}</td>
+      <td>${e.page}</td>
+      <td>${e.action}</td>
+      <td>${e.productName || ''}</td>
+    </tr>`;
+  }).join('');
+
+  // ---------- Gráficas (Canvas 2D) ----------
+  function pick(i){
+    const base = ['#ff6a00','#ffd166','#7dd3fc','#a7f3d0','#c4b5fd','#fda4af','#f9a8d4','#93c5fd'];
+    return base[i%base.length];
+  }
+  function drawBar(canvas, data){
+    const ctx = canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const max = Math.max(1, ...data.map(d=>d.value));
+    const padX=40, padY=20, slot=(W-2*padX)/data.length, barW=slot*0.7;
+    data.forEach((d,i)=>{
+      const x=padX+i*slot+(slot-barW)/2;
+      const h=(H-2*padY)*(d.value/max), y=H-padY-h;
+      ctx.fillStyle=pick(i); ctx.fillRect(x,y,barW,h);
+      ctx.fillStyle='#e5e7eb'; ctx.font='12px system-ui'; ctx.fillText(d.value,x,y-4);
+      ctx.save(); ctx.translate(x+barW/2,H-padY+12); ctx.rotate(-Math.PI/6);
+      ctx.textAlign='center'; ctx.fillText(d.label,0,0); ctx.restore();
+    });
+  }
+  function drawPie(canvas, data){
+    const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, r=Math.min(W,H)/2-20;
+    const total=Math.max(1, data.reduce((t,d)=>t+d.value,0));
+    let a0=-Math.PI/2;
+    data.forEach((d,i)=>{
+      const a1=a0+2*Math.PI*(d.value/total);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a0,a1); ctx.closePath();
+      ctx.fillStyle=pick(i); ctx.fill(); a0=a1;
+    });
+  }
+  function drawLine(canvas, data){
+    const ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const padX=40, padY=20, max=Math.max(1,...data.map(d=>d.value));
+    ctx.strokeStyle='#374151'; for(let y=0;y<=4;y++){const gy=padY+(H-2*padY)*y/4; ctx.beginPath(); ctx.moveTo(padX,gy); ctx.lineTo(W-padX,gy); ctx.stroke();}
+    ctx.strokeStyle='#ff6a00'; ctx.lineWidth=2; ctx.beginPath();
+    data.forEach((d,i)=>{
+      const x=padX+i*((W-2*padX)/(data.length-1));
+      const y=H-padY-(H-2*padY)*(d.value/max);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      ctx.fillStyle='#e5e7eb'; ctx.font='12px system-ui'; ctx.fillText(d.label,x-12,H-padY+14);
+    });
+    ctx.stroke();
+  }
+
+  const topProducts = Object.entries(addsByProduct).map(([k,v])=>({label:k,value:v})).sort((a,b)=>b.value-a.value).slice(0,6);
+  const devicesData = Object.entries(deviceCounts).map(([k,v])=>({label:k,value:v})).sort((a,b)=>b.value-a.value);
+
+  drawBar(document.getElementById('chartProducts'), topProducts);
+  drawPie(document.getElementById('chartDevices'), devicesData);
+  drawLine(document.getElementById('chartSessions'), last7);
+
+  const mkLegend = (el, data)=> el.innerHTML = data.map((d,i)=>`<span><i class="dot" style="background:${pick(i)}"></i>${d.label} (${d.value})</span>`).join('');
+  mkLegend(document.getElementById('legProducts'), topProducts);
+  mkLegend(document.getElementById('legDevices'), devicesData);
+  </script>
+</body>
+</html>
