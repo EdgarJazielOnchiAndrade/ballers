@@ -25,13 +25,27 @@
       font-size:0.9em;
       color:#aaa;
     }
+    .btn-back {
+      margin-top:10px;
+      padding:8px 18px;
+      border:none;
+      border-radius:6px;
+      background:#ff6a00;
+      color:#000;
+      font-weight:600;
+      cursor:pointer;
+      font-family:'Poppins',sans-serif;
+    }
+    .btn-back:hover {
+      opacity:0.9;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     <h1>Aviso de Privacidad</h1>
-    <p>En <strong>Ballers 🏀👟</strong> respetamos la privacidad de nuestros clientes. Este aviso explica de forma breve cómo usamos y protegemos tus datos personales cuando visitas nuestro sitio web o realizas una compra.</p>
+    <p>En <strong>Ballers</strong> respetamos la privacidad de nuestros clientes. Este aviso explica de forma breve cómo usamos y protegemos tus datos personales cuando visitas nuestro sitio web o realizas una compra.</p>
 
     <h2>Datos que recopilamos</h2>
     <p>Podemos solicitar información como tu nombre, correo electrónico y número telefónico para procesar pedidos, responder mensajes o brindar atención personalizada.</p>
@@ -55,7 +69,9 @@
 
   <div class="footer">
     <p>© 2025 Ballers. Todos los derechos reservados.</p>
-    <a href="../../../index.html">← Volver al inicio</a>
+    <button type="button" class="btn-back" onclick="window.history.back()">
+      ← Volver
+    </button>
   </div>
 
 </body>

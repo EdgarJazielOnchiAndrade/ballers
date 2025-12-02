@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recibo de pago | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+
+  <style>
+    .header__inner{ display:flex; align-items:center; gap:12px; }
+    .nav{ margin-left:auto; }
+
+    main.recibo-main{
+      padding:32px 0 72px;
+      min-height:70vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+
+    .recibo-box{
+      max-width:780px;
+      width:100%;
+      background:#111;
+      border-radius:18px;
+      padding:24px 22px 26px;
+      border:1px solid #262626;
+      box-shadow:0 8px 24px rgba(0,0,0,.45);
+      color:#f5f5f5;
+    }
+
+    .recibo-title{
+      margin:0 0 4px;
+      font-size:1.5rem;
+      color:#ff6a00;
+    }
+
+    .recibo-sub{
+      margin:0 0 16px;
+      font-size:0.95rem;
+      color:#ccc;
+    }
+
+    .recibo-grid{
+      display:grid;
+      grid-template-columns:1.4fr 1fr;
+      gap:18px;
+      margin-top:10px;
+      font-size:0.95rem;
+    }
+
+    .recibo-block h3{
+      margin:0 0 6px;
+      font-size:1rem;
+      border-bottom:1px solid #262626;
+      padding-bottom:4px;
+    }
+
+    .recibo-block p{
+      margin:2px 0;
+    }
+
+    .recibo-total{
+      margin-top:16px;
+      font-size:1.05rem;
+      font-weight:600;
+    }
+
+    .recibo-actions{
+      margin-top:20px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (usuario) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a class="active" href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container recibo-main">
+    <section class="recibo-box">
+      <h1 class="recibo-title">Recibo de pago</h1>
+      <p class="recibo-sub">
+        Comprobante de pago correspondiente a tu compra realizada en Ballers.
+      </p>
+
+      <!-- Datos principales del recibo -->
+      <div class="recibo-grid">
+        <!-- Bloque izquierdo -->
+        <div class="recibo-block">
+          <h3>Datos del comprobante</h3>
+          <p><strong>Folio:</strong> <span id="rec-folio">RCB-001</span></p>
+          <p><strong>Número de pedido:</strong> <span id="rec-pedido">PED-001</span></p>
+          <!-- Fecha fija en formato 2025/05/20 -->
+          <p><strong>Fecha:</strong> <span id="rec-fecha">2025-05-20</span></p>
+        </div>
+
+        <!-- Bloque derecho -->
+        <div class="recibo-block">
+          <h3>Datos del cliente y negocio</h3>
+          <p><strong>Nombre cliente:</strong> <span id="rec-nombre">Cliente</span></p>
+          <p><strong>Negocio:</strong> Ballers</p>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <p class="recibo-total">
+        Total pagado: <span id="rec-total">$5,697.00 MXN</span>
+      </p><br>
+       <em>(No oficial)</em>
+
+      <!-- Acciones -->
+      <div class="recibo-actions">
+        <!-- PDF: crea src/assets/docs/recibo-demo.pdf -->
+        <a href="../../docs/recibo-demo.pdf" class="btn" download>
+          Descargar recibo PDF
+        </a>
+        <a href="catalog_user.html" class="btn btn--ghost">Volver al catálogo</a>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+      <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+      <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
+    </div>
+  </div>
+</footer>
+
+
+  <script src="../../js/app.js"></script>
+  <script>
+    // Datos que pueden venir desde confirmacion.html
+    const params = new URLSearchParams(window.location.search);
+    const nombre = params.get('nombre') || 'Cliente';
+    const pedido = params.get('pedido') || 'PED-001';
+    const total  = params.get('total')  || '$5,697.00 MXN';
+
+    document.getElementById('rec-nombre').textContent = nombre;
+    document.getElementById('rec-pedido').textContent = pedido;
+    document.getElementById('rec-total').textContent  = total;
+
+    // Importante: ya NO cambiamos la fecha, se queda fija como 2025/05/20
+  </script>
+</body>
+</html>

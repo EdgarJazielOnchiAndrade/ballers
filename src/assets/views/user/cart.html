@@ -34,10 +34,14 @@
       <div id="cart-list"></div>
       <div id="cart-total" style="margin-top:14px;font-weight:800"></div>
       <p id="cart-msg" class="muted" style="margin-top:10px"></p>
+
+           <!-- 🔘 Botón para ir a la pantalla de datos de pago -->
+      <div style="margin-top:18px;">
+        <a href="pago.html" class="btn">Continuar con el pago</a>
+      </div>
     </section>
   </main>
 
-  <!-- Footer CORREGIDO FINAL -->
 <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
   <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
     <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
@@ -46,6 +50,8 @@
       <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
       <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
       <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+      <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+      <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
     </nav>
 
     <div style="margin-top:8px; color:#fff;">
@@ -55,6 +61,8 @@
     </div>
   </div>
 </footer>
+
+
 
 
   <script src="../../js/app.js"></script>
@@ -91,11 +99,11 @@
     // Rutas de imagen compatibles local/GitHub Pages
     const fixImg = (path) => {
       if (!path) return '';
-      if (/^https?:\/\//i.test(path)) return path;                 // URL absoluta
+      if (/^https?:\/\//i.test(path)) return path;
       if (path.startsWith('../img/')) return '../../' + path.replace('../','');
       if (path.startsWith('src/assets/img/')) return '../../' + path.replace('src/assets/','');
-      if (path.startsWith('/src/assets/')) return '../../' + path.replace('/src/assets/',''); // quitar slash inicial
-      return path; // ya relativa correcta
+      if (path.startsWith('/src/assets/')) return '../../' + path.replace('/src/assets/','');
+      return path;
     };
 
     function rowTemplate(item){

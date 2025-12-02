@@ -25,13 +25,27 @@
       font-size:0.9em;
       color:#aaa;
     }
+    .btn-back {
+      margin-top:10px;
+      padding:8px 18px;
+      border:none;
+      border-radius:6px;
+      background:#ff6a00;
+      color:#000;
+      font-weight:600;
+      cursor:pointer;
+      font-family:'Poppins',sans-serif;
+    }
+    .btn-back:hover {
+      opacity:0.9;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     <h1>Términos y Condiciones</h1>
-    <p>Estos Términos y Condiciones regulan el uso del sitio web <strong>Ballers 🏀👟</strong> y la relación entre los usuarios y nuestra tienda en línea. Al navegar o utilizar nuestros servicios, aceptas los siguientes lineamientos.</p>
+    <p>Estos Términos y Condiciones regulan el uso del sitio web <strong>Ballers</strong> y la relación entre los usuarios y nuestra tienda en línea. Al navegar o utilizar nuestros servicios, aceptas los siguientes lineamientos.</p>
 
     <h2>1. Uso del sitio</h2>
     <p>El contenido y los productos mostrados en este sitio son para uso personal del usuario. Está prohibido copiar, distribuir o alterar cualquier parte del sitio sin autorización de Ballers.</p>
@@ -40,15 +54,28 @@
     <p>El usuario se compromete a proporcionar información verídica al momento de realizar un pedido o registrarse, y a no utilizar el sitio para actividades fraudulentas o ilícitas.</p>
 
     <h2>3. Responsabilidad de Ballers</h2>
-    <p>Ballers 🏀👟 se compromete a ofrecer información clara sobre sus productos, precios y políticas. Nos reservamos el derecho de modificar precios, descripciones o disponibilidad de productos sin previo aviso, garantizando siempre transparencia en las actualizaciones.</p>
+    <p>Ballers se compromete a ofrecer información clara sobre sus productos, precios y políticas. Nos reservamos el derecho de modificar precios, descripciones o disponibilidad de productos sin previo aviso, garantizando siempre transparencia en las actualizaciones.</p>
 
     <h2>4. Precios y disponibilidad</h2>
     <p>Todos los precios mostrados están en pesos mexicanos e incluyen impuestos. Los productos están sujetos a disponibilidad y actualización constante del inventario.</p>
 
     <h2>5. Propiedad intelectual</h2>
-    <p>Todo el contenido del sitio —incluyendo imágenes, textos, logotipos y diseños— pertenece a Ballers 🏀👟. Queda prohibido su uso sin autorización previa y por escrito.</p>
+    <p>Todo el contenido del sitio —incluyendo imágenes, textos, logotipos y diseños— pertenece a Ballers o a nuestros distribuidores autorizados. Las imágenes de productos pueden ser proporcionadas por marcas oficiales o distribuidores, y se usan únicamente con fines ilustrativos. Queda prohibido su uso sin autorización previa y por escrito.</p>
 
-    <h2>6. Contacto</h2>
+    <!-- 6. Política de Devoluciones (subido aquí) -->
+    <h2>6. Política de Devoluciones</h2>
+    <p>Ballers acepta devoluciones únicamente de productos adquiridos a través de nuestro sitio web, siempre que cumplan con las siguientes condiciones:</p>
+    <ul>
+      <li>El producto debe estar en las mismas condiciones en que se entregó: nuevo, sin uso y con empaque original.</li>
+      <li>La solicitud debe realizarse dentro de los primeros <strong>7 días naturales</strong> después de la entrega.</li>
+      <li>El usuario deberá proporcionar su número de pedido y fotografías del producto para validar la solicitud.</li>
+      <li>No se aceptan devoluciones de productos con señales de uso, desgaste o daño por parte del usuario.</li>
+      <li>En caso de aprobada, el reembolso se realizará en el mismo método de pago utilizado.</li>
+    </ul>
+    <p>Los gastos de envío por devolución pueden ser cubiertos por el cliente, salvo en casos de defectos de fabricación o error en el envío.</p>
+
+    <!-- 7. Contacto (bajado aquí) -->
+    <h2>7. Contacto</h2>
     <p>Si tienes dudas o comentarios relacionados con estos términos, puedes comunicarte con nosotros a través de:</p>
     <p><strong>Teléfono:</strong> +52 449 123 4567<br>
        <strong>Correo:</strong> contacto@ballers.com</p>
@@ -57,8 +84,10 @@
   </div>
 
   <div class="footer">
-    <p>© 2025 Ballers. Todos los derechos reservados.</p>
-    <a href="../../../index.html">← Volver al inicio</a>
+    <p>©️ 2025 Ballers. Todos los derechos reservados.</p>
+    <button type="button" class="btn-back" onclick="window.history.back()">
+      ← Volver
+    </button>
   </div>
 
 </body>

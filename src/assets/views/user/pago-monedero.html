@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pago con monedero digital | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+
+  <style>
+    .header__inner{ display:flex; align-items:center; gap:12px; }
+    .nav{ margin-left:auto; }
+
+    main.payment-main{
+      padding:22px 0 64px;
+      min-height:70vh;
+    }
+
+    .summary-box{
+      max-width:640px;
+      margin-top:8px;
+      font-size:0.95rem;
+    }
+    .summary-box p{ margin:2px 0; }
+
+    .wallet-box{
+      max-width:640px;
+      margin-top:18px;
+      padding:18px 16px;
+      border-radius:12px;
+      border:1px solid #262626;
+      background:#111;
+      box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .wallet-box h3{
+      margin:0 0 6px;
+      font-size:1.05rem;
+    }
+
+    .wallet-balance{
+      font-size:1.2rem;
+      font-weight:700;
+      margin:4px 0 2px;
+    }
+
+    .wallet-note{
+      font-size:0.9rem;
+      color:#cfcfcf;
+      margin:0;
+    }
+
+    .payment-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .payment-note{
+      margin-top:6px;
+      font-size:0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (usuario) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a class="active" href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container payment-main">
+    <section class="section">
+      <h2 style="margin:0 0 4px;">Pago con monedero digital</h2>
+      <p class="muted payment-note">
+        Confirma que deseas usar tu monedero digital para completar la compra.
+      </p>
+
+      <!-- Resumen de datos que vienen de metodos.html -->
+      <div class="summary-box">
+        <p><strong>Nombre:</strong> <span id="res-nombre">Cliente</span></p>
+        <p><strong>Correo:</strong> <span id="res-correo">correo@ejemplo.com</span></p>
+        <p><strong>Método:</strong> Monedero digital</p>
+      </div>
+
+      <!-- Bloque de monedero con saldo disponible -->
+      <div class="wallet-box">
+        <h3>Saldo disponible en tu monedero</h3>
+        <p class="wallet-balance">
+          Saldo disponible: <span id="saldo-monedero">$6,000.00 MXN</span>
+        </p>
+        <p class="wallet-note">
+          Puedes aplicar tu saldo para cubrir total o parcialmente el monto de tu compra.
+        </p>
+
+        <!-- Formulario mínimo para mandar datos a la siguiente pantalla -->
+        <form id="form-monedero" action="confirmacion.html" method="get">
+          <!-- Campos ocultos que viajan a la siguiente pantalla -->
+          <input type="hidden" name="nombre" id="hidden-nombre">
+          <input type="hidden" name="correo" id="hidden-correo">
+          <input type="hidden" name="metodo" id="hidden-metodo" value="monedero">
+
+          <div class="payment-actions">
+            <button type="submit" class="btn">Usar saldo</button>
+            <button type="button" class="btn btn--ghost">Agregar saldo</button>
+            <a href="metodos.html" class="btn btn--ghost">Cambiar método</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+      <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+      <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
+    </div>
+  </div>
+</footer>
+
+
+
+
+  <script src="../../js/app.js"></script>
+  <script>
+    // Leer nombre y correo de la URL (vienen desde metodos.html)
+    const params  = new URLSearchParams(window.location.search);
+    const nombre  = params.get('nombre') || 'Cliente';
+    const correo  = params.get('correo') || 'correo@ejemplo.com';
+
+    // Mostrar en el resumen
+    document.getElementById('res-nombre').textContent = nombre;
+    document.getElementById('res-correo').textContent = correo;
+
+    // Pasar a la siguiente pantalla como campos ocultos
+    document.getElementById('hidden-nombre').value = nombre;
+    document.getElementById('hidden-correo').value = correo;
+
+    // 50% confirmación / 50% error-pago al usar saldo
+    const formMonedero = document.getElementById('form-monedero');
+    formMonedero.addEventListener('submit', (e) => {
+      const destino = Math.random() < 0.5 ? 'confirmacion.html' : 'error-pago.html';
+      formMonedero.action = destino;
+    });
+  </script>
+</body>
+</html>

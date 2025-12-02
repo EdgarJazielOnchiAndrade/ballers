@@ -25,13 +25,27 @@
       font-size:0.9em;
       color:#aaa;
     }
+    .btn-back {
+      margin-top:10px;
+      padding:8px 18px;
+      border:none;
+      border-radius:6px;
+      background:#ff6a00;
+      color:#000;
+      font-weight:600;
+      cursor:pointer;
+      font-family:'Poppins',sans-serif;
+    }
+    .btn-back:hover {
+      opacity:0.9;
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     <h1>Sección de Cumplimiento Legal</h1>
-    <p>En <strong>Ballers 🏀👟</strong> estamos comprometidos con los derechos del consumidor y con el cumplimiento de las normas mexicanas que protegen las compras y la información de nuestros clientes.</p>
+    <p>En <strong>Ballers</strong> estamos comprometidos con los derechos del consumidor y con el cumplimiento de las normas mexicanas que protegen las compras y la información de nuestros clientes.</p>
 
     <h2>Derechos del consumidor</h2>
     <p>Todo cliente tiene derecho a recibir información clara, precios visibles, productos auténticos y atención responsable. Nos aseguramos de que la descripción y el costo de cada artículo sean correctos y estén actualizados, cumpliendo con lo establecido por la PROFECO.</p>
@@ -52,7 +66,9 @@
 
   <div class="footer">
     <p>© 2025 Ballers. Todos los derechos reservados.</p>
-    <a href="../../../index.html">← Volver al inicio</a>
+    <button type="button" class="btn-back" onclick="window.history.back()">
+      ← Volver
+    </button>
   </div>
 
 </body>

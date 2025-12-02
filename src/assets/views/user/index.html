@@ -8,6 +8,67 @@
   <style>
     .header__inner{ display:flex; align-items:center; gap:12px; }
     .nav{ margin-left:auto; }
+
+    /* Bloque de métodos de pago tradicionales (igual que en el index público) */
+    .payment-section {
+      background: #050505;
+      color: #f5f5f5;
+      padding: 40px 0;
+      margin-top: 32px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .payment-section__inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+      text-align: center;
+    }
+
+    .payment-section__title {
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+      color: #ffd166;
+    }
+
+    .payment-section__subtitle {
+      font-size: 0.95rem;
+      color: #aaa;
+      margin-bottom: 24px;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .payment-card {
+      background: #111;
+      border-radius: 14px;
+      padding: 18px 16px;
+      border: 1px solid #262626;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .payment-card__badge {
+      font-size: 0.8rem;
+      color: #0af5a1;
+    }
+
+    .payment-card__title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .payment-card__desc {
+      font-size: 0.9rem;
+      color: #c5c5c5;
+    }
   </style>
 </head>
 <body>
@@ -64,14 +125,49 @@
     </div>
   </section>
 
-  <!-- Grid de productos (ya sin el bloque de texto) -->
+  <!-- Grid de productos -->
   <main class="container">
     <section id="home-grid" class="grid" aria-live="polite"></section>
   </main>
 
-  <!-- Footer -->
-<!-- Footer CORREGIDO -->
-<!-- Footer CORREGIDO FINAL -->
+  <!-- Bloque de métodos de pago (igual que en el index público) -->
+  <section class="payment-section" aria-labelledby="payment-title">
+    <div class="payment-section__inner">
+      <h2 id="payment-title" class="payment-section__title">
+        Métodos de pago disponibles
+      </h2>
+      <p class="payment-section__subtitle">
+        En Ballers aceptamos los siguientes métodos de pago para tus compras.
+      </p>
+
+      <div class="payment-grid">
+        <article class="payment-card">
+          <span class="payment-card__badge">Tarjetas bancarias</span>
+          <h3 class="payment-card__title">Visa / Mastercard</h3>
+          <p class="payment-card__desc">
+            Pagos con tarjeta de crédito o débito.
+          </p>
+        </article>
+
+        <article class="payment-card">
+          <span class="payment-card__badge">Transferencia</span>
+          <h3 class="payment-card__title">SPEI</h3>
+          <p class="payment-card__desc">
+            Pagos mediante transferencia interbancaria SPEI.
+          </p>
+        </article>
+
+        <article class="payment-card">
+          <span class="payment-card__badge">Pago en tienda</span>
+          <h3 class="payment-card__title">OXXO</h3>
+          <p class="payment-card__desc">
+            Pago en efectivo en tiendas OXXO mediante una referencia.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
 <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
   <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
     <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
@@ -80,6 +176,8 @@
       <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
       <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
       <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+      <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+      <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
     </nav>
 
     <div style="margin-top:8px; color:#fff;">
@@ -89,6 +187,7 @@
     </div>
   </div>
 </footer>
+
 
 
 

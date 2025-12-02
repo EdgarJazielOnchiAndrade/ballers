@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Métodos de pago | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+
+  <style>
+    .header__inner{ display:flex; align-items:center; gap:12px; }
+    .nav{ margin-left:auto; }
+
+    main.methods-main{
+      padding:22px 0 64px;
+      min-height:70vh;
+    }
+
+    .methods-summary{
+      max-width:640px;
+      margin-top:8px;
+      font-size:0.95rem;
+    }
+    .methods-summary p{
+      margin:2px 0;
+    }
+
+    .methods-selected-box{
+      max-width:640px;
+      margin:22px auto 0;
+      padding:14px 16px;
+      border-radius:12px;
+      border:1px solid #262626;
+      background:#111;
+      text-align:center;
+      box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .methods-selected-box p{
+      margin:0 0 10px;
+      font-size:0.95rem;
+    }
+
+    .methods-selected-label{
+      color:#ffd166;
+      font-weight:600;
+    }
+
+    .methods-grid{
+      max-width:840px;
+      margin:22px auto 0;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px,1fr));
+      gap:16px;
+    }
+
+    .method-card{
+      background:#111;
+      border-radius:12px;
+      border:1px solid #262626;
+      padding:16px 14px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.25);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:8px;
+      cursor:pointer;
+      transition:border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .method-card h3{
+      margin:0 0 4px;
+      font-size:1rem;
+    }
+
+    .method-card p{
+      margin:0 0 8px;
+      font-size:0.9rem;
+      color:#cfcfcf;
+    }
+
+    .method-card button{
+      width:100%;
+      text-align:center;
+      justify-content:center;
+    }
+
+    .method-card--active{
+      border-color:#ff6a00;
+      box-shadow:0 0 0 1px rgba(255,106,0,0.45);
+    }
+
+    .methods-actions{
+      margin-top:22px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn[disabled]{
+      opacity:0.5;
+      cursor:not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (usuario) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a class="active" href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container methods-main">
+    <section class="section">
+      <h2 style="margin:0 0 4px;">Selecciona el método de pago</h2>
+      <p class="muted" style="font-size:0.9rem;">
+        Elige cómo quieres completar tu compra.
+      </p>
+
+      <!-- Resumen de datos que vienen de micropago.html / pago.html -->
+      <div class="methods-summary">
+        <p><strong>Nombre:</strong> <span id="res-nombre">Cliente</span></p>
+        <p><strong>Correo:</strong> <span id="res-correo">correo@ejemplo.com</span></p>
+      </div>
+
+      <!-- Grid de métodos -->
+      <div class="methods-grid" id="methods-grid">
+        <!-- Tarjeta -->
+        <article class="method-card" data-label="Pago con tarjeta" data-page="pago-tarjeta.html">
+          <div>
+            <h3>Pago con tarjeta</h3>
+            <p>Tarjeta de crédito o débito (Visa / Mastercard) a través de una pasarela bancaria.</p>
+          </div>
+          <button type="button" class="btn">Seleccionar</button>
+        </article>
+
+        <!-- Monedero digital -->
+        <article class="method-card" data-label="Pago con monedero digital" data-page="pago-monedero.html">
+          <div>
+            <h3>Pago con monedero digital</h3>
+            <p>Utiliza tu saldo almacenado en un monedero digital asociado a tu cuenta.</p>
+          </div>
+          <button type="button" class="btn">Seleccionar</button>
+        </article>
+
+        <!-- Cheque electrónico -->
+        <article class="method-card" data-label="Pago con cheque electrónico" data-page="pago-cheque.html">
+          <div>
+            <h3>Pago con cheque electrónico</h3>
+            <p>Registra los datos de un cheque electrónico emitido por tu banco.</p>
+          </div>
+          <button type="button" class="btn">Seleccionar</button>
+        </article>
+
+        <!-- Cajero -->
+        <article class="method-card" data-label="Pago desde cajero" data-page="pago-cajero.html">
+          <div>
+            <h3>Pago desde cajero</h3>
+            <p>Genera una referencia para completar el pago desde un cajero automático.</p>
+          </div>
+          <button type="button" class="btn">Seleccionar</button>
+        </article>
+
+        <!-- NUEVO: Pago por transferencia -->
+        <article class="method-card" data-label="Pago por transferencia" data-page="pago-transferencia.html">
+          <div>
+            <h3>Pago por transferencia</h3>
+            <p>Realiza una transferencia bancaria utilizando CLABE y referencia de tu pedido.</p>
+          </div>
+          <button type="button" class="btn">Seleccionar</button>
+        </article>
+
+        <!-- NUEVO: Pago en efectivo -->
+        <article class="method-card" data-label="Pago en efectivo" data-page="pago-efectivo.html">
+          <div>
+            <h3>Pago en efectivo</h3>
+            <p>Genera un código o QR para pagar en efectivo en una sucursal autorizada.</p>
+          </div>
+          <button type="button" class="btn">Seleccionar</button>
+        </article>
+      </div>
+
+      <!-- Recuadro debajo de todos los métodos -->
+      <div class="methods-selected-box">
+        <p>
+          Has seleccionado:
+          <span class="methods-selected-label" id="texto-seleccion">
+            ningún método todavía.
+          </span>
+        </p>
+        <button id="btn-continuar" class="btn" disabled>
+          Continuar con el pago
+        </button>
+      </div>
+
+      <!-- Acciones -->
+      <div class="methods-actions">
+        <a id="link-volver" href="micropago.html" class="btn btn--ghost">Volver</a>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+      <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+      <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
+    </div>
+  </div>
+</footer>
+
+
+  <script src="../../js/app.js"></script>
+  <script>
+    // Leer nombre y correo que vienen de micropago.html / pago.html
+    const params = new URLSearchParams(window.location.search);
+    const nombre = params.get('nombre') || 'Cliente';
+    const correo = params.get('correo') || 'correo@ejemplo.com';
+
+    document.getElementById('res-nombre').textContent = nombre;
+    document.getElementById('res-correo').textContent = correo;
+
+    const textoSeleccion = document.getElementById('texto-seleccion');
+    const btnContinuar   = document.getElementById('btn-continuar');
+    const cards          = document.querySelectorAll('.method-card');
+    const backLink       = document.getElementById('link-volver');
+
+    let selectedUrl = null;   // ruta del método elegido con querystring
+    let selectedCard = null;  // referencia a la card activa
+
+    // Query string común para pasar datos a la siguiente pantalla
+    const baseQuery = `?nombre=${encodeURIComponent(nombre)}&correo=${encodeURIComponent(correo)}`;
+
+    // Actualizar link "Volver" para conservar datos
+    if (backLink) {
+      backLink.href = 'micropago.html' + baseQuery;
+    }
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Quitar estado activo anterior
+        if (selectedCard) {
+          selectedCard.classList.remove('method-card--active');
+        }
+
+        // Marcar esta card como activa
+        selectedCard = card;
+        card.classList.add('method-card--active');
+
+        const label = card.dataset.label || 'método de pago';
+        const page  = card.dataset.page  || '#';
+
+        // Actualizar texto del recuadro
+        textoSeleccion.textContent = label;
+
+        // Guardar URL final a donde iremos al continuar
+        selectedUrl = page + baseQuery;
+
+        // Habilitar botón "Continuar con el pago"
+        btnContinuar.disabled = false;
+      });
+    });
+
+    // Navegar a la pantalla del método elegido
+    btnContinuar.addEventListener('click', () => {
+      if (!selectedUrl) return;
+      window.location.href = selectedUrl;
+    });
+  </script>
+</body>
+</html>

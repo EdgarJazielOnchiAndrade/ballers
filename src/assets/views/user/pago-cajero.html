@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pago desde cajero automático | Ballers</title>
+  <!-- estás en: src/assets/views/user/ -->
+  <link rel="stylesheet" href="../../css/base.css"/>
+
+  <style>
+    .header__inner{ display:flex; align-items:center; gap:12px; }
+    .nav{ margin-left:auto; }
+
+    main.payment-main{
+      padding:22px 0 64px;
+      min-height:70vh;
+    }
+
+    .summary-box{
+      max-width:640px;
+      margin-top:8px;
+      font-size:0.95rem;
+    }
+    .summary-box p{ margin:2px 0; }
+
+    .atm-box{
+      max-width:680px;
+      margin-top:18px;
+      padding:18px 16px;
+      border-radius:12px;
+      border:1px solid #262626;
+      background:#111;
+      box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .atm-box h3{
+      margin:0 0 8px;
+      font-size:1.05rem;
+    }
+
+    .atm-text{
+      font-size:0.9rem;
+      color:#cfcfcf;
+      margin:0 0 10px;
+    }
+
+    .atm-steps{
+      margin:6px 0 10px 18px;
+      font-size:0.9rem;
+      color:#e0e0e0;
+    }
+
+    .atm-steps li{
+      margin-bottom:4px;
+    }
+
+    .atm-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+
+    .atm-field{
+      display:flex;
+      flex-direction:column;
+      font-size:0.9rem;
+    }
+
+    .atm-field input{
+      margin-top:4px;
+      padding:8px;
+      border-radius:4px;
+      border:1px solid #333;
+      background:#111;
+      color:#f5f5f5;
+    }
+
+    .atm-checkbox{
+      margin-top:10px;
+      font-size:0.9rem;
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+    }
+
+    .atm-checkbox input{
+      margin-top:3px;
+    }
+
+    .payment-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+
+    .payment-note{
+      margin-top:6px;
+      font-size:0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (usuario) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="catalog_user.html">Catálogo</a></li>
+          <li><a class="active" href="cart.html">Carrito</a></li>
+          <li><a href="comprados.html">Ver productos comprados</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+          <li><a href="editar.html">Editar información</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container payment-main">
+    <section class="section">
+      <h2 style="margin:0 0 4px;">Pago desde cajero automático</h2>
+      <p class="muted payment-note">
+        Revisa los datos y sigue las instrucciones para completar el pago en un cajero automático.
+      </p>
+
+      <!-- Resumen de datos que vienen de metodos.html -->
+      <div class="summary-box">
+        <p><strong>Nombre:</strong> <span id="res-nombre">Cliente</span></p>
+        <p><strong>Correo:</strong> <span id="res-correo">correo@ejemplo.com</span></p>
+        <p><strong>Método:</strong> Pago desde cajero</p>
+      </div>
+
+      <div class="atm-box">
+        <h3>Instrucciones para realizar el pago</h3>
+        <p class="atm-text">
+          Para completar este pago debes acudir a un cajero automático. Este proceso se simula en este sitio.
+        </p>
+
+        <ul class="atm-steps">
+          <li>1. Dirígete a un cajero automático de tu banco.</li>
+          <li>2. Inserta tu tarjeta y selecciona la opción de pago de servicios o transferencias.</li>
+          <li>3. Ingresa los datos que se muestran a continuación (cuenta o convenio y referencia).</li>
+          <li>4. Confirma el monto antes de finalizar la operación.</li>
+          <li>5. Conserva tu comprobante por cualquier aclaración.</li>
+        </ul>
+
+        <form id="form-cajero" action="confirmacion.html" method="get">
+          <!-- Campos ocultos que viajan a la siguiente pantalla -->
+          <input type="hidden" name="nombre" id="hidden-nombre">
+          <input type="hidden" name="correo" id="hidden-correo">
+          <input type="hidden" name="metodo" id="hidden-metodo" value="cajero">
+
+          <div class="atm-grid">
+            <div class="atm-field">
+              <label for="atm-banco">
+                Banco
+              </label>
+              <input id="atm-banco" type="text" value="Banco Ballers" readonly>
+            </div>
+
+            <div class="atm-field">
+              <label for="atm-cuenta">
+                Cuenta / Convenio
+              </label>
+              <input id="atm-cuenta" type="text" value="1122 3344 5566 7788" readonly>
+            </div>
+
+            <div class="atm-field">
+              <label for="atm-referencia">
+                Referencia de pago
+              </label>
+              <input id="atm-referencia" type="text" value="PED-001-CAJERO" readonly>
+            </div>
+
+            <div class="atm-field">
+              <label for="atm-monto">
+                Monto a pagar (MXN)
+              </label>
+              <input id="atm-monto" type="text" value="$5,697.00" readonly>
+            </div>
+          </div>
+
+          <div class="atm-checkbox">
+            <input id="chk-realizado" type="checkbox">
+            <label for="chk-realizado">
+              Confirmo que ya realicé el pago en el cajero y deseo registrar la operación.
+            </label>
+          </div>
+
+          <div class="payment-actions">
+            <button type="submit" class="btn">Registrar pago</button>
+            <a href="metodos.html" class="btn btn--ghost">Cambiar método</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+      <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+      <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+      <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+      <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+      <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+    </nav>
+
+    <div style="margin-top:8px; color:#fff;">
+      <strong>Contacto:</strong><br>
+      Teléfono: +52 449 123 4567<br>
+      Correo: contacto@ballers.com
+    </div>
+  </div>
+</footer>
+
+
+
+
+  <script src="../../js/app.js"></script>
+  <script>
+    // Leer nombre y correo de la URL (vienen desde metodos.html)
+    const params  = new URLSearchParams(window.location.search);
+    const nombre  = params.get('nombre') || 'Cliente';
+    const correo  = params.get('correo') || 'correo@ejemplo.com';
+
+    // Mostrar en el resumen
+    document.getElementById('res-nombre').textContent = nombre;
+    document.getElementById('res-correo').textContent = correo;
+
+    // Pasar a la siguiente pantalla como campos ocultos
+    document.getElementById('hidden-nombre').value = nombre;
+    document.getElementById('hidden-correo').value = correo;
+
+    // 50% confirmación / 50% error-pago al registrar pago
+    const formCajero   = document.getElementById('form-cajero');
+    const chkRealizado = document.getElementById('chk-realizado');
+
+    formCajero.addEventListener('submit', (e) => {
+      // si quieres obligar a marcar la casilla, descomenta:
+      // if (!chkRealizado.checked) {
+      //   e.preventDefault();
+      //   alert('Marca la casilla para confirmar que realizaste el pago en el cajero.');
+      //   return;
+      // }
+
+      const destino = Math.random() < 0.5 ? 'confirmacion.html' : 'error-pago.html';
+      formCajero.action = destino;
+    });
+  </script>
+</body>
+</html>
