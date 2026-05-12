@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ayuda y soporte | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .top-box{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .top-box h2{
+      margin:0 0 8px;
+    }
+
+    .top-box p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .layout{
+      display:grid;
+      gap:18px;
+    }
+
+    @media (min-width:1100px){
+      .layout{
+        grid-template-columns:420px 1fr;
+      }
+    }
+
+    .section-box{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:20px;
+      display:grid;
+      gap:14px;
+    }
+
+    .section-box h3{
+      margin:0;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .form-row{
+      display:grid;
+      gap:6px;
+    }
+
+    .form-row label{
+      font-weight:700;
+    }
+
+    .form-row input,
+    .form-row select,
+    .form-row textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+      box-sizing:border-box;
+      resize:vertical;
+    }
+
+    .form-row textarea{
+      min-height:120px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .msg-box{
+      margin:18px 0;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .solicitudes-list{
+      display:grid;
+      gap:16px;
+    }
+
+    .solicitud-card{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:16px;
+      display:grid;
+      gap:12px;
+    }
+
+    .solicitud-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+    }
+
+    .solicitud-title{
+      font-size:1rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .solicitud-meta{
+      display:grid;
+      gap:5px;
+      color:var(--muted);
+      font-size:.94rem;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:700;
+      border:1px solid #333;
+      width:max-content;
+      text-transform:capitalize;
+    }
+
+    .estado-por_resolver{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .estado-en_proceso{
+      color:#9ecbff;
+      border-color:#355c9a;
+      background:#10213d;
+    }
+
+    .estado-resuelto{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .prioridad-baja{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .prioridad-media{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .prioridad-alta{
+      color:#ff8b8b;
+      border-color:#6d2c2c;
+      background:#241313;
+    }
+
+    .respuesta-box{
+      padding:14px;
+      border-radius:14px;
+      border:1px solid #2a2a32;
+      background:#15151a;
+      color:#d8d8de;
+      line-height:1.5;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    .helper-note{
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.45;
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a class="active" href="soporte.html" aria-current="page">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="top-box">
+      <h2>Ayuda y soporte</h2>
+      <p>Cuéntanos qué sucede y nuestro equipo dará seguimiento a tu solicitud.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section class="layout">
+      <article class="section-box">
+        <h3>Crear solicitud</h3>
+        <p class="helper-note">
+          Puedes reportar problemas con productos, pedidos, pagos, facturación, envío o cualquier otra situación relacionada con tu compra.
+        </p>
+
+        <form id="soporte-form" class="form-grid">
+          <div class="form-row">
+            <label for="tipo_solicitud">Tipo de solicitud</label>
+            <select id="tipo_solicitud" required>
+              <option value="problema_producto">Problema con producto</option>
+              <option value="problema_pedido">Problema con pedido</option>
+              <option value="problema_pago">Problema con pago</option>
+              <option value="factura">Factura</option>
+              <option value="envio_seguimiento">Envío / seguimiento</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="orden_id">Pedido relacionado</label>
+            <select id="orden_id">
+              <option value="">Selecciona un pedido</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="producto_id">Producto relacionado</label>
+            <select id="producto_id">
+              <option value="">Selecciona un producto</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="asunto">Asunto</label>
+            <input id="asunto" type="text" maxlength="150" placeholder="Ejemplo: Producto llegó incompleto" required />
+          </div>
+
+          <div class="form-row">
+            <label for="descripcion">Descripción detallada</label>
+            <textarea id="descripcion" placeholder="Describe con detalle lo que sucedió..." required></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="prioridad">Prioridad</label>
+            <select id="prioridad">
+              <option value="baja">Baja</option>
+              <option value="media" selected>Media</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit" id="btn-enviar">Enviar solicitud</button>
+            <button class="btn btn--ghost" type="button" id="btn-recargar">Recargar</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="section-box">
+        <h3>Mis solicitudes</h3>
+        <div id="solicitudes-list" class="solicitudes-list">
+          <div class="empty-box">Cargando solicitudes...</div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const mensaje = document.getElementById('mensaje');
+    const form = document.getElementById('soporte-form');
+    const btnEnviar = document.getElementById('btn-enviar');
+    const btnRecargar = document.getElementById('btn-recargar');
+    const solicitudesList = document.getElementById('solicitudes-list');
+    const ordenSelect = document.getElementById('orden_id');
+    const productoSelect = document.getElementById('producto_id');
+    const tipoSolicitudSelect = document.getElementById('tipo_solicitud');
+
+    let clienteId = null;
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      mensaje.textContent = texto;
+      mensaje.className = `msg-box ${tipo}`;
+    }
+
+    function limpiarMensaje() {
+      mensaje.textContent = '';
+      mensaje.className = 'msg-box';
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      const f = new Date(fecha);
+      if (Number.isNaN(f.getTime())) return String(fecha);
+      return f.toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function textoTipoSolicitud(tipo) {
+      const mapa = {
+        problema_producto: 'Problema con producto',
+        problema_pedido: 'Problema con pedido',
+        problema_pago: 'Problema con pago',
+        factura: 'Factura',
+        envio_seguimiento: 'Envío / seguimiento',
+        otro: 'Otro'
+      };
+      return mapa[tipo] || tipo || '-';
+    }
+
+    function textoEstado(estado) {
+      const mapa = {
+        por_resolver: 'Por resolver',
+        en_proceso: 'En proceso',
+        resuelto: 'Resuelto'
+      };
+      return mapa[estado] || estado || '-';
+    }
+
+    function textoPrioridad(prioridad) {
+      const mapa = {
+        baja: 'Baja',
+        media: 'Media',
+        alta: 'Alta'
+      };
+      return mapa[prioridad] || prioridad || '-';
+    }
+
+    function renderSolicitudes(lista) {
+      if (!lista.length) {
+        solicitudesList.innerHTML = `
+          <div class="empty-box">
+            Aún no has creado solicitudes de ayuda y soporte.
+          </div>
+        `;
+        return;
+      }
+
+      solicitudesList.innerHTML = lista.map(item => `
+        <article class="solicitud-card">
+          <div class="solicitud-head">
+            <div class="solicitud-meta">
+              <div class="solicitud-title">SUP-${escaparHtml(item.id)}</div>
+              <div>Fecha: ${formatearFecha(item.creado_en)}</div>
+              <div>Tipo: ${escaparHtml(textoTipoSolicitud(item.tipo_solicitud))}</div>
+              <div>Asunto: ${escaparHtml(item.asunto)}</div>
+              ${item.orden_id ? `<div>Pedido relacionado: #${escaparHtml(item.orden_id)}</div>` : ''}
+              ${item.producto_nombre ? `<div>Producto: ${escaparHtml(item.producto_nombre)}</div>` : ''}
+            </div>
+
+            <div style="display:grid; gap:8px;">
+              <span class="badge estado-${escaparHtml(item.estado)}">${escaparHtml(textoEstado(item.estado))}</span>
+              <span class="badge prioridad-${escaparHtml(item.prioridad)}">${escaparHtml(textoPrioridad(item.prioridad))}</span>
+            </div>
+          </div>
+
+          <div class="helper-note">
+            ${escaparHtml(item.descripcion)}
+          </div>
+
+          ${item.respuesta_admin ? `
+            <div class="respuesta-box">
+              <strong style="display:block;margin-bottom:6px;color:#fff;">Respuesta del equipo</strong>
+              ${escaparHtml(item.respuesta_admin)}
+            </div>
+          ` : ''}
+        </article>
+      `).join('');
+    }
+
+    function llenarPedidos(lista) {
+      ordenSelect.innerHTML = '<option value="">Selecciona un pedido</option>' +
+        lista.map(item => `
+          <option value="${item.orden_id}">Pedido #${item.orden_id}</option>
+        `).join('');
+    }
+
+    function llenarProductos(lista) {
+      const mapa = new Map();
+
+      lista.forEach(item => {
+        if (item.producto_id && !mapa.has(item.producto_id)) {
+          mapa.set(item.producto_id, item.nombre || `Producto #${item.producto_id}`);
+        }
+      });
+
+      productoSelect.innerHTML = '<option value="">Selecciona un producto</option>' +
+        Array.from(mapa.entries()).map(([id, nombre]) => `
+          <option value="${id}">${escaparHtml(nombre)}</option>
+        `).join('');
+    }
+
+    function actualizarProductoSegunTipo() {
+      const tipo = tipoSolicitudSelect.value;
+      const desactivar = tipo !== 'problema_producto';
+
+      productoSelect.disabled = desactivar;
+      if (desactivar) {
+        productoSelect.value = '';
+      }
+    }
+
+    async function cargarComprasRelacionadas() {
+      const resp = await fetch(`/api/compras/${Number(clienteId)}`);
+      const data = await resp.json();
+
+      if (!resp.ok || !data.ok) {
+        throw new Error(data.message || 'No se pudieron cargar las compras del cliente');
+      }
+
+      const compras = Array.isArray(data.compras) ? data.compras : [];
+      llenarPedidos(compras);
+      llenarProductos(compras);
+      actualizarProductoSegunTipo();
+    }
+
+    async function cargarSolicitudes() {
+      const resp = await fetch(`/api/soporte/cliente/${Number(clienteId)}`);
+      const data = await resp.json();
+
+      if (!resp.ok || !data.ok) {
+        throw new Error(data.message || 'No se pudieron cargar las solicitudes');
+      }
+
+      const solicitudes = Array.isArray(data.solicitudes) ? data.solicitudes : [];
+      renderSolicitudes(solicitudes);
+    }
+
+    async function cargarTodo() {
+      try {
+        clienteId = localStorage.getItem('ballers_user_id');
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
+
+        if (!clienteId) {
+          mostrarMensaje('Primero debes iniciar sesión.', 'error');
+          solicitudesList.innerHTML = `<div class="empty-box">No has iniciado sesión.</div>`;
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          mostrarMensaje('Solo un cliente puede acceder a este apartado.', 'error');
+          solicitudesList.innerHTML = `<div class="empty-box">Acceso no permitido.</div>`;
+          return;
+        }
+
+        await Promise.all([
+          cargarComprasRelacionadas(),
+          cargarSolicitudes()
+        ]);
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje(error.message || 'Error al cargar la información.', 'error');
+        solicitudesList.innerHTML = `<div class="empty-box">No se pudo cargar la información.</div>`;
+      }
+    }
+
+    tipoSolicitudSelect.addEventListener('change', actualizarProductoSegunTipo);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      limpiarMensaje();
+
+      if (!clienteId) {
+        mostrarMensaje('Primero debes iniciar sesión.', 'error');
+        return;
+      }
+
+      const payload = {
+        cliente_id: Number(clienteId),
+        orden_id: ordenSelect.value ? Number(ordenSelect.value) : null,
+        producto_id: productoSelect.value ? Number(productoSelect.value) : null,
+        tipo_solicitud: document.getElementById('tipo_solicitud').value,
+        asunto: document.getElementById('asunto').value.trim(),
+        descripcion: document.getElementById('descripcion').value.trim(),
+        prioridad: document.getElementById('prioridad').value
+      };
+
+      if (!payload.tipo_solicitud || !payload.asunto || !payload.descripcion) {
+        mostrarMensaje('Completa los campos obligatorios.', 'error');
+        return;
+      }
+
+      if (payload.tipo_solicitud === 'problema_producto' && !payload.producto_id) {
+        mostrarMensaje('Selecciona el producto relacionado.', 'error');
+        return;
+      }
+
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Enviando...';
+
+      try {
+        const resp = await fetch('/api/soporte', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo crear la solicitud.', 'error');
+          btnEnviar.disabled = false;
+          btnEnviar.textContent = 'Enviar solicitud';
+          return;
+        }
+
+        mostrarMensaje(`Solicitud enviada correctamente. Folio: ${data.folio}`, 'ok');
+        form.reset();
+        actualizarProductoSegunTipo();
+        await cargarSolicitudes();
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor.', 'error');
+      } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Enviar solicitud';
+      }
+    });
+
+    btnRecargar.addEventListener('click', async () => {
+      limpiarMensaje();
+      await cargarTodo();
+    });
+
+    cargarTodo();
+  </script>
+</body>
+</html>

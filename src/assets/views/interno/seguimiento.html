@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seguimiento interno | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .top-box{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .top-box h2{
+      margin:0 0 8px;
+    }
+
+    .top-box p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .msg-box{
+      margin:18px 0;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .seguimiento-list{
+      display:grid;
+      gap:18px;
+    }
+
+    .pedido-card{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:20px;
+      display:grid;
+      gap:16px;
+    }
+
+    .pedido-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .pedido-title{
+      font-size:1.08rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .pedido-meta{
+      display:grid;
+      gap:6px;
+      color:var(--muted);
+    }
+
+    .grid-2{
+      display:grid;
+      gap:14px;
+    }
+
+    @media (min-width:860px){
+      .grid-2{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    .row label{
+      display:block;
+      font-weight:700;
+      margin:0 0 6px;
+    }
+
+    .row input,
+    .row select,
+    .row textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+      box-sizing:border-box;
+    }
+
+    .row textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .estado-badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:700;
+      border:1px solid #333;
+      width:max-content;
+    }
+
+    .estado-preparacion{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .estado-camino{
+      color:#7cc7ff;
+      border-color:#24506c;
+      background:#0f1b24;
+    }
+
+    .estado-entregado{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="top-box">
+      <h2>Gestión de seguimiento</h2>
+      <p>Actualiza el estado de los pedidos de los clientes.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section id="seguimiento-list" class="seguimiento-list">
+      <div class="empty-box">Cargando seguimientos...</div>
+    </section>
+  </main>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const mensaje = document.getElementById('mensaje');
+    const seguimientoList = document.getElementById('seguimiento-list');
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      mensaje.textContent = texto;
+      mensaje.className = `msg-box ${tipo}`;
+
+      setTimeout(() => {
+        mensaje.className = 'msg-box';
+        mensaje.textContent = '';
+      }, 2500);
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      const f = new Date(fecha);
+      if (Number.isNaN(f.getTime())) return fecha;
+      return f.toLocaleString('es-MX');
+    }
+
+    function obtenerClaseEstado(estado) {
+      if (estado === 'preparacion') return 'estado-badge estado-preparacion';
+      if (estado === 'en_camino') return 'estado-badge estado-camino';
+      if (estado === 'entregado') return 'estado-badge estado-entregado';
+      return 'estado-badge estado-preparacion';
+    }
+
+    function obtenerTextoEstado(estado) {
+      if (estado === 'preparacion') return 'En preparación';
+      if (estado === 'en_camino') return 'En camino';
+      if (estado === 'entregado') return 'Entregado';
+      return 'En preparación';
+    }
+
+    function renderSeguimientos(seguimientos) {
+      if (!seguimientos.length) {
+        seguimientoList.innerHTML = `
+          <div class="empty-box">
+            No hay seguimientos registrados.
+          </div>
+        `;
+        return;
+      }
+
+      seguimientoList.innerHTML = seguimientos.map(item => `
+        <article class="pedido-card">
+          <div class="pedido-head">
+            <div class="pedido-meta">
+              <div class="pedido-title">Pedido #${item.orden_id}</div>
+              <div>Cliente: ${escaparHtml(item.cliente_nombre || 'Cliente')}</div>
+              <div>Correo: ${escaparHtml(item.cliente_correo || '-')}</div>
+              <div>Fecha de compra: ${formatearFecha(item.fecha)}</div>
+              <div>Total: ${money(item.total)}</div>
+              <div>Última actualización: ${formatearFecha(item.actualizado_en)}</div>
+            </div>
+
+            <span class="${obtenerClaseEstado(item.estado)}">
+              ${escaparHtml(obtenerTextoEstado(item.estado))}
+            </span>
+          </div>
+
+          <div class="grid-2">
+            <div class="row">
+              <label for="estado-${item.orden_id}">Estado</label>
+              <select id="estado-${item.orden_id}">
+                <option value="preparacion" ${item.estado === 'preparacion' ? 'selected' : ''}>En preparación</option>
+                <option value="en_camino" ${item.estado === 'en_camino' ? 'selected' : ''}>En camino</option>
+                <option value="entregado" ${item.estado === 'entregado' ? 'selected' : ''}>Entregado</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <label for="comentario-${item.orden_id}">Comentario</label>
+              <textarea id="comentario-${item.orden_id}" placeholder="Escribe una nota para el cliente...">${escaparHtml(item.comentario || '')}</textarea>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="button" onclick="guardarSeguimiento(${Number(item.orden_id)})">
+              Guardar cambios
+            </button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    async function cargarSeguimientos() {
+      try {
+        const resp = await fetch('/api/interno/seguimiento');
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudieron cargar los seguimientos');
+        }
+
+        renderSeguimientos(Array.isArray(data.seguimientos) ? data.seguimientos : []);
+      } catch (error) {
+        console.error(error);
+        seguimientoList.innerHTML = `
+          <div class="empty-box">
+            Error al cargar seguimientos.
+          </div>
+        `;
+        mostrarMensaje(error.message || 'Error al cargar seguimientos', 'error');
+      }
+    }
+
+    async function guardarSeguimiento(ordenId) {
+      try {
+        const estado = document.getElementById(`estado-${ordenId}`).value;
+        const comentario = document.getElementById(`comentario-${ordenId}`).value.trim();
+
+        const resp = await fetch(`/api/interno/seguimiento/${ordenId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            estado,
+            comentario
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudo actualizar el seguimiento');
+        }
+
+        mostrarMensaje('Seguimiento actualizado correctamente', 'ok');
+        await cargarSeguimientos();
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje(error.message || 'Error al actualizar seguimiento', 'error');
+      }
+    }
+
+    window.guardarSeguimiento = guardarSeguimiento;
+
+    cargarSeguimientos();
+  </script>
+</body>
+</html>

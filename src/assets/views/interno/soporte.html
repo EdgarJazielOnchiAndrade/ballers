@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Soporte interno | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .top-box{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .top-box h2{
+      margin:0 0 8px;
+    }
+
+    .top-box p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .msg-box{
+      margin:18px 0;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .solicitudes-list{
+      display:grid;
+      gap:18px;
+    }
+
+    .solicitud-card{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:20px;
+      display:grid;
+      gap:16px;
+    }
+
+    .solicitud-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+    }
+
+    .solicitud-title{
+      font-size:1.08rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .solicitud-meta{
+      display:grid;
+      gap:5px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:700;
+      border:1px solid #333;
+      width:max-content;
+    }
+
+    .estado-por_resolver{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .estado-en_proceso{
+      color:#9ecbff;
+      border-color:#355c9a;
+      background:#10213d;
+    }
+
+    .estado-resuelto{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .prioridad-baja{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .prioridad-media{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .prioridad-alta{
+      color:#ff8b8b;
+      border-color:#6d2c2c;
+      background:#241313;
+    }
+
+    .detail-box{
+      padding:14px;
+      border:1px solid #23232a;
+      border-radius:14px;
+      background:#111;
+      color:#d8d8de;
+      line-height:1.5;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .form-row{
+      display:grid;
+      gap:6px;
+    }
+
+    .form-row label{
+      font-weight:700;
+    }
+
+    .form-row select,
+    .form-row textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+      box-sizing:border-box;
+      resize:vertical;
+    }
+
+    .form-row textarea{
+      min-height:110px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="clientes.html">Clientes</a></li>
+          <li><a href="ventas.html">Ventas</a></li>
+          <li><a href="productos.html">Productos</a></li>
+          <li><a class="active" href="soporte.html" aria-current="page">Soporte</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="top-box">
+      <h2>Gestión de soporte</h2>
+      <p>Consulta las solicitudes de clientes, cambia su estado y responde desde este panel.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section id="solicitudes-list" class="solicitudes-list">
+      <div class="empty-box">Cargando solicitudes...</div>
+    </section>
+  </main>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const mensaje = document.getElementById('mensaje');
+    const solicitudesList = document.getElementById('solicitudes-list');
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      mensaje.textContent = texto;
+      mensaje.className = `msg-box ${tipo}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      const f = new Date(fecha);
+      if (Number.isNaN(f.getTime())) return String(fecha);
+      return f.toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function textoTipoSolicitud(tipo) {
+      const mapa = {
+        problema_producto: 'Problema con producto',
+        problema_pedido: 'Problema con pedido',
+        problema_pago: 'Problema con pago',
+        factura: 'Factura',
+        envio_seguimiento: 'Envío / seguimiento',
+        otro: 'Otro'
+      };
+      return mapa[tipo] || tipo || '-';
+    }
+
+    function textoEstado(estado) {
+      const mapa = {
+        por_resolver: 'Por resolver',
+        en_proceso: 'En proceso',
+        resuelto: 'Resuelto'
+      };
+      return mapa[estado] || estado || '-';
+    }
+
+    function textoPrioridad(prioridad) {
+      const mapa = {
+        baja: 'Baja',
+        media: 'Media',
+        alta: 'Alta'
+      };
+      return mapa[prioridad] || prioridad || '-';
+    }
+
+    function renderSolicitudes(lista) {
+      if (!lista.length) {
+        solicitudesList.innerHTML = `
+          <div class="empty-box">
+            No hay solicitudes registradas.
+          </div>
+        `;
+        return;
+      }
+
+      solicitudesList.innerHTML = lista.map(item => `
+        <article class="solicitud-card">
+          <div class="solicitud-head">
+            <div class="solicitud-meta">
+              <div class="solicitud-title">SUP-${escaparHtml(item.id)} · ${escaparHtml(item.asunto)}</div>
+              <div>Cliente: ${escaparHtml(item.cliente_nombre || '-')}</div>
+              <div>Correo: ${escaparHtml(item.cliente_correo || '-')}</div>
+              <div>Fecha: ${formatearFecha(item.creado_en)}</div>
+              <div>Tipo: ${escaparHtml(textoTipoSolicitud(item.tipo_solicitud))}</div>
+              ${item.orden_id ? `<div>Pedido: #${escaparHtml(item.orden_id)}</div>` : ''}
+              ${item.producto_nombre ? `<div>Producto: ${escaparHtml(item.producto_nombre)}</div>` : ''}
+            </div>
+
+            <div style="display:grid; gap:8px;">
+              <span class="badge estado-${escaparHtml(item.estado)}">${escaparHtml(textoEstado(item.estado))}</span>
+              <span class="badge prioridad-${escaparHtml(item.prioridad)}">${escaparHtml(textoPrioridad(item.prioridad))}</span>
+            </div>
+          </div>
+
+          <div class="detail-box">
+            <strong style="display:block;margin-bottom:6px;color:#fff;">Descripción del cliente</strong>
+            ${escaparHtml(item.descripcion)}
+          </div>
+
+          ${item.respuesta_admin ? `
+            <div class="detail-box">
+              <strong style="display:block;margin-bottom:6px;color:#fff;">Respuesta actual</strong>
+              ${escaparHtml(item.respuesta_admin)}
+            </div>
+          ` : ''}
+
+          <form class="form-grid" onsubmit="guardarSolicitud(event, ${Number(item.id)})">
+            <div class="form-row">
+              <label for="estado-${Number(item.id)}">Estado</label>
+              <select id="estado-${Number(item.id)}">
+                <option value="por_resolver" ${item.estado === 'por_resolver' ? 'selected' : ''}>Por resolver</option>
+                <option value="en_proceso" ${item.estado === 'en_proceso' ? 'selected' : ''}>En proceso</option>
+                <option value="resuelto" ${item.estado === 'resuelto' ? 'selected' : ''}>Resuelto</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="respuesta-${Number(item.id)}">Respuesta al cliente</label>
+              <textarea id="respuesta-${Number(item.id)}" placeholder="Escribe una respuesta clara para el cliente...">${escaparHtml(item.respuesta_admin || '')}</textarea>
+            </div>
+
+            <div class="actions">
+              <button class="btn" type="submit">Guardar cambios</button>
+            </div>
+          </form>
+        </article>
+      `).join('');
+    }
+
+    async function cargarSolicitudes() {
+      try {
+        const resp = await fetch('/api/soporte');
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudieron cargar las solicitudes');
+        }
+
+        const solicitudes = Array.isArray(data.solicitudes) ? data.solicitudes : [];
+        renderSolicitudes(solicitudes);
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje(error.message || 'Error al cargar solicitudes', 'error');
+        solicitudesList.innerHTML = `<div class="empty-box">No se pudieron cargar las solicitudes.</div>`;
+      }
+    }
+
+    async function guardarSolicitud(event, id) {
+      event.preventDefault();
+
+      const estado = document.getElementById(`estado-${id}`).value;
+      const respuesta_admin = document.getElementById(`respuesta-${id}`).value.trim();
+
+      try {
+        const resp = await fetch(`/api/soporte/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            estado,
+            respuesta_admin
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo actualizar la solicitud.', 'error');
+          return;
+        }
+
+        if (estado === 'resuelto') {
+          mostrarMensaje(`Solicitud SUP-${id} actualizada y marcada como resuelta.`, 'ok');
+        } else {
+          mostrarMensaje(`Solicitud SUP-${id} actualizada correctamente.`, 'ok');
+        }
+
+        await cargarSolicitudes();
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor.', 'error');
+      }
+    }
+
+    window.guardarSolicitud = guardarSolicitud;
+
+    cargarSolicitudes();
+  </script>
+</body>
+</html>

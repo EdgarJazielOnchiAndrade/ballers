@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventario | Ballers SCM</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .grid-2{display:grid;gap:18px}
+    @media (min-width:1100px){.grid-2{grid-template-columns:380px 1fr}}
+    .form-grid{display:grid;gap:12px}
+    .form-row{display:grid;gap:6px}
+    .form-row input,.form-row select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .toolbar{display:grid;gap:12px;margin-bottom:16px}
+    @media (min-width:900px){.toolbar{grid-template-columns:1fr 220px}}
+    .toolbar input,.toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      overflow:hidden
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #23232a;
+      vertical-align:top
+    }
+    th{background:#17171c}
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333
+    }
+    .tag.entrada{color:#7CFC98;border-color:#1f6b37}
+    .tag.salida{color:#ff8b8b;border-color:#7a2f2f}
+    .tag.critico{color:#ffd166;border-color:#70561a}
+    .tag.normal{color:#7ec8ff;border-color:#275a7d}
+    .msg{margin-top:12px;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+    .subgrid{display:grid;gap:18px}
+    @media (min-width:1000px){.subgrid{grid-template-columns:1fr 1fr}}
+    .muted{color:var(--muted)}
+    .list-risk{display:grid;gap:12px}
+    .risk-item{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:14px;
+      padding:14px;
+    }
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Control de inventario y trazabilidad</h2>
+      <p class="muted" style="margin:0">
+        Registra entradas y salidas de inventario, revisa el historial por producto y detecta stock crítico.
+      </p>
+    </section>
+
+    <section class="grid-2">
+      <article class="section">
+        <h3 style="margin-top:0">Nuevo movimiento</h3>
+
+        <form id="movimiento-form" class="form-grid">
+          <div class="form-row">
+            <label for="producto_id">Producto</label>
+            <select id="producto_id" required>
+              <option value="">Selecciona un producto</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" required>
+              <option value="">Selecciona un tipo</option>
+              <option value="entrada">Entrada</option>
+              <option value="salida">Salida</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="cantidad">Cantidad</label>
+            <input id="cantidad" type="number" min="1" required />
+          </div>
+
+          <div class="form-row">
+            <label for="motivo">Motivo</label>
+            <select id="motivo" required>
+              <option value="">Selecciona un motivo</option>
+              <option value="venta">Venta</option>
+              <option value="ajuste">Ajuste</option>
+              <option value="reposicion">Reposición</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Registrar movimiento</button>
+          </div>
+
+          <div id="mensaje" class="msg"></div>
+        </form>
+      </article>
+
+      <article class="section">
+        <div class="toolbar">
+          <select id="filtro-producto">
+            <option value="">Selecciona un producto para ver historial</option>
+          </select>
+          <select id="filtro-tipo">
+            <option value="">Todos los tipos</option>
+            <option value="entrada">Entrada</option>
+            <option value="salida">Salida</option>
+          </select>
+        </div>
+
+        <div id="historial-wrap"></div>
+      </article>
+    </section>
+
+    <section class="subgrid">
+      <article class="section">
+        <h3 style="margin-top:0">Estado actual del inventario</h3>
+        <div id="stock-wrap"></div>
+      </article>
+
+      <article class="section">
+        <h3 style="margin-top:0">Productos con stock crítico</h3>
+        <div id="riesgo-wrap"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const form = document.getElementById('movimiento-form');
+    const mensaje = document.getElementById('mensaje');
+    const productoSelect = document.getElementById('producto_id');
+    const filtroProducto = document.getElementById('filtro-producto');
+    const filtroTipo = document.getElementById('filtro-tipo');
+    const historialWrap = document.getElementById('historial-wrap');
+    const stockWrap = document.getElementById('stock-wrap');
+    const riesgoWrap = document.getElementById('riesgo-wrap');
+
+    let productos = [];
+    let movimientos = [];
+
+    function formatoFecha(fecha) {
+      return new Date(fecha).toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function cargarSelects() {
+      const opciones = productos.map(p =>
+        `<option value="${p.id}">${p.nombre}</option>`
+      ).join('');
+
+      productoSelect.innerHTML = `<option value="">Selecciona un producto</option>${opciones}`;
+      filtroProducto.innerHTML = `<option value="">Selecciona un producto para ver historial</option>${opciones}`;
+    }
+
+    function renderStockActual() {
+      if (!productos.length) {
+        stockWrap.innerHTML = '<div class="empty">No hay productos cargados.</div>';
+        return;
+      }
+
+      stockWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Stock actual</th>
+              <th>Stock mínimo</th>
+              <th>Estrategia</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${productos.map(p => {
+              const critico = Number(p.stock_actual) <= Number(p.stock_minimo);
+              return `
+                <tr>
+                  <td>${p.nombre}</td>
+                  <td>${p.stock_actual}</td>
+                  <td>${p.stock_minimo}</td>
+                  <td>${p.estrategia_logistica}</td>
+                  <td>
+                    <span class="tag ${critico ? 'critico' : 'normal'}">
+                      ${critico ? 'Stock crítico' : 'Normal'}
+                    </span>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderRiesgo() {
+      const criticos = productos.filter(p => Number(p.stock_actual) <= Number(p.stock_minimo));
+
+      if (!criticos.length) {
+        riesgoWrap.innerHTML = '<div class="empty">No hay productos en nivel crítico.</div>';
+        return;
+      }
+
+      riesgoWrap.innerHTML = `
+        <div class="list-risk">
+          ${criticos.map(p => `
+            <article class="risk-item">
+              <strong>${p.nombre}</strong>
+              <div class="muted">Stock actual: ${p.stock_actual}</div>
+              <div class="muted">Stock mínimo: ${p.stock_minimo}</div>
+              <div class="muted">Estrategia: ${p.estrategia_logistica}</div>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderHistorial() {
+      const productoId = filtroProducto.value;
+      const tipo = filtroTipo.value;
+
+      let lista = [...movimientos];
+
+      if (tipo) {
+        lista = lista.filter(m => m.tipo === tipo);
+      }
+
+      if (!productoId) {
+        historialWrap.innerHTML = '<div class="empty">Selecciona un producto para ver su historial.</div>';
+        return;
+      }
+
+      if (!lista.length) {
+        historialWrap.innerHTML = '<div class="empty">No hay movimientos para mostrar.</div>';
+        return;
+      }
+
+      historialWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Motivo</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(m => `
+              <tr>
+                <td><span class="tag ${m.tipo}">${m.tipo}</span></td>
+                <td>${m.cantidad}</td>
+                <td>${m.motivo}</td>
+                <td>${formatoFecha(m.fecha)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function cargarProductos() {
+      try {
+        const resp = await fetch('/api/productos');
+        productos = await resp.json();
+        cargarSelects();
+        renderStockActual();
+        renderRiesgo();
+      } catch (error) {
+        console.error(error);
+        stockWrap.innerHTML = '<div class="empty">No se pudieron cargar los productos.</div>';
+        riesgoWrap.innerHTML = '<div class="empty">No se pudo calcular el inventario crítico.</div>';
+      }
+    }
+
+    async function cargarMovimientos(productoId) {
+      if (!productoId) {
+        movimientos = [];
+        renderHistorial();
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/productos/${productoId}/movimientos`);
+        movimientos = await resp.json();
+        renderHistorial();
+      } catch (error) {
+        console.error(error);
+        historialWrap.innerHTML = '<div class="empty">No se pudo cargar el historial de movimientos.</div>';
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      mensaje.textContent = '';
+      mensaje.className = 'msg';
+
+      const payload = {
+        producto_id: productoSelect.value,
+        tipo: document.getElementById('tipo').value,
+        cantidad: Number(document.getElementById('cantidad').value || 0),
+        motivo: document.getElementById('motivo').value
+      };
+
+      if (!payload.producto_id || !payload.tipo || !payload.cantidad || !payload.motivo) {
+        mensaje.textContent = 'Completa todos los campos';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/inventario/movimiento', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mensaje.textContent = data.message || 'No se pudo registrar el movimiento';
+          mensaje.classList.add('error');
+          return;
+        }
+
+        mensaje.textContent = data.message || 'Movimiento registrado correctamente';
+        mensaje.classList.add('ok');
+
+        form.reset();
+
+        await cargarProductos();
+
+        if (filtroProducto.value === String(payload.producto_id)) {
+          await cargarMovimientos(payload.producto_id);
+        }
+      } catch (error) {
+        console.error(error);
+        mensaje.textContent = 'Error de conexión con el servidor';
+        mensaje.classList.add('error');
+      }
+    });
+
+    filtroProducto.addEventListener('change', () => {
+      cargarMovimientos(filtroProducto.value);
+    });
+
+    filtroTipo.addEventListener('change', renderHistorial);
+
+    cargarProductos();
+    renderHistorial();
+  </script>
+</body>
+</html>

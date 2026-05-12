@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clientes ERP Administrador | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    body{
+      margin:0;
+      background:#0f172a;
+      color:#fff;
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .erp-layout{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      min-height:100vh;
+    }
+    .erp-sidebar{
+      background:#111827;
+      border-right:1px solid #1f2937;
+      padding:22px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .erp-brand{
+      font-size:1.3rem;
+      font-weight:700;
+      color:#fff;
+      text-decoration:none;
+    }
+    .erp-subtitle{
+      color:#9ca3af;
+      font-size:.92rem;
+      margin-top:-8px;
+    }
+    .erp-menu{
+      display:grid;
+      gap:8px;
+      margin-top:8px;
+    }
+    .erp-menu a{
+      display:block;
+      padding:12px 14px;
+      border-radius:12px;
+      color:#e5e7eb;
+      text-decoration:none;
+      transition:.2s;
+      border:1px solid transparent;
+    }
+    .erp-menu a:hover{
+      background:#1f2937;
+      border-color:#374151;
+    }
+    .erp-menu a.active{
+      background:#2563eb;
+      border-color:#3b82f6;
+      color:#fff;
+      font-weight:700;
+    }
+    .erp-user{
+      margin-top:auto;
+      background:#0b1220;
+      border:1px solid #1f2937;
+      border-radius:14px;
+      padding:14px;
+    }
+    .erp-user strong{
+      display:block;
+      margin-bottom:4px;
+    }
+    .erp-user small{
+      color:#9ca3af;
+      display:block;
+      margin-bottom:12px;
+    }
+    .erp-user .btn{
+      width:100%;
+      text-align:center;
+      display:inline-block;
+      box-sizing:border-box;
+    }
+    .erp-main{
+      padding:24px;
+    }
+    .erp-title h1{
+      margin:0;
+      font-size:2rem;
+    }
+    .erp-title p{
+      margin:8px 0 0;
+      color:#9ca3af;
+    }
+    .section{
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:18px;
+      padding:20px;
+      margin:20px 0;
+    }
+    .toolbar{
+      display:grid;
+      gap:12px;
+      grid-template-columns:1.2fr .8fr .8fr;
+      margin-bottom:16px;
+    }
+    .toolbar input,
+    .toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a3142;
+      background:#141b2a;
+      color:#fff;
+      box-sizing:border-box;
+    }
+    .card-grid{
+      display:grid;
+      gap:16px;
+      grid-template-columns:repeat(4,1fr);
+      margin-top:20px;
+    }
+    .card-mini{
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:16px;
+      padding:18px;
+    }
+    .card-mini small{
+      display:block;
+      color:#9ca3af;
+      margin-bottom:8px;
+    }
+    .card-mini strong{
+      font-size:1.2rem;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#0b1220;
+      border:1px solid #1f2937;
+      border-radius:16px;
+      overflow:hidden;
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #1f2937;
+      vertical-align:top;
+    }
+    th{
+      background:#131c2e;
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333;
+    }
+    .tag.activo{
+      color:#7CFC98;
+      border-color:#1f6b37;
+    }
+    .tag.inactivo{
+      color:#ff8b8b;
+      border-color:#7a2f2f;
+    }
+    .tag.prospecto{
+      color:#ffd166;
+      border-color:#70561a;
+    }
+    .tag.frecuente{
+      color:#7ec8ff;
+      border-color:#275a7d;
+    }
+    .empty{
+      padding:18px;
+      border:1px dashed #374151;
+      border-radius:14px;
+      color:#9ca3af;
+    }
+    @media (max-width:1100px){
+      .toolbar,.card-grid{
+        grid-template-columns:1fr;
+      }
+    }
+    @media (max-width:800px){
+      .erp-layout{
+        grid-template-columns:1fr;
+      }
+      .erp-sidebar{
+        border-right:none;
+        border-bottom:1px solid #1f2937;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="erp-layout">
+    <aside class="erp-sidebar">
+      <a class="erp-brand" href="dashboard-erp-admin.html">Ballers ERP</a>
+      <div class="erp-subtitle">Panel administrativo</div>
+
+      <nav class="erp-menu">
+        <a href="dashboard-erp-admin.html">Dashboard</a>
+        <a href="ordenes-erp-admin.html">Órdenes</a>
+        <a href="clientes-erp-admin.html" class="active">Clientes</a>
+        <a href="inventario-erp-admin.html">Inventario</a>
+        <a href="procesos-erp-admin.html">Procesos</a>
+        <a href="recursos-erp-admin.html">Recursos</a>
+        <a href="estado-erp-admin.html">Estado ERP</a>
+      </nav>
+
+      <div class="erp-user">
+        <strong id="erp-user-name">Administrador</strong>
+        <small id="erp-user-role">administrador</small>
+        <a class="btn btn--ghost" href="index.html">Volver al panel</a>
+      </div>
+    </aside>
+
+    <main class="erp-main">
+      <div class="erp-title">
+        <h1>Clientes ERP Administrador</h1>
+        <p>Vista general de clientes vinculados al entorno ERP.</p>
+      </div>
+
+      <section class="card-grid">
+        <article class="card-mini">
+          <small>Total de clientes</small>
+          <strong id="kpi-total">0</strong>
+        </article>
+        <article class="card-mini">
+          <small>Clientes activos</small>
+          <strong id="kpi-activos">0</strong>
+        </article>
+        <article class="card-mini">
+          <small>Clientes inactivos</small>
+          <strong id="kpi-inactivos">0</strong>
+        </article>
+        <article class="card-mini">
+          <small>Prospectos</small>
+          <strong id="kpi-prospectos">0</strong>
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="toolbar">
+          <input id="buscar" type="text" placeholder="Buscar por nombre, correo o empresa" />
+          <select id="filtro-estado">
+            <option value="">Todos los estados</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+          <select id="filtro-etapa">
+            <option value="">Todas las etapas</option>
+            <option value="Prospecto">Prospecto</option>
+            <option value="Activo">Activo</option>
+            <option value="Frecuente">Frecuente</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+
+        <div id="tabla-wrap"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const tablaWrap = document.getElementById('tabla-wrap');
+    const buscar = document.getElementById('buscar');
+    const filtroEstado = document.getElementById('filtro-estado');
+    const filtroEtapa = document.getElementById('filtro-etapa');
+
+    let clientes = [];
+
+    function cargarUsuario() {
+      const nombre = localStorage.getItem('ballers_user_name') || localStorage.getItem('ballers_user_nombre') || 'Administrador';
+      const rol = localStorage.getItem('ballers_user_rol') || 'administrador';
+      document.getElementById('erp-user-name').textContent = nombre;
+      document.getElementById('erp-user-role').textContent = rol;
+    }
+
+    function tagEstado(valor) {
+      return `<span class="tag ${String(valor).toLowerCase()}">${valor}</span>`;
+    }
+
+    function tagEtapa(valor) {
+      const clase = String(valor).toLowerCase();
+      return `<span class="tag ${clase}">${valor}</span>`;
+    }
+
+    function actualizarKpis(listaBase) {
+      document.getElementById('kpi-total').textContent = listaBase.length;
+      document.getElementById('kpi-activos').textContent = listaBase.filter(c => c.estado === 'activo').length;
+      document.getElementById('kpi-inactivos').textContent = listaBase.filter(c => c.estado === 'inactivo').length;
+      document.getElementById('kpi-prospectos').textContent = listaBase.filter(c => c.etapa_crm === 'Prospecto').length;
+    }
+
+    function filtrarClientes() {
+      const texto = buscar.value.trim().toLowerCase();
+      const estado = filtroEstado.value;
+      const etapa = filtroEtapa.value;
+
+      return clientes.filter(c => {
+        const coincideTexto =
+          !texto ||
+          (c.nombre || '').toLowerCase().includes(texto) ||
+          (c.correo || '').toLowerCase().includes(texto) ||
+          (c.empresa || '').toLowerCase().includes(texto);
+
+        const coincideEstado = !estado || c.estado === estado;
+        const coincideEtapa = !etapa || c.etapa_crm === etapa;
+
+        return coincideTexto && coincideEstado && coincideEtapa;
+      });
+    }
+
+    function renderTabla() {
+      const lista = filtrarClientes();
+
+      if (!lista.length) {
+        tablaWrap.innerHTML = '<div class="empty">No hay clientes para mostrar.</div>';
+        return;
+      }
+
+      tablaWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Empresa</th>
+              <th>Estado</th>
+              <th>Etapa CRM</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(c => `
+              <tr>
+                <td>${c.id}</td>
+                <td>${c.nombre || '-'}</td>
+                <td>${c.correo || '-'}</td>
+                <td>${c.telefono || '-'}</td>
+                <td>${c.empresa || '-'}</td>
+                <td>${tagEstado(c.estado || '-')}</td>
+                <td>${tagEtapa(c.etapa_crm || '-')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function cargarClientes() {
+      try {
+        const resp = await fetch('/api/clientes');
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.message || 'No se pudieron cargar los clientes');
+        }
+
+        clientes = data;
+        actualizarKpis(clientes);
+        renderTabla();
+      } catch (error) {
+        console.error(error);
+        tablaWrap.innerHTML = '<div class="empty">No se pudieron cargar los clientes.</div>';
+      }
+    }
+
+    buscar.addEventListener('input', renderTabla);
+    filtroEstado.addEventListener('change', renderTabla);
+    filtroEtapa.addEventListener('change', renderTabla);
+
+    cargarUsuario();
+    cargarClientes();
+  </script>
+</body>
+</html>

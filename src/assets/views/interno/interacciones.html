@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interacciones | Ballers CRM</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .grid-2{display:grid;gap:18px}
+    @media (min-width:1000px){.grid-2{grid-template-columns:380px 1fr}}
+    .form-grid{display:grid;gap:12px}
+    .form-row{display:grid;gap:6px}
+    .form-row input,.form-row select,.form-row textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .form-row textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .toolbar{display:grid;gap:12px;margin-bottom:16px}
+    @media (min-width:900px){.toolbar{grid-template-columns:1fr 1fr}}
+    .toolbar input,.toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .msg{margin-top:12px;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+    .timeline{
+      display:grid;
+      gap:14px;
+    }
+    .timeline-item{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:14px;
+      padding:14px;
+    }
+    .timeline-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333
+    }
+    .tag.llamada{color:#ffd166;border-color:#70561a}
+    .tag.correo{color:#7ec8ff;border-color:#275a7d}
+    .tag.reunion{color:#7CFC98;border-color:#1f6b37}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Registro de interacciones</h2>
+      <p class="muted" style="margin:0">
+        Registra llamadas, correos y reuniones para mantener el historial centralizado del cliente.
+      </p>
+    </section>
+
+    <section class="grid-2">
+      <!-- FORMULARIO -->
+      <article class="section">
+        <h3 style="margin-top:0">Nueva interacción</h3>
+
+        <form id="interaccion-form" class="form-grid">
+          <div class="form-row">
+            <label for="cliente_id">Cliente</label>
+            <select id="cliente_id" required>
+              <option value="">Selecciona un cliente</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="tipo">Tipo de interacción</label>
+            <select id="tipo" required>
+              <option value="">Selecciona un tipo</option>
+              <option value="llamada">Llamada</option>
+              <option value="correo">Correo</option>
+              <option value="reunion">Reunión</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" placeholder="Describe brevemente la interacción..." required></textarea>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Guardar interacción</button>
+          </div>
+
+          <div id="mensaje" class="msg"></div>
+        </form>
+      </article>
+
+      <!-- HISTORIAL -->
+      <article class="section">
+        <div class="toolbar">
+          <select id="filtro-cliente">
+            <option value="">Selecciona un cliente para ver historial</option>
+          </select>
+          <input id="buscar-texto" type="text" placeholder="Buscar en descripciones" />
+        </div>
+
+        <div id="historial-wrap"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const form = document.getElementById('interaccion-form');
+    const mensaje = document.getElementById('mensaje');
+    const clienteSelect = document.getElementById('cliente_id');
+    const filtroCliente = document.getElementById('filtro-cliente');
+    const historialWrap = document.getElementById('historial-wrap');
+    const buscarTexto = document.getElementById('buscar-texto');
+
+    let clientes = [];
+    let interaccionesActuales = [];
+
+    function formatoFecha(fecha) {
+      return new Date(fecha).toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function renderHistorial() {
+      const texto = buscarTexto.value.trim().toLowerCase();
+      const lista = interaccionesActuales.filter(i =>
+        !texto || (i.descripcion || '').toLowerCase().includes(texto)
+      );
+
+      if (!lista.length) {
+        historialWrap.innerHTML = `<div class="empty">No hay interacciones para mostrar.</div>`;
+        return;
+      }
+
+      historialWrap.innerHTML = `
+        <div class="timeline">
+          ${lista.map(i => `
+            <article class="timeline-item">
+              <div class="timeline-top">
+                <div>
+                  <span class="tag ${i.tipo}">${i.tipo}</span>
+                </div>
+                <small class="muted">${formatoFecha(i.fecha)}</small>
+              </div>
+              <p style="margin:0 0 8px">${i.descripcion}</p>
+              <small class="muted">Registrado por: ${i.usuario_nombre || 'Usuario interno'}</small>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function cargarClientes() {
+      try {
+        const resp = await fetch('/api/clientes');
+        clientes = await resp.json();
+
+        const opciones = clientes.map(c =>
+          `<option value="${c.id}">${c.nombre} - ${c.correo}</option>`
+        ).join('');
+
+        clienteSelect.innerHTML = `<option value="">Selecciona un cliente</option>${opciones}`;
+        filtroCliente.innerHTML = `<option value="">Selecciona un cliente para ver historial</option>${opciones}`;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function cargarHistorial(clienteId) {
+      if (!clienteId) {
+        historialWrap.innerHTML = `<div class="empty">Selecciona un cliente para ver su historial.</div>`;
+        interaccionesActuales = [];
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/clientes/${clienteId}/interacciones`);
+        interaccionesActuales = await resp.json();
+        renderHistorial();
+      } catch (error) {
+        console.error(error);
+        historialWrap.innerHTML = `<div class="empty">No se pudo cargar el historial.</div>`;
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      mensaje.textContent = '';
+      mensaje.className = 'msg';
+
+      const cliente_id = clienteSelect.value;
+      const tipo = document.getElementById('tipo').value;
+      const descripcion = document.getElementById('descripcion').value.trim();
+      const usuario_id = localStorage.getItem('ballers_user_id');
+
+      if (!cliente_id || !tipo || !descripcion || !usuario_id) {
+        mensaje.textContent = 'Completa todos los campos';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/interacciones', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            cliente_id,
+            tipo,
+            descripcion,
+            usuario_id
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mensaje.textContent = data.message || 'No se pudo guardar la interacción';
+          mensaje.classList.add('error');
+          return;
+        }
+
+        mensaje.textContent = 'Interacción registrada correctamente';
+        mensaje.classList.add('ok');
+
+        form.reset();
+
+        if (filtroCliente.value === cliente_id) {
+          await cargarHistorial(cliente_id);
+        }
+      } catch (error) {
+        console.error(error);
+        mensaje.textContent = 'Error de conexión con el servidor';
+        mensaje.classList.add('error');
+      }
+    });
+
+    filtroCliente.addEventListener('change', () => {
+      cargarHistorial(filtroCliente.value);
+    });
+
+    buscarTexto.addEventListener('input', renderHistorial);
+
+    cargarClientes();
+    cargarHistorial('');
+  </script>
+</body>
+</html>

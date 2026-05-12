@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pedidos | Ballers SCM</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .grid-2{display:grid;gap:18px}
+    @media (min-width:1100px){.grid-2{grid-template-columns:380px 1fr}}
+    .form-grid{display:grid;gap:12px}
+    .form-row{display:grid;gap:6px}
+    .form-row input,.form-row select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .toolbar{display:grid;gap:12px;margin-bottom:16px}
+    @media (min-width:900px){.toolbar{grid-template-columns:1fr 220px}}
+    .toolbar input,.toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      overflow:hidden
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #23232a;
+      vertical-align:top
+    }
+    th{background:#17171c}
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333
+    }
+    .tag.reposicion{color:#ffd166;border-color:#70561a}
+    .tag.venta{color:#7ec8ff;border-color:#275a7d}
+    .tag.pendiente{color:#ff8b8b;border-color:#7a2f2f}
+    .tag.surtido{color:#7CFC98;border-color:#1f6b37}
+    .msg{margin-top:12px;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
+    .mini-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Gestión de pedidos</h2>
+      <p class="muted" style="margin:0">
+        Crea pedidos manuales y consulta los pedidos generados automáticamente por la estrategia Push.
+      </p>
+    </section>
+
+    <section class="grid-2">
+      <article class="section">
+        <h3 style="margin-top:0">Generar pedido manual</h3>
+
+        <form id="pedido-form" class="form-grid">
+          <div class="form-row">
+            <label for="producto_id">Producto</label>
+            <select id="producto_id" required>
+              <option value="">Selecciona un producto</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="cantidad">Cantidad</label>
+            <input id="cantidad" type="number" min="1" required />
+          </div>
+
+          <div class="form-row">
+            <label for="tipo">Tipo de pedido</label>
+            <select id="tipo" required>
+              <option value="">Selecciona un tipo</option>
+              <option value="reposicion">Reposición</option>
+              <option value="venta">Venta</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Crear pedido</button>
+          </div>
+
+          <div id="mensaje" class="msg"></div>
+        </form>
+      </article>
+
+      <article class="section">
+        <div class="toolbar">
+          <input id="buscar" type="text" placeholder="Buscar por nombre de producto" />
+          <select id="filtro-estado">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="surtido">Surtido</option>
+          </select>
+        </div>
+
+        <div id="tabla-wrap"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const form = document.getElementById('pedido-form');
+    const mensaje = document.getElementById('mensaje');
+    const productoSelect = document.getElementById('producto_id');
+    const tablaWrap = document.getElementById('tabla-wrap');
+    const buscar = document.getElementById('buscar');
+    const filtroEstado = document.getElementById('filtro-estado');
+
+    let productos = [];
+    let pedidos = [];
+
+    function cargarSelectProductos() {
+      productoSelect.innerHTML = '<option value="">Selecciona un producto</option>' +
+        productos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+    }
+
+    function tagTipo(tipo) {
+      return `<span class="tag ${tipo}">${tipo}</span>`;
+    }
+
+    function tagEstado(estado) {
+      return `<span class="tag ${estado}">${estado}</span>`;
+    }
+
+    function filtrarPedidos() {
+      const texto = buscar.value.trim().toLowerCase();
+      const estado = filtroEstado.value;
+
+      return pedidos.filter(p => {
+        const coincideTexto =
+          !texto ||
+          (p.producto_nombre || '').toLowerCase().includes(texto);
+
+        const coincideEstado = !estado || p.estado === estado;
+
+        return coincideTexto && coincideEstado;
+      });
+    }
+
+    function renderTabla() {
+      const lista = filtrarPedidos();
+
+      if (!lista.length) {
+        tablaWrap.innerHTML = '<div class="empty">No hay pedidos para mostrar.</div>';
+        return;
+      }
+
+      tablaWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(p => `
+              <tr>
+                <td>${p.id}</td>
+                <td>${p.producto_nombre}</td>
+                <td>${p.cantidad}</td>
+                <td>${tagTipo(p.tipo)}</td>
+                <td>${tagEstado(p.estado)}</td>
+                <td>${new Date(p.creado_en).toLocaleString('es-MX')}</td>
+                <td>
+                  <div class="mini-actions">
+                    <button class="btn btn--ghost" onclick="cambiarEstado(${p.id}, 'pendiente')">Pendiente</button>
+                    <button class="btn btn--ghost" onclick="cambiarEstado(${p.id}, 'surtido')">Surtido</button>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function cargarProductos() {
+      try {
+        const resp = await fetch('/api/productos');
+        productos = await resp.json();
+        cargarSelectProductos();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function cargarPedidos() {
+      try {
+        const resp = await fetch('/api/pedidos');
+        pedidos = await resp.json();
+        renderTabla();
+      } catch (error) {
+        console.error(error);
+        tablaWrap.innerHTML = '<div class="empty">No se pudieron cargar los pedidos.</div>';
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      mensaje.textContent = '';
+      mensaje.className = 'msg';
+
+      const payload = {
+        producto_id: productoSelect.value,
+        cantidad: Number(document.getElementById('cantidad').value || 0),
+        tipo: document.getElementById('tipo').value
+      };
+
+      if (!payload.producto_id || !payload.cantidad || !payload.tipo) {
+        mensaje.textContent = 'Completa todos los campos';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/pedidos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mensaje.textContent = data.message || 'No se pudo crear el pedido';
+          mensaje.classList.add('error');
+          return;
+        }
+
+        mensaje.textContent = 'Pedido creado correctamente';
+        mensaje.classList.add('ok');
+
+        form.reset();
+        await cargarPedidos();
+      } catch (error) {
+        console.error(error);
+        mensaje.textContent = 'Error de conexión con el servidor';
+        mensaje.classList.add('error');
+      }
+    });
+
+    async function cambiarEstado(id, estado) {
+      try {
+        const resp = await fetch(`/api/pedidos/${id}/estado`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          alert(data.message || 'No se pudo actualizar el estado');
+          return;
+        }
+
+        await cargarPedidos();
+      } catch (error) {
+        console.error(error);
+        alert('Error de conexión con el servidor');
+      }
+    }
+
+    window.cambiarEstado = cambiarEstado;
+
+    buscar.addEventListener('input', renderTabla);
+    filtroEstado.addEventListener('change', renderTabla);
+
+    cargarProductos();
+    cargarPedidos();
+  </script>
+</body>
+</html>

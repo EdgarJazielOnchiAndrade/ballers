@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Productos | Ballers SCM</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .grid-2{display:grid;gap:18px}
+    @media (min-width:1100px){.grid-2{grid-template-columns:400px 1fr}}
+    .form-grid{display:grid;gap:12px}
+    .form-row{display:grid;gap:6px}
+    .form-row input,.form-row select,.form-row textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .form-row textarea{min-height:100px;resize:vertical}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .toolbar{display:grid;gap:12px;margin-bottom:16px}
+    @media (min-width:900px){.toolbar{grid-template-columns:1fr 220px 220px}}
+    .toolbar input,.toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      overflow:hidden
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #23232a;
+      vertical-align:top
+    }
+    th{background:#17171c}
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333
+    }
+    .tag.push{color:#ffd166;border-color:#70561a}
+    .tag.pull{color:#7ec8ff;border-color:#275a7d}
+    .msg{margin-top:12px;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
+    .mini-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+    .subgrid{display:grid;gap:18px}
+    @media (min-width:800px){.subgrid{grid-template-columns:1fr 1fr}}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Gestión de productos y proveedores</h2>
+      <p class="muted" style="margin:0">
+        Administra productos, proveedores y define la estrategia logística Push o Pull.
+      </p>
+    </section>
+
+    <section class="subgrid">
+      <article class="section">
+        <h3 style="margin-top:0">Nuevo proveedor</h3>
+        <form id="proveedor-form" class="form-grid">
+          <div class="form-row">
+            <label for="prov-nombre">Nombre</label>
+            <input id="prov-nombre" type="text" required />
+          </div>
+          <div class="form-row">
+            <label for="prov-contacto">Contacto</label>
+            <input id="prov-contacto" type="text" />
+          </div>
+          <div class="form-row">
+            <label for="prov-correo">Correo</label>
+            <input id="prov-correo" type="email" />
+          </div>
+          <div class="form-row">
+            <label for="prov-telefono">Teléfono</label>
+            <input id="prov-telefono" type="text" />
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Guardar proveedor</button>
+          </div>
+
+          <div id="msg-proveedor" class="msg"></div>
+        </form>
+      </article>
+
+      <article class="section">
+        <h3 style="margin-top:0">Nuevo producto</h3>
+        <form id="producto-form" class="form-grid">
+          <input type="hidden" id="producto-id" />
+
+          <div class="form-row">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" required />
+          </div>
+
+          <div class="form-row">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion"></textarea>
+          </div>
+
+          <div class="form-row">
+            <label for="categoria">Categoría</label>
+            <input id="categoria" type="text" />
+          </div>
+
+          <div class="form-row">
+            <label for="stock_actual">Stock actual</label>
+            <input id="stock_actual" type="number" min="0" value="0" />
+          </div>
+
+          <div class="form-row">
+            <label for="stock_minimo">Stock mínimo</label>
+            <input id="stock_minimo" type="number" min="0" value="0" />
+          </div>
+
+          <div class="form-row">
+            <label for="proveedor_id">Proveedor</label>
+            <select id="proveedor_id">
+              <option value="">Selecciona un proveedor</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="costo_unitario">Costo unitario</label>
+            <input id="costo_unitario" type="number" min="0" step="0.01" value="0" />
+          </div>
+
+          <div class="form-row">
+            <label for="estrategia_logistica">Estrategia logística</label>
+            <select id="estrategia_logistica">
+              <option value="PULL">PULL</option>
+              <option value="PUSH">PUSH</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Guardar producto</button>
+            <button class="btn btn--ghost" type="button" id="btn-cancelar">Cancelar edición</button>
+          </div>
+
+          <div id="msg-producto" class="msg"></div>
+        </form>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="toolbar">
+        <input id="buscar" type="text" placeholder="Buscar por nombre o categoría" />
+        <select id="filtro-estrategia">
+          <option value="">Todas las estrategias</option>
+          <option value="PUSH">PUSH</option>
+          <option value="PULL">PULL</option>
+        </select>
+        <select id="filtro-stock">
+          <option value="">Todos los niveles</option>
+          <option value="critico">Stock crítico</option>
+          <option value="normal">Stock normal</option>
+        </select>
+      </div>
+
+      <div id="tabla-wrap"></div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const proveedorForm = document.getElementById('proveedor-form');
+    const productoForm = document.getElementById('producto-form');
+
+    const msgProveedor = document.getElementById('msg-proveedor');
+    const msgProducto = document.getElementById('msg-producto');
+    const tablaWrap = document.getElementById('tabla-wrap');
+
+    const productoId = document.getElementById('producto-id');
+    const nombre = document.getElementById('nombre');
+    const descripcion = document.getElementById('descripcion');
+    const categoria = document.getElementById('categoria');
+    const stockActual = document.getElementById('stock_actual');
+    const stockMinimo = document.getElementById('stock_minimo');
+    const proveedorId = document.getElementById('proveedor_id');
+    const costoUnitario = document.getElementById('costo_unitario');
+    const estrategia = document.getElementById('estrategia_logistica');
+
+    const buscar = document.getElementById('buscar');
+    const filtroEstrategia = document.getElementById('filtro-estrategia');
+    const filtroStock = document.getElementById('filtro-stock');
+
+    let proveedores = [];
+    let productos = [];
+
+    function limpiarProductoForm() {
+      productoId.value = '';
+      nombre.value = '';
+      descripcion.value = '';
+      categoria.value = '';
+      stockActual.value = 0;
+      stockMinimo.value = 0;
+      proveedorId.value = '';
+      costoUnitario.value = 0;
+      estrategia.value = 'PULL';
+      msgProducto.textContent = '';
+      msgProducto.className = 'msg';
+    }
+
+    function cargarSelectProveedores() {
+      proveedorId.innerHTML = '<option value="">Selecciona un proveedor</option>' +
+        proveedores.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+    }
+
+    function tagEstrategia(valor) {
+      const clase = valor.toLowerCase();
+      return `<span class="tag ${clase}">${valor}</span>`;
+    }
+
+    function filtrarProductos() {
+      const texto = buscar.value.trim().toLowerCase();
+      const est = filtroEstrategia.value;
+      const stock = filtroStock.value;
+
+      return productos.filter(p => {
+        const coincideTexto =
+          !texto ||
+          p.nombre.toLowerCase().includes(texto) ||
+          (p.categoria || '').toLowerCase().includes(texto);
+
+        const coincideEstrategia = !est || p.estrategia_logistica === est;
+
+        let coincideStock = true;
+        if (stock === 'critico') coincideStock = Number(p.stock_actual) <= Number(p.stock_minimo);
+        if (stock === 'normal') coincideStock = Number(p.stock_actual) > Number(p.stock_minimo);
+
+        return coincideTexto && coincideEstrategia && coincideStock;
+      });
+    }
+
+    function renderTabla() {
+      const lista = filtrarProductos();
+
+      if (!lista.length) {
+        tablaWrap.innerHTML = '<div class="empty">No hay productos para mostrar.</div>';
+        return;
+      }
+
+      tablaWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Stock mínimo</th>
+              <th>Proveedor</th>
+              <th>Costo</th>
+              <th>Estrategia</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(p => `
+              <tr>
+                <td>${p.id}</td>
+                <td>${p.nombre}</td>
+                <td>${p.categoria || '-'}</td>
+                <td>${p.stock_actual}</td>
+                <td>${p.stock_minimo}</td>
+                <td>${p.proveedor_nombre || '-'}</td>
+                <td>$${Number(p.costo_unitario).toFixed(2)}</td>
+                <td>${tagEstrategia(p.estrategia_logistica)}</td>
+                <td>
+                  <div class="mini-actions">
+                    <button class="btn btn--ghost" onclick="editarProducto(${p.id})">Editar</button>
+                    <button class="btn btn--ghost" onclick="cambiarEstrategia(${p.id})">Estrategia</button>
+                    <button class="btn btn--ghost" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function cargarProveedores() {
+      try {
+        const resp = await fetch('/api/proveedores');
+        proveedores = await resp.json();
+        cargarSelectProveedores();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function cargarProductos() {
+      try {
+        const resp = await fetch('/api/productos');
+        productos = await resp.json();
+        renderTabla();
+      } catch (error) {
+        console.error(error);
+        tablaWrap.innerHTML = '<div class="empty">No se pudieron cargar los productos.</div>';
+      }
+    }
+
+    proveedorForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      msgProveedor.textContent = '';
+      msgProveedor.className = 'msg';
+
+      const payload = {
+        nombre: document.getElementById('prov-nombre').value.trim(),
+        contacto: document.getElementById('prov-contacto').value.trim(),
+        correo: document.getElementById('prov-correo').value.trim(),
+        telefono: document.getElementById('prov-telefono').value.trim()
+      };
+
+      if (!payload.nombre) {
+        msgProveedor.textContent = 'El nombre del proveedor es obligatorio';
+        msgProveedor.classList.add('error');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/proveedores', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          msgProveedor.textContent = data.message || 'No se pudo guardar el proveedor';
+          msgProveedor.classList.add('error');
+          return;
+        }
+
+        msgProveedor.textContent = 'Proveedor creado correctamente';
+        msgProveedor.classList.add('ok');
+        proveedorForm.reset();
+        await cargarProveedores();
+      } catch (error) {
+        console.error(error);
+        msgProveedor.textContent = 'Error de conexión con el servidor';
+        msgProveedor.classList.add('error');
+      }
+    });
+
+    productoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      msgProducto.textContent = '';
+      msgProducto.className = 'msg';
+
+      const payload = {
+        nombre: nombre.value.trim(),
+        descripcion: descripcion.value.trim(),
+        categoria: categoria.value.trim(),
+        stock_actual: Number(stockActual.value || 0),
+        stock_minimo: Number(stockMinimo.value || 0),
+        proveedor_id: proveedorId.value || null,
+        costo_unitario: Number(costoUnitario.value || 0),
+        estrategia_logistica: estrategia.value
+      };
+
+      if (!payload.nombre) {
+        msgProducto.textContent = 'El nombre del producto es obligatorio';
+        msgProducto.classList.add('error');
+        return;
+      }
+
+      try {
+        let resp;
+
+        if (productoId.value) {
+          resp = await fetch(`/api/productos/${productoId.value}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          resp = await fetch('/api/productos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          msgProducto.textContent = data.message || 'No se pudo guardar el producto';
+          msgProducto.classList.add('error');
+          return;
+        }
+
+        msgProducto.textContent = productoId.value
+          ? 'Producto actualizado correctamente'
+          : 'Producto creado correctamente';
+        msgProducto.classList.add('ok');
+
+        limpiarProductoForm();
+        await cargarProductos();
+      } catch (error) {
+        console.error(error);
+        msgProducto.textContent = 'Error de conexión con el servidor';
+        msgProducto.classList.add('error');
+      }
+    });
+
+    async function editarProducto(id) {
+      const producto = productos.find(p => Number(p.id) === Number(id));
+      if (!producto) return;
+
+      productoId.value = producto.id;
+      nombre.value = producto.nombre;
+      descripcion.value = producto.descripcion || '';
+      categoria.value = producto.categoria || '';
+      stockActual.value = producto.stock_actual || 0;
+      stockMinimo.value = producto.stock_minimo || 0;
+      proveedorId.value = producto.proveedor_id || '';
+      costoUnitario.value = producto.costo_unitario || 0;
+      estrategia.value = producto.estrategia_logistica || 'PULL';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function eliminarProducto(id) {
+      const confirmar = confirm('¿Seguro que deseas eliminar este producto?');
+      if (!confirmar) return;
+
+      try {
+        const resp = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          alert(data.message || 'No se pudo eliminar el producto');
+          return;
+        }
+
+        await cargarProductos();
+      } catch (error) {
+        console.error(error);
+        alert('Error de conexión con el servidor');
+      }
+    }
+
+    async function cambiarEstrategia(id) {
+      const producto = productos.find(p => Number(p.id) === Number(id));
+      if (!producto) return;
+
+      const nueva = prompt('Escribe la nueva estrategia: PUSH o PULL', producto.estrategia_logistica);
+      if (!nueva) return;
+
+      try {
+        const resp = await fetch(`/api/productos/${id}/estrategia`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estrategia_logistica: nueva.toUpperCase() })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          alert(data.message || 'No se pudo cambiar la estrategia');
+          return;
+        }
+
+        await cargarProductos();
+      } catch (error) {
+        console.error(error);
+        alert('Error de conexión con el servidor');
+      }
+    }
+
+    document.getElementById('btn-cancelar').addEventListener('click', limpiarProductoForm);
+    buscar.addEventListener('input', renderTabla);
+    filtroEstrategia.addEventListener('change', renderTabla);
+    filtroStock.addEventListener('change', renderTabla);
+
+    window.editarProducto = editarProducto;
+    window.eliminarProducto = eliminarProducto;
+    window.cambiarEstrategia = cambiarEstrategia;
+
+    cargarProveedores();
+    cargarProductos();
+  </script>
+</body>
+</html>

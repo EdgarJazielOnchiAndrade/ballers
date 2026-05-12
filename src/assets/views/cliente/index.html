@@ -3,11 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catálogo | Ballers</title>
-  <link rel="stylesheet" href="../css/base.css"/>
+  <title>Mi cuenta | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
   <style>
+    .header__inner{ display:flex; align-items:center; gap:12px; }
+    .nav{ margin-left:auto; }
+
+    .payment-section {
+      background: #050505;
+      color: #f5f5f5;
+      padding: 40px 0;
+      margin-top: 32px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .payment-section__inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+      text-align: center;
+    }
+
+    .payment-section__title {
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+      color: #ffd166;
+    }
+
+    .payment-section__subtitle {
+      font-size: 0.95rem;
+      color: #aaa;
+      margin-bottom: 24px;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .payment-card {
+      background: #111;
+      border-radius: 14px;
+      padding: 18px 16px;
+      border: 1px solid #262626;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .payment-card__badge {
+      font-size: 0.8rem;
+      color: #0af5a1;
+    }
+
+    .payment-card__title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .payment-card__desc {
+      font-size: 0.9rem;
+      color: #c5c5c5;
+    }
+
     .msg-box{
-      margin:18px 0;
+      margin:18px 0 0;
       padding:12px 14px;
       border-radius:12px;
       border:1px solid #333;
@@ -29,37 +92,6 @@
       border-color:#5a2323;
     }
 
-    .catalog-note{
-      margin: 18px auto 0;
-      max-width: 1100px;
-      padding: 14px 16px;
-      border: 1px solid #2a2a32;
-      border-radius: 14px;
-      background: #111;
-      color: var(--muted);
-    }
-
-    .card__extra{
-      margin: 8px 0 10px;
-      color: var(--muted);
-      font-size: .95rem;
-    }
-
-    .stock-ok{
-      color:#7CFC98;
-      font-weight:700;
-    }
-
-    .stock-low{
-      color:#ffd166;
-      font-weight:700;
-    }
-
-    .stock-out{
-      color:#ff8b8b;
-      font-weight:700;
-    }
-
     .btn[disabled]{
       opacity:.55;
       cursor:not-allowed;
@@ -75,6 +107,8 @@
       font-weight:700;
       font-size:.85rem;
       border:1px solid #5a3418;
+      margin-bottom:6px;
+      width:max-content;
     }
 
     .price-old{
@@ -91,44 +125,38 @@
 </head>
 <body>
   <!-- Header -->
-  <header class="header">
-    <div class="container header__inner">
-      <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
-      <form class="search" role="search" aria-label="Buscar productos">
-        <label class="visually-hidden" for="q">Buscar</label>
-        <input id="q" type="search" placeholder="Buscar sneakers, jerseys, gorras…" />
-        <button type="submit" aria-label="Buscar">🔍</button>
-      </form>
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a class="active" href="index.html" aria-current="page">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
-      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
-      <nav id="mainnav" class="nav">
-        <ul>
-          <li><a href="../../../index.html">Inicio</a></li>
-          <li><a class="active" href="catalogo.html" aria-current="page">Catálogo</a></li>
-
-          <li>
-            <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
-              </svg>
-            </a>
-          </li>
-        </ul>
-      </nav>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <h1>Moda urbana inspirada en el básquet</h1>
+        <p>Descubre sneakers, jerseys y accesorios de temporada. Calidad, estilo y envíos rápidos.</p>
+        <a class="btn" href="catalog_user.html">Ver catálogo</a>
+      </div>
+      <div class="hero__img" aria-hidden="true"></div>
     </div>
-  </header>
+  </section>
 
-  <div class="container">
-    <div id="mensaje" class="msg-box"></div>
-  </div>
-
-  <div class="catalog-note">
-    Puedes explorar el catálogo libremente. Para agregar productos al carrito y comprar, necesitas crear una cuenta e iniciar sesión.
-  </div>
-
-  <!-- Filtros -->
+  <!-- Filtros / categorías -->
   <section class="filters">
     <div class="container filters__inner">
       <div class="chips">
@@ -142,30 +170,68 @@
         <label for="orden">Ordenar:</label>
         <select id="orden">
           <option value="popular">Más populares</option>
-          <option value="nombre-asc">Nombre A-Z</option>
           <option value="precio-asc">Precio: bajo a alto</option>
           <option value="precio-desc">Precio: alto a bajo</option>
           <option value="stock-desc">Mayor stock</option>
+          <option value="nombre-asc">Nombre A-Z</option>
         </select>
       </div>
     </div>
   </section>
 
-  <!-- Grid -->
   <main class="container">
-    <section id="product-grid" class="grid" aria-live="polite"></section>
+    <div id="mensaje" class="msg-box"></div>
+    <section id="home-grid" class="grid" aria-live="polite"></section>
   </main>
+
+  <!-- Bloque de métodos de pago -->
+  <section class="payment-section" aria-labelledby="payment-title">
+    <div class="payment-section__inner">
+      <h2 id="payment-title" class="payment-section__title">
+        Métodos de pago disponibles
+      </h2>
+      <p class="payment-section__subtitle">
+        En Ballers aceptamos los siguientes métodos de pago para tus compras.
+      </p>
+
+      <div class="payment-grid">
+        <article class="payment-card">
+          <span class="payment-card__badge">Tarjetas bancarias</span>
+          <h3 class="payment-card__title">Visa / Mastercard</h3>
+          <p class="payment-card__desc">
+            Pagos con tarjeta de crédito o débito.
+          </p>
+        </article>
+
+        <article class="payment-card">
+          <span class="payment-card__badge">Transferencia</span>
+          <h3 class="payment-card__title">SPEI</h3>
+          <p class="payment-card__desc">
+            Pagos mediante transferencia interbancaria SPEI.
+          </p>
+        </article>
+
+        <article class="payment-card">
+          <span class="payment-card__badge">Pago en tienda</span>
+          <h3 class="payment-card__title">OXXO</h3>
+          <p class="payment-card__desc">
+            Pago en efectivo en tiendas OXXO mediante una referencia.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
 
   <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
     <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
       <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
 
       <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
-        <a href="aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
-        <a href="terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
-        <a href="cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
-        <a href="certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
-        <a href="politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
       </nav>
 
       <div style="margin-top:8px; color:#fff;">
@@ -176,13 +242,13 @@
     </div>
   </footer>
 
-  <script src="../js/app.js"></script>
+  <script src="../../js/app.js"></script>
+
   <script>
   (() => {
-    const grid = document.getElementById('product-grid');
+    const grid = document.getElementById('home-grid');
     const chips = Array.from(document.querySelectorAll('.chip'));
     const select = document.getElementById('orden');
-    const qInput = document.getElementById('q');
     const mensaje = document.getElementById('mensaje');
 
     let productos = [];
@@ -225,13 +291,6 @@
       return '';
     }
 
-    function estadoStock(stock) {
-      const n = Number(stock || 0);
-      if (n <= 0) return '<span class="stock-out">Sin stock</span>';
-      if (n <= 5) return `<span class="stock-low">Stock bajo: ${n}</span>`;
-      return `<span class="stock-ok">Disponible: ${n}</span>`;
-    }
-
     function obtenerPromocionProducto(productoId) {
       return promociones.find(p => Number(p.producto_id) === Number(productoId)) || null;
     }
@@ -263,15 +322,10 @@
     function applyFilters() {
       const active = document.querySelector('.chip.is-active');
       const cat = active ? active.dataset.cat : 'todo';
-      const term = (qInput?.value || '').trim().toLowerCase();
 
       current = productos.filter(p => {
-        const inCat = (cat === 'todo') || (String(p.categoria || '') === cat);
-        const inText =
-          term === '' ||
-          String(p.nombre || '').toLowerCase().includes(term) ||
-          String(p.descripcion || '').toLowerCase().includes(term);
-        return inCat && inText;
+        if (cat === 'todo') return true;
+        return String(p.categoria || '') === cat;
       });
     }
 
@@ -306,19 +360,18 @@
         : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
 
       const precioInfo = calcularPrecioFinal(p);
+      const sinStock = Number(p.stock_actual || 0) <= 0;
 
       const promoHtml = precioInfo.promo
         ? `
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-            <span class="promo-badge">${Number(precioInfo.descuento)}% OFF</span>
-            <span class="muted">${escaparHtml(precioInfo.promo.nombre || 'Promoción')}</span>
-          </div>
+          <span class="promo-badge">${Number(precioInfo.descuento)}% OFF</span>
+          <div class="muted">${escaparHtml(precioInfo.promo.nombre || 'Promoción')}</div>
         `
         : '';
 
       const precioHtml = precioInfo.promo
         ? `
-          <p class="card__price" style="margin:0 0 6px;">
+          <p class="card__price" style="margin:0 0 8px;">
             <span class="price-old">${money(precioInfo.precioBase)}</span>
             <span class="price-new">${money(precioInfo.precioFinal)}</span>
           </p>
@@ -334,11 +387,13 @@
             ${promoHtml}
             <h3 class="card__title">${escaparHtml(p.nombre || 'Producto sin nombre')}</h3>
             ${precioHtml}
-            <p class="muted" style="margin:0 0 6px">${escaparHtml(p.categoria || 'Sin categoría')}</p>
-            <p class="card__extra">${estadoStock(p.stock_actual)}</p>
+            <p class="muted" style="margin:0 0 8px">${escaparHtml(p.categoria || 'Sin categoría')}</p>
+            <p class="muted" style="margin:0 0 10px">${escaparHtml((p.descripcion || 'Sin descripción').slice(0, 70))}${(p.descripcion && p.descripcion.length > 70) ? '...' : ''}</p>
             <div class="card__actions">
-              <a class="btn" href="login.html">Iniciar sesión</a>
-              <button class="btn btn--ghost" onclick="mostrarLoginNecesario()">Comprar</button>
+              <button class="btn" onclick="agregarAlCarrito(${Number(p.id)})" ${sinStock ? 'disabled' : ''}>
+                ${sinStock ? 'Sin stock' : 'Agregar'}
+              </button>
+              <a class="btn btn--ghost" href="catalog_user.html">Ver más</a>
             </div>
           </div>
         </article>
@@ -346,15 +401,17 @@
     }
 
     function render(list) {
-      if (!list.length) {
+      const slice = list.slice(0, 8);
+
+      if (!slice.length) {
         grid.innerHTML = `<article class="card" style="padding:16px">
-          <h3>Sin resultados</h3>
-          <p class="muted">Prueba otra categoría u otro término.</p>
+          <h3>Sin productos</h3>
+          <p class="muted">Ajusta los filtros o agrega más productos a la base de datos.</p>
         </article>`;
         return;
       }
 
-      grid.innerHTML = list.map(cardTemplate).join('');
+      grid.innerHTML = slice.map(cardTemplate).join('');
     }
 
     async function cargarCatalogo() {
@@ -382,40 +439,63 @@
       } catch (err) {
         console.error(err);
         grid.innerHTML = `<article class="card" style="padding:16px">
-          <h3>Error cargando catálogo</h3>
+          <h3>Error cargando productos</h3>
           <p class="muted">${escaparHtml(err.message)}</p>
         </article>`;
       }
     }
 
-    window.mostrarLoginNecesario = function () {
-      mostrarMensaje('Debes iniciar sesión o crear una cuenta para comprar.', 'error');
-    };
+    async function agregarAlCarrito(productoId) {
+      try {
+        const clienteId = localStorage.getItem('ballers_user_id');
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
 
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
-        chip.classList.add('is-active');
-        applyFilters();
-        applySort();
-        render(current);
-      });
-    });
+        if (!clienteId) {
+          mostrarMensaje('Primero debes iniciar sesión como cliente.', 'error');
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          mostrarMensaje('Solo un cliente puede agregar productos al carrito.', 'error');
+          return;
+        }
+
+        const resp = await fetch('/api/carrito/agregar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cliente_id: Number(clienteId),
+            producto_id: Number(productoId),
+            cantidad: 1
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo agregar al carrito', 'error');
+          return;
+        }
+
+        mostrarMensaje('Producto agregado al carrito', 'ok');
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    window.agregarAlCarrito = agregarAlCarrito;
+
+    chips.forEach(chip => chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      applyFilters();
+      applySort();
+      render(current);
+    }));
 
     select.addEventListener('change', () => {
-      applySort();
-      render(current);
-    });
-
-    qInput?.addEventListener('input', () => {
-      applyFilters();
-      applySort();
-      render(current);
-    });
-
-    document.querySelector('.search')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      applyFilters();
       applySort();
       render(current);
     });

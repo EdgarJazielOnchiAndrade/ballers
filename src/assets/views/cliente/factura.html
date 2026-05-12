@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Factura | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .invoice-top{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .invoice-top h2{
+      margin:0 0 8px;
+    }
+
+    .invoice-top p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .invoice-card{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:22px;
+      display:grid;
+      gap:18px;
+    }
+
+    .invoice-section{
+      display:grid;
+      gap:12px;
+    }
+
+    .invoice-section h3{
+      margin:0;
+      font-size:1.08rem;
+    }
+
+    .invoice-grid{
+      display:grid;
+      gap:10px;
+    }
+
+    @media (min-width:900px){
+      .invoice-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    .invoice-field{
+      padding:12px 14px;
+      border:1px solid #23232a;
+      border-radius:14px;
+      background:#111;
+    }
+
+    .invoice-field strong{
+      display:block;
+      margin-bottom:6px;
+      color:#fff;
+    }
+
+    .seal-box{
+      padding:16px;
+      border:1px solid #23232a;
+      border-radius:14px;
+      background:#111;
+      line-height:1.5;
+      word-break:break-word;
+      color:var(--muted);
+    }
+
+    .total-box{
+      padding:18px;
+      border:1px solid #23232a;
+      border-radius:14px;
+      background:#111;
+      display:grid;
+      gap:10px;
+    }
+
+    .total-line{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .total-final{
+      font-size:1.2rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    .msg-box{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .print-only{
+      display:none;
+    }
+
+    @media print{
+      body{
+        background:#fff !important;
+        color:#000 !important;
+      }
+
+      .header,
+      .footer,
+      .invoice-top p,
+      .actions,
+      .nav__toggle,
+      .nav,
+      .msg-box{
+        display:none !important;
+      }
+
+      main.container{
+        padding:0 !important;
+        max-width:100% !important;
+      }
+
+      .invoice-top{
+        margin:0 0 14px !important;
+        padding:0 0 14px !important;
+        border:none !important;
+        border-radius:0 !important;
+        background:none !important;
+        box-shadow:none !important;
+      }
+
+      .invoice-top h2{
+        color:#000 !important;
+      }
+
+      .invoice-card{
+        background:#fff !important;
+        color:#000 !important;
+        border:1px solid #ccc !important;
+        box-shadow:none !important;
+      }
+
+      .invoice-field,
+      .seal-box,
+      .total-box{
+        background:#fff !important;
+        color:#000 !important;
+        border:1px solid #ccc !important;
+      }
+
+      .invoice-field strong,
+      .total-final{
+        color:#000 !important;
+      }
+
+      .print-only{
+        display:block;
+        margin-bottom:14px;
+        color:#000;
+      }
+
+      a{
+        text-decoration:none !important;
+        color:#000 !important;
+      }
+
+      @page{
+        size:auto;
+        margin:16mm;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="invoice-top">
+      <h2>Factura electrónica</h2>
+      <p>Este documento muestra los datos fiscales registrados para tu compra.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section id="invoice-container" class="invoice-card">
+      <div class="empty-box">Cargando factura...</div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const container = document.getElementById('invoice-container');
+    const mensaje = document.getElementById('mensaje');
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      mensaje.textContent = texto;
+      mensaje.className = `msg-box ${tipo}`;
+
+      setTimeout(() => {
+        mensaje.className = 'msg-box';
+        mensaje.textContent = '';
+      }, 3000);
+    }
+
+    function obtenerOrdenId() {
+      const params = new URLSearchParams(window.location.search);
+      const ordenIdQuery = params.get('orden_id');
+
+      if (ordenIdQuery) {
+        return ordenIdQuery;
+      }
+
+      const ultimaOrden = localStorage.getItem('ballers_last_order_id');
+      if (ultimaOrden) {
+        return ultimaOrden;
+      }
+
+      const reciboRaw = localStorage.getItem('ballers_recibo');
+      if (reciboRaw) {
+        try {
+          const recibo = JSON.parse(reciboRaw);
+          if (recibo.pedido) {
+            return String(recibo.pedido).replace('PED-', '');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      return null;
+    }
+
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      const f = new Date(fecha);
+      if (Number.isNaN(f.getTime())) return fecha;
+      return f.toLocaleDateString('es-MX');
+    }
+
+    function descargarPDF() {
+      window.print();
+    }
+
+    async function enviarFacturaCorreo(ordenId, correoDestino) {
+      try {
+        const resp = await fetch('/api/factura/enviar-correo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            orden_id: ordenId,
+            correo: correoDestino
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudo enviar la factura');
+        }
+
+        mostrarMensaje('Factura enviada correctamente a tu correo', 'ok');
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje(error.message || 'Error al enviar la factura', 'error');
+      }
+    }
+
+    window.descargarPDF = descargarPDF;
+    window.enviarFacturaCorreo = enviarFacturaCorreo;
+
+    async function cargarFactura() {
+      const ordenId = obtenerOrdenId();
+
+      if (!ordenId) {
+        container.innerHTML = `
+          <div class="empty-box">
+            No se encontró un número de orden para consultar la factura.
+          </div>
+          <div class="actions">
+            <a class="btn" href="recibo.html">Volver al recibo</a>
+            <a class="btn btn--ghost" href="index.html">Ir al inicio</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/factura/${encodeURIComponent(ordenId)}`);
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudo cargar la factura');
+        }
+
+        const factura = data.factura;
+        const correoDestino = factura.correo_factura || localStorage.getItem('ballers_user_correo') || '';
+
+        document.title = `Factura_${factura.folio || `PED-${factura.orden_id}`}`;
+
+        container.innerHTML = `
+          <div class="print-only">
+            <h2 style="margin:0 0 6px;">Ballers</h2>
+            <div>Factura electrónica</div>
+          </div>
+
+          <section class="invoice-section">
+            <h3>Datos del comprobante</h3>
+            <div class="invoice-grid">
+              <div class="invoice-field">
+                <strong>Folio</strong>
+                <span>${escaparHtml(factura.folio || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Número de pedido</strong>
+                <span>PED-${escaparHtml(factura.orden_id || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Fecha</strong>
+                <span>${formatearFecha(factura.fecha)}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Uso CFDI</strong>
+                <span>${escaparHtml(factura.uso_cfdi || '-')}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="invoice-section">
+            <h3>Datos fiscales</h3>
+            <div class="invoice-grid">
+              <div class="invoice-field">
+                <strong>RFC cliente</strong>
+                <span>${escaparHtml(factura.rfc_cliente || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Nombre cliente</strong>
+                <span>${escaparHtml(factura.nombre_cliente || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Razón social cliente</strong>
+                <span>${escaparHtml(factura.razon_social_cliente || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Correo de facturación</strong>
+                <span>${escaparHtml(factura.correo_factura || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>RFC negocio</strong>
+                <span>${escaparHtml(factura.rfc_negocio || '-')}</span>
+              </div>
+
+              <div class="invoice-field">
+                <strong>Razón social negocio</strong>
+                <span>${escaparHtml(factura.razon_social_negocio || 'Ballers')}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="invoice-section">
+            <h3>Total facturado</h3>
+            <div class="total-box">
+              ${typeof factura.subtotal_original !== 'undefined' && Number(factura.subtotal_original) > 0 ? `
+                <div class="total-line">
+                  <span>Subtotal original</span>
+                  <strong>${money(factura.subtotal_original)}</strong>
+                </div>
+              ` : ''}
+
+              ${typeof factura.descuento_monto !== 'undefined' && Number(factura.descuento_monto) > 0 ? `
+                <div class="total-line">
+                  <span>Descuento</span>
+                  <strong>-${money(factura.descuento_monto)}</strong>
+                </div>
+              ` : ''}
+
+              ${typeof factura.subtotal !== 'undefined' ? `
+                <div class="total-line">
+                  <span>Subtotal</span>
+                  <strong>${money(factura.subtotal)}</strong>
+                </div>
+              ` : ''}
+
+              ${typeof factura.impuesto_monto !== 'undefined' ? `
+                <div class="total-line">
+                  <span>${escaparHtml(factura.impuesto_nombre || 'IVA')} (${Number(factura.impuesto_porcentaje || 0)}%)</span>
+                  <strong>${money(factura.impuesto_monto)}</strong>
+                </div>
+              ` : ''}
+
+              <div class="total-line">
+                <span>Total</span>
+                <strong class="total-final">${money(factura.total || 0)}</strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="invoice-section">
+            <h3>Sello digital</h3>
+            <div class="seal-box">
+              <div><strong style="display:inline;color:#fff;">Certificado expedido a:</strong> ${escaparHtml(factura.certificado_expedido_a || 'Ballers')}</div>
+              <div><strong style="display:inline;color:#fff;">Válido por:</strong> ${escaparHtml(factura.valido_por || new Date().getFullYear())}</div>
+              <div style="margin-top:10px;">
+                <strong style="display:block;color:#fff;margin-bottom:6px;">Huella digital del comprobante:</strong>
+                <span>${escaparHtml(factura.huella_digital || '-')}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="invoice-section">
+            <div class="actions">
+              <button class="btn" type="button" onclick="descargarPDF()">Descargar PDF</button>
+              <button class="btn btn--ghost" type="button" onclick="enviarFacturaCorreo(${Number(factura.orden_id)}, '${escaparHtml(correoDestino)}')">Enviar a mi correo</button>
+              <a class="btn btn--ghost" href="recibo.html?orden_id=${encodeURIComponent(factura.orden_id)}">Volver al recibo</a>
+              <a class="btn btn--ghost" href="index.html">Ir al inicio</a>
+            </div>
+          </section>
+        `;
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+          <div class="empty-box">
+            Error al cargar la factura: ${escaparHtml(error.message)}
+          </div>
+          <div class="actions">
+            <a class="btn" href="recibo.html${ordenId ? `?orden_id=${encodeURIComponent(ordenId)}` : ''}">Volver al recibo</a>
+            <a class="btn btn--ghost" href="index.html">Ir al inicio</a>
+          </div>
+        `;
+      }
+    }
+
+    cargarFactura();
+  </script>
+</body>
+</html>

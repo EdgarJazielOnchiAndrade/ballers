@@ -16,10 +16,12 @@
     .auth-actions .btn{min-width:180px;text-align:center}
     .alt{margin-top:14px;text-align:center}
     .alt a{color:var(--text);text-decoration:underline}
+    .msg{margin-top:14px;text-align:center;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="container header__inner">
       <a class="logo" href="../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
@@ -35,9 +37,7 @@
         <ul>
           <li><a href="../../../index.html">Inicio</a></li>
           <li><a href="catalog.html">Catálogo</a></li>
-          <li><a href="intranet.html">Intranet</a></li>
 
-          <!-- Icono usuario -->
           <li>
             <a class="nav__user" href="login.html" aria-label="Iniciar sesión">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -46,49 +46,44 @@
               </svg>
             </a>
           </li>
-
-          <!-- Documentación (desplegable) -->
-          <li class="has-submenu">
-            <button class="submenu__toggle" type="button"
-                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
-              Documentación <span class="caret" aria-hidden="true">▾</span>
-            </button>
-            <ul id="doc-submenu" class="submenu" role="menu" hidden>
-              <li role="none"><a role="menuitem" href="tecnologia.html">Tecnología propuesta</a></li>
-              <li role="none"><a role="menuitem" href="infraestructura.html">Infraestructura</a></li>
-              <li role="none"><a role="menuitem" href="status.html">Status</a></li>
-              <li role="none"><a role="menuitem" href="disponibilidad.html">Disponibilidad</a></li>
-            </ul>
-          </li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- Contenido -->
   <main class="container auth-wrap">
     <section class="auth-card" aria-labelledby="titulo-signup">
-      <h2 id="titulo-signup">Crear cuenta</h2>
+      <h2 id="titulo-signup">Crear cuenta de cliente</h2>
 
       <form id="signup-form" autocomplete="on">
         <div class="auth-row">
-          <label for="name">Nombre completo</label>
-          <input id="name" name="name" type="text" autocomplete="name" />
+          <label for="nombre">Nombre completo</label>
+          <input id="nombre" name="nombre" type="text" autocomplete="name" required />
         </div>
 
         <div class="auth-row">
-          <label for="email">Correo electrónico</label>
-          <input id="email" name="email" type="email" autocomplete="email" />
+          <label for="correo">Correo electrónico</label>
+          <input id="correo" name="correo" type="email" autocomplete="email" required />
         </div>
 
         <div class="auth-row">
-          <label for="pass">Contraseña</label>
-          <input id="pass" name="pass" type="password" autocomplete="new-password" />
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" name="telefono" type="text" autocomplete="tel" />
         </div>
 
         <div class="auth-row">
-          <label for="pass2">Confirmar contraseña</label>
-          <input id="pass2" name="pass2" type="password" autocomplete="new-password" />
+          <label for="empresa">Empresa</label>
+          <input id="empresa" name="empresa" type="text" />
+        </div>
+
+        <div class="auth-row">
+          <label for="password">Contraseña</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required />
+        </div>
+
+        <div class="auth-row">
+          <label for="password2">Confirmar contraseña</label>
+          <input id="password2" name="password2" type="password" autocomplete="new-password" required />
         </div>
 
         <div class="auth-actions">
@@ -96,26 +91,86 @@
         </div>
 
         <p class="alt">¿Ya tienes cuenta? <a href="login.html">Entrar</a></p>
+        <div id="mensaje" class="msg"></div>
       </form>
     </section>
   </main>
 
   <script src="../js/app.js"></script>
   <script>
-    // Evita recargar con el buscador del header
     document.querySelector('.search')?.addEventListener('submit', e => e.preventDefault());
 
-    // Redirección inmediata sin efectos ni delays
-    document.getElementById('signup-form').addEventListener('submit', (e) => {
+    const form = document.getElementById('signup-form');
+    const mensaje = document.getElementById('mensaje');
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name  = (document.getElementById('name').value || '').trim();
-      const email = (document.getElementById('email').value || '').trim();
 
-      localStorage.setItem('ballers_auth', 'true');
-      localStorage.setItem('ballers_user', name || email || 'Usuario');
+      mensaje.textContent = '';
+      mensaje.className = 'msg';
 
-      // Dashboard de usuario
-      window.location.href = 'user/index.html';
+      const nombre = document.getElementById('nombre').value.trim();
+      const correo = document.getElementById('correo').value.trim();
+      const telefono = document.getElementById('telefono').value.trim();
+      const empresa = document.getElementById('empresa').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const password2 = document.getElementById('password2').value.trim();
+
+      if (!nombre || !correo || !password || !password2) {
+        mensaje.textContent = 'Completa los campos obligatorios';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      if (password !== password2) {
+        mensaje.textContent = 'Las contraseñas no coinciden';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      if (password.length < 6) {
+        mensaje.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            nombre,
+            correo,
+            telefono,
+            empresa,
+            password,
+            tipo_cuenta: 'cliente',
+            rol: 'cliente'
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mensaje.textContent = data.message || 'No se pudo crear la cuenta';
+          mensaje.classList.add('error');
+          return;
+        }
+
+        mensaje.textContent = 'Cuenta creada correctamente. Ahora inicia sesión.';
+        mensaje.classList.add('ok');
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1200);
+
+      } catch (error) {
+        mensaje.textContent = 'Error de conexión con el servidor';
+        mensaje.classList.add('error');
+        console.error(error);
+      }
     });
   </script>
 </body>

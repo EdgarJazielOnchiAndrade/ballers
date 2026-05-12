@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard ERP Ventas | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    body{
+      margin:0;
+      background:#0f172a;
+      color:#fff;
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .erp-layout{
+      display:grid;
+      grid-template-columns:260px 1fr;
+      min-height:100vh;
+    }
+    .erp-sidebar{
+      background:#111827;
+      border-right:1px solid #1f2937;
+      padding:22px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .erp-brand{
+      font-size:1.3rem;
+      font-weight:700;
+      color:#fff;
+      text-decoration:none;
+    }
+    .erp-subtitle{
+      color:#9ca3af;
+      font-size:.92rem;
+      margin-top:-8px;
+    }
+    .erp-menu{
+      display:grid;
+      gap:8px;
+      margin-top:8px;
+    }
+    .erp-menu a{
+      display:block;
+      padding:12px 14px;
+      border-radius:12px;
+      color:#e5e7eb;
+      text-decoration:none;
+      transition:.2s;
+      border:1px solid transparent;
+    }
+    .erp-menu a:hover{
+      background:#1f2937;
+      border-color:#374151;
+    }
+    .erp-menu a.active{
+      background:#2563eb;
+      border-color:#3b82f6;
+      color:#fff;
+      font-weight:700;
+    }
+    .erp-user{
+      margin-top:auto;
+      background:#0b1220;
+      border:1px solid #1f2937;
+      border-radius:14px;
+      padding:14px;
+    }
+    .erp-user strong{
+      display:block;
+      margin-bottom:4px;
+    }
+    .erp-user small{
+      color:#9ca3af;
+      display:block;
+      margin-bottom:12px;
+    }
+    .erp-user .btn{
+      width:100%;
+      text-align:center;
+      display:inline-block;
+      box-sizing:border-box;
+    }
+    .erp-main{
+      padding:24px;
+    }
+    .erp-title h1{
+      margin:0;
+      font-size:2rem;
+    }
+    .erp-title p{
+      margin:8px 0 0;
+      color:#9ca3af;
+    }
+    .kpis{
+      display:grid;
+      gap:16px;
+      grid-template-columns:repeat(4,1fr);
+      margin:24px 0;
+    }
+    .kpi{
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:18px;
+      padding:18px;
+    }
+    .kpi small{
+      display:block;
+      color:#9ca3af;
+      margin-bottom:8px;
+    }
+    .kpi strong{
+      font-size:1.6rem;
+    }
+    .grid-2{
+      display:grid;
+      gap:18px;
+      grid-template-columns:1fr 1fr;
+    }
+    .section{
+      background:#111827;
+      border:1px solid #1f2937;
+      border-radius:18px;
+      padding:20px;
+      margin-bottom:18px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#0b1220;
+      border:1px solid #1f2937;
+      border-radius:16px;
+      overflow:hidden;
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #1f2937;
+    }
+    th{
+      background:#131c2e;
+    }
+    .mini-list{
+      margin:0;
+      padding-left:18px;
+      color:#d1d5db;
+    }
+    @media (max-width:1100px){
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .grid-2{grid-template-columns:1fr}
+    }
+    @media (max-width:800px){
+      .erp-layout{grid-template-columns:1fr}
+      .erp-sidebar{
+        border-right:none;
+        border-bottom:1px solid #1f2937;
+      }
+      .kpis{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="erp-layout">
+    <aside class="erp-sidebar">
+      <a class="erp-brand" href="dashboard-erp-ventas.html">Ballers ERP</a>
+      <div class="erp-subtitle">Panel de ventas</div>
+
+      <nav class="erp-menu">
+        <a href="dashboard-erp-ventas.html" class="active">Dashboard</a>
+        <a href="ordenes-erp-ventas.html">Órdenes</a>
+        <a href="clientes-erp-ventas.html">Clientes</a>
+      </nav>
+
+      <div class="erp-user">
+        <strong id="erp-user-name">Ventas</strong>
+        <small id="erp-user-role">ventas</small>
+        <a class="btn btn--ghost" href="index-ventas.html">Volver al panel</a>
+      </div>
+    </aside>
+
+    <main class="erp-main">
+      <div class="erp-title">
+        <h1>Dashboard ERP Ventas</h1>
+        <p>Vista comercial del sistema para seguimiento de clientes y órdenes.</p>
+      </div>
+
+      <section class="kpis">
+        <article class="kpi">
+          <small>Ventas totales</small>
+          <strong id="kpi-ventas">$0.00</strong>
+        </article>
+        <article class="kpi">
+          <small>Órdenes procesadas</small>
+          <strong id="kpi-ordenes">0</strong>
+        </article>
+        <article class="kpi">
+          <small>Clientes activos</small>
+          <strong id="kpi-clientes">0</strong>
+        </article>
+        <article class="kpi">
+          <small>Productos vendidos</small>
+          <strong id="kpi-productos">0</strong>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="section">
+          <h3 style="margin-top:0">Resumen comercial</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Indicador</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-resumen">
+              <tr><td>Ventas totales</td><td>$0.00</td></tr>
+              <tr><td>Órdenes procesadas</td><td>0</td></tr>
+              <tr><td>Clientes activos</td><td>0</td></tr>
+              <tr><td>Productos vendidos</td><td>0</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="section">
+          <h3 style="margin-top:0">Vista del área</h3>
+          <ul class="mini-list">
+            <li>Seguimiento comercial habilitado</li>
+            <li>Clientes visibles para el área de ventas</li>
+            <li>Órdenes empresariales disponibles</li>
+            <li>Acceso restringido a módulos comerciales</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    function money(n){
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function cargarUsuario(){
+      const nombre = localStorage.getItem('ballers_user_name') || localStorage.getItem('ballers_user_nombre') || 'Ventas';
+      const rol = localStorage.getItem('ballers_user_rol') || 'ventas';
+
+      document.getElementById('erp-user-name').textContent = nombre;
+      document.getElementById('erp-user-role').textContent = rol;
+    }
+
+    async function cargarDashboardVentas(){
+      try{
+        const resp = await fetch('/api/erp/metricas');
+        const data = await resp.json();
+
+        document.getElementById('kpi-ventas').textContent = money(data.ventas_totales || 0);
+        document.getElementById('kpi-ordenes').textContent = data.ordenes_procesadas || 0;
+        document.getElementById('kpi-clientes').textContent = data.clientes_activos || 0;
+        document.getElementById('kpi-productos').textContent = data.productos_vendidos || 0;
+
+        document.getElementById('tabla-resumen').innerHTML = `
+          <tr><td>Ventas totales</td><td>${money(data.ventas_totales || 0)}</td></tr>
+          <tr><td>Órdenes procesadas</td><td>${data.ordenes_procesadas || 0}</td></tr>
+          <tr><td>Clientes activos</td><td>${data.clientes_activos || 0}</td></tr>
+          <tr><td>Productos vendidos</td><td>${data.productos_vendidos || 0}</td></tr>
+        `;
+      } catch(error){
+        console.error(error);
+      }
+    }
+
+    cargarUsuario();
+    cargarDashboardVentas();
+  </script>
+</body>
+</html>

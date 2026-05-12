@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .catalog-top{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+    .catalog-top h1{
+      margin:0 0 8px;
+    }
+    .catalog-top p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .catalog-toolbar{
+      display:grid;
+      gap:12px;
+      margin:18px 0 22px;
+    }
+    @media (min-width:900px){
+      .catalog-toolbar{
+        grid-template-columns:1.2fr .9fr .9fr;
+      }
+    }
+
+    .catalog-toolbar input,
+    .catalog-toolbar select{
+      width:100%;
+      padding:11px 12px;
+      border-radius:12px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+    }
+
+    .catalog-grid{
+      display:grid;
+      gap:18px;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      margin-bottom:28px;
+    }
+
+    .product-card{
+      background:var(--card);
+      border:1px solid #23232a;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:var(--shadow-soft);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .product-image{
+      height:230px;
+      background:#18181d center/cover no-repeat;
+      border-bottom:1px solid #23232a;
+    }
+
+    .product-body{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:1;
+    }
+
+    .product-category{
+      display:inline-block;
+      width:max-content;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.8rem;
+      border:1px solid #333;
+      color:#ffd166;
+    }
+
+    .product-title{
+      margin:0;
+      font-size:1.08rem;
+    }
+
+    .product-desc{
+      margin:0;
+      color:var(--muted);
+      line-height:1.45;
+      min-height:44px;
+    }
+
+    .product-meta{
+      display:grid;
+      gap:6px;
+      color:#d5d5da;
+      font-size:.95rem;
+    }
+
+    .product-price{
+      font-size:1.2rem;
+      font-weight:700;
+      color:#fff;
+    }
+
+    .stock-ok{
+      color:#7CFC98;
+      font-weight:700;
+    }
+
+    .stock-low{
+      color:#ffd166;
+      font-weight:700;
+    }
+
+    .stock-out{
+      color:#ff8b8b;
+      font-weight:700;
+    }
+
+    .product-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:auto;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    .counter-box{
+      margin:0 0 18px;
+      color:var(--muted);
+    }
+
+    .msg-box{
+      margin:0 0 18px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .btn[disabled]{
+      opacity:.55;
+      cursor:not-allowed;
+      pointer-events:none;
+    }
+
+    .promo-badge{
+      display:inline-block;
+      width:max-content;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#2a1408;
+      color:#ffd166;
+      font-weight:700;
+      font-size:.85rem;
+      border:1px solid #5a3418;
+    }
+
+    .price-old{
+      text-decoration:line-through;
+      color:#aaa;
+      margin-right:8px;
+    }
+
+    .price-new{
+      color:#7CFC98;
+      font-weight:800;
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a class="active" href="catalog_user.html" aria-current="page">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 50px">
+    <section class="catalog-top">
+      <h1>Catálogo de productos</h1>
+      <p>Explora los productos disponibles, filtra por categoría y agrega artículos al carrito.</p>
+    </section>
+
+    <section class="catalog-toolbar">
+      <input id="buscar" type="text" placeholder="Buscar por nombre..." />
+
+      <select id="categoria">
+        <option value="">Todas las categorías</option>
+      </select>
+
+      <select id="orden">
+        <option value="nombre-asc">Nombre A-Z</option>
+        <option value="nombre-desc">Nombre Z-A</option>
+        <option value="precio-asc">Precio: menor a mayor</option>
+        <option value="precio-desc">Precio: mayor a menor</option>
+        <option value="stock-desc">Mayor stock</option>
+      </select>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <div class="counter-box">
+      <span id="contador-productos">0 productos</span>
+    </div>
+
+    <section id="catalogo-grid" class="catalog-grid">
+      <div class="empty-box">Cargando catálogo...</div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const grid = document.getElementById('catalogo-grid');
+    const buscarInput = document.getElementById('buscar');
+    const categoriaSelect = document.getElementById('categoria');
+    const ordenSelect = document.getElementById('orden');
+    const contador = document.getElementById('contador-productos');
+    const mensaje = document.getElementById('mensaje');
+
+    let productos = [];
+    let promociones = [];
+    let productosFiltrados = [];
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      mensaje.textContent = texto;
+      mensaje.className = `msg-box ${tipo}`;
+
+      setTimeout(() => {
+        mensaje.className = 'msg-box';
+        mensaje.textContent = '';
+      }, 2500);
+    }
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function obtenerImagen(producto) {
+      if (producto.imagen_url && String(producto.imagen_url).trim() !== '') {
+        return String(producto.imagen_url).trim();
+      }
+      if (producto.imagen && String(producto.imagen).trim() !== '') {
+        return String(producto.imagen).trim();
+      }
+      return '';
+    }
+
+    function estadoStock(stock) {
+      const n = Number(stock || 0);
+      if (n <= 0) return '<span class="stock-out">Sin stock</span>';
+      if (n <= 5) return `<span class="stock-low">Stock bajo: ${n}</span>`;
+      return `<span class="stock-ok">Disponible: ${n}</span>`;
+    }
+
+    function obtenerPromocionProducto(productoId) {
+      return promociones.find(p => Number(p.producto_id) === Number(productoId)) || null;
+    }
+
+    function calcularPrecioFinal(producto) {
+      const precioBase = Number(producto.precio ?? producto.precio_venta ?? producto.costo_unitario ?? 0);
+      const promo = obtenerPromocionProducto(producto.id);
+
+      if (!promo) {
+        return {
+          precioBase,
+          precioFinal: precioBase,
+          descuento: 0,
+          promo: null
+        };
+      }
+
+      const descuento = Number(promo.valor_descuento || 0);
+      const precioFinal = precioBase - (precioBase * (descuento / 100));
+
+      return {
+        precioBase,
+        precioFinal,
+        descuento,
+        promo
+      };
+    }
+
+    function renderCategorias() {
+      const categorias = [...new Set(
+        productos
+          .map(p => (p.categoria || '').trim())
+          .filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, 'es'));
+
+      categoriaSelect.innerHTML =
+        '<option value="">Todas las categorías</option>' +
+        categorias.map(cat => `<option value="${escaparHtml(cat)}">${escaparHtml(cat)}</option>`).join('');
+    }
+
+    function filtrarYOrdenar() {
+      const texto = buscarInput.value.trim().toLowerCase();
+      const categoria = categoriaSelect.value;
+      const orden = ordenSelect.value;
+
+      productosFiltrados = productos.filter(p => {
+        const nombre = String(p.nombre || '').toLowerCase();
+        const descripcion = String(p.descripcion || '').toLowerCase();
+        const cat = String(p.categoria || '');
+        const coincideTexto = !texto || nombre.includes(texto) || descripcion.includes(texto);
+        const coincideCategoria = !categoria || cat === categoria;
+        return coincideTexto && coincideCategoria;
+      });
+
+      if (orden === 'nombre-asc') {
+        productosFiltrados.sort((a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es'));
+      }
+      if (orden === 'nombre-desc') {
+        productosFiltrados.sort((a, b) => String(b.nombre || '').localeCompare(String(a.nombre || ''), 'es'));
+      }
+      if (orden === 'precio-asc') {
+        productosFiltrados.sort((a, b) => calcularPrecioFinal(a).precioFinal - calcularPrecioFinal(b).precioFinal);
+      }
+      if (orden === 'precio-desc') {
+        productosFiltrados.sort((a, b) => calcularPrecioFinal(b).precioFinal - calcularPrecioFinal(a).precioFinal);
+      }
+      if (orden === 'stock-desc') {
+        productosFiltrados.sort((a, b) => Number(b.stock_actual || 0) - Number(a.stock_actual || 0));
+      }
+
+      renderProductos();
+    }
+
+    function renderProductos() {
+      contador.textContent = `${productosFiltrados.length} producto(s)`;
+
+      if (!productosFiltrados.length) {
+        grid.innerHTML = `<div class="empty-box">No se encontraron productos con esos filtros.</div>`;
+        return;
+      }
+
+      grid.innerHTML = productosFiltrados.map(producto => {
+        const precioInfo = calcularPrecioFinal(producto);
+        const imagen = obtenerImagen(producto);
+        const fondo = imagen
+          ? `background-image:url('${imagen.replace(/'/g, "%27")}')`
+          : `background-image:linear-gradient(135deg, rgba(255,106,0,.18), rgba(255,209,102,.18))`;
+
+        const sinStock = Number(producto.stock_actual || 0) <= 0;
+
+        const promoHtml = precioInfo.promo
+          ? `
+            <span class="promo-badge">${Number(precioInfo.descuento)}% OFF</span>
+            <div class="muted">${escaparHtml(precioInfo.promo.nombre || 'Promoción')}</div>
+          `
+          : '';
+
+        const precioHtml = precioInfo.promo
+          ? `
+            <div class="product-price">
+              <span class="price-old">${money(precioInfo.precioBase)}</span>
+              <span class="price-new">${money(precioInfo.precioFinal)}</span>
+            </div>
+          `
+          : `
+            <div class="product-price">${money(precioInfo.precioBase)}</div>
+          `;
+
+        return `
+          <article class="product-card">
+            <div class="product-image" style="${fondo};"></div>
+
+            <div class="product-body">
+              <span class="product-category">${escaparHtml(producto.categoria || 'Sin categoría')}</span>
+
+              ${promoHtml}
+
+              <h3 class="product-title">${escaparHtml(producto.nombre || 'Producto sin nombre')}</h3>
+
+              <p class="product-desc">${escaparHtml(producto.descripcion || 'Sin descripción disponible.')}</p>
+
+              <div class="product-meta">
+                ${precioHtml}
+                <div>${estadoStock(producto.stock_actual)}</div>
+              </div>
+
+              <div class="product-actions">
+                <button class="btn" onclick="agregarAlCarrito(${Number(producto.id)})" ${sinStock ? 'disabled' : ''}>
+                  ${sinStock ? 'Sin stock' : 'Agregar al carrito'}
+                </button>
+                <button class="btn btn--ghost" onclick="verDetalle(${Number(producto.id)})">Ver detalle</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function cargarCatalogo() {
+      try {
+        const [respProductos, respPromos] = await Promise.all([
+          fetch('/api/catalogo'),
+          fetch('/api/promociones/activas/catalogo')
+        ]);
+
+        const dataProductos = await respProductos.json();
+        const dataPromos = await respPromos.json();
+
+        if (!respProductos.ok) {
+          throw new Error(dataProductos.message || 'No se pudo cargar el catálogo');
+        }
+
+        productos = Array.isArray(dataProductos) ? dataProductos : [];
+        promociones = (respPromos.ok && dataPromos.ok && Array.isArray(dataPromos.promociones))
+          ? dataPromos.promociones
+          : [];
+
+        renderCategorias();
+        filtrarYOrdenar();
+      } catch (error) {
+        console.error(error);
+        grid.innerHTML = `<div class="empty-box">Error al cargar catálogo: ${escaparHtml(error.message)}</div>`;
+      }
+    }
+
+    async function agregarAlCarrito(productoId) {
+      try {
+        const clienteId = localStorage.getItem('ballers_user_id');
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
+
+        if (!clienteId) {
+          mostrarMensaje('Primero debes iniciar sesión como cliente.', 'error');
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          mostrarMensaje('Solo un cliente puede agregar productos al carrito.', 'error');
+          return;
+        }
+
+        const resp = await fetch('/api/carrito/agregar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cliente_id: Number(clienteId),
+            producto_id: Number(productoId),
+            cantidad: 1
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo agregar al carrito', 'error');
+          return;
+        }
+
+        mostrarMensaje('Producto agregado al carrito', 'ok');
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    async function verDetalle(productoId) {
+      try {
+        const resp = await fetch(`/api/catalogo/${productoId}`);
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          mostrarMensaje(data.message || 'No se pudo cargar el detalle', 'error');
+          return;
+        }
+
+        const precioInfo = calcularPrecioFinal(data);
+
+        const detalle = `
+Producto: ${data.nombre || 'Sin nombre'}
+Categoría: ${data.categoria || 'Sin categoría'}
+Precio: ${money(precioInfo.precioFinal)}
+${precioInfo.promo ? `Precio original: ${money(precioInfo.precioBase)}\nPromoción: ${precioInfo.promo.nombre} (${Number(precioInfo.descuento)}% OFF)` : ''}
+Stock: ${data.stock_actual || 0}
+Proveedor: ${data.proveedor_nombre || 'Sin proveedor'}
+
+${data.descripcion || 'Sin descripción'}
+        `.trim();
+
+        alert(detalle);
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error al obtener detalle del producto', 'error');
+      }
+    }
+
+    window.agregarAlCarrito = agregarAlCarrito;
+    window.verDetalle = verDetalle;
+
+    buscarInput.addEventListener('input', filtrarYOrdenar);
+    categoriaSelect.addEventListener('change', filtrarYOrdenar);
+    ordenSelect.addEventListener('change', filtrarYOrdenar);
+
+    cargarCatalogo();
+  </script>
+</body>
+</html>

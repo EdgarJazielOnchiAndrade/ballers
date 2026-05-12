@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seguimiento | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .top-box{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .top-box h2{
+      margin:0 0 8px;
+    }
+
+    .top-box p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .msg-box{
+      margin:18px 0;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .seguimiento-list{
+      display:grid;
+      gap:18px;
+    }
+
+    .pedido-card{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:20px;
+      display:grid;
+      gap:16px;
+    }
+
+    .pedido-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .pedido-title{
+      font-size:1.08rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .pedido-meta{
+      display:grid;
+      gap:6px;
+      color:var(--muted);
+    }
+
+    .estado-badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:700;
+      border:1px solid #333;
+      width:max-content;
+      text-transform:capitalize;
+    }
+
+    .estado-preparacion{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .estado-camino{
+      color:#7cc7ff;
+      border-color:#24506c;
+      background:#0f1b24;
+    }
+
+    .estado-entregado{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .step{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid #333;
+      background:#111;
+      text-align:center;
+      font-weight:700;
+      color:#aaa;
+    }
+
+    .step.active-preparacion{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .step.active-camino{
+      color:#7cc7ff;
+      border-color:#24506c;
+      background:#0f1b24;
+    }
+
+    .step.active-entregado{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .comentario-box{
+      padding:14px;
+      border:1px solid #23232a;
+      border-radius:14px;
+      background:#111;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .pedido-total{
+      padding-top:10px;
+      border-top:1px solid #23232a;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:1.05rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    @media (max-width:700px){
+      .steps{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a class="active" href="seguimiento.html" aria-current="page">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="top-box">
+      <h2>Seguimiento de pedidos</h2>
+      <p>Consulta el estado actual de tus pedidos realizados.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section id="seguimiento-list" class="seguimiento-list">
+      <div class="empty-box">Cargando pedidos...</div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const mensaje = document.getElementById('mensaje');
+    const seguimientoList = document.getElementById('seguimiento-list');
+
+    function mostrarError(texto) {
+      mensaje.textContent = texto;
+      mensaje.className = 'msg-box error';
+    }
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      const f = new Date(fecha);
+      if (Number.isNaN(f.getTime())) return fecha;
+      return f.toLocaleString('es-MX');
+    }
+
+    function obtenerClaseEstado(estado) {
+      if (estado === 'preparacion') return 'estado-badge estado-preparacion';
+      if (estado === 'en_camino') return 'estado-badge estado-camino';
+      if (estado === 'entregado') return 'estado-badge estado-entregado';
+      return 'estado-badge estado-preparacion';
+    }
+
+    function obtenerTextoEstado(estado) {
+      if (estado === 'preparacion') return 'En preparación';
+      if (estado === 'en_camino') return 'En camino';
+      if (estado === 'entregado') return 'Entregado';
+      return 'En preparación';
+    }
+
+    function obtenerPasoActivo(estado) {
+      if (estado === 'preparacion') return 1;
+      if (estado === 'en_camino') return 2;
+      if (estado === 'entregado') return 3;
+      return 1;
+    }
+
+    function renderPedidos(pedidos) {
+      if (!pedidos.length) {
+        seguimientoList.innerHTML = `
+          <div class="empty-box">
+            Aún no tienes pedidos registrados.
+          </div>
+        `;
+        return;
+      }
+
+      seguimientoList.innerHTML = pedidos.map(pedido => {
+        const estado = pedido.seguimiento_estado || 'preparacion';
+        const pasoActivo = obtenerPasoActivo(estado);
+
+        return `
+          <article class="pedido-card">
+            <div class="pedido-head">
+              <div class="pedido-meta">
+                <div class="pedido-title">Pedido #${pedido.orden_id}</div>
+                <div>Fecha de compra: ${formatearFecha(pedido.fecha)}</div>
+                <div>Última actualización: ${formatearFecha(pedido.actualizado_en)}</div>
+              </div>
+
+              <span class="${obtenerClaseEstado(estado)}">
+                ${escaparHtml(obtenerTextoEstado(estado))}
+              </span>
+            </div>
+
+            <div class="steps">
+              <div class="step ${pasoActivo >= 1 ? 'active-preparacion' : ''}">
+                En preparación
+              </div>
+              <div class="step ${pasoActivo >= 2 ? 'active-camino' : ''}">
+                En camino
+              </div>
+              <div class="step ${pasoActivo >= 3 ? 'active-entregado' : ''}">
+                Entregado
+              </div>
+            </div>
+
+            <div class="comentario-box">
+              ${escaparHtml(pedido.comentario || 'Tu pedido está siendo preparado.')}
+            </div>
+
+            <div class="pedido-total">
+              <span>Total del pedido</span>
+              <span>${money(pedido.total)}</span>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function cargarSeguimiento() {
+      try {
+        const clienteId = localStorage.getItem('ballers_user_id');
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
+
+        if (!clienteId) {
+          mostrarError('Primero debes iniciar sesión.');
+          seguimientoList.innerHTML = `<div class="empty-box">No has iniciado sesión.</div>`;
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          mostrarError('Solo un cliente puede ver el seguimiento de pedidos.');
+          seguimientoList.innerHTML = `<div class="empty-box">Acceso no permitido.</div>`;
+          return;
+        }
+
+        const resp = await fetch(`/api/seguimiento/${Number(clienteId)}`);
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudo cargar el seguimiento');
+        }
+
+        renderPedidos(Array.isArray(data.pedidos) ? data.pedidos : []);
+      } catch (error) {
+        console.error(error);
+        mostrarError(error.message || 'Error al cargar seguimiento');
+        seguimientoList.innerHTML = `<div class="empty-box">Error al cargar seguimiento.</div>`;
+      }
+    }
+
+    cargarSeguimiento();
+  </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analytics SCM | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .kpis{
+      display:grid;
+      gap:16px;
+    }
+    @media (min-width:900px){
+      .kpis{grid-template-columns:repeat(4,1fr)}
+    }
+    .kpi{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:18px;
+    }
+    .kpi small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .kpi strong{
+      font-size:1.7rem;
+    }
+    .grid-2{
+      display:grid;
+      gap:18px;
+    }
+    @media (min-width:1100px){
+      .grid-2{grid-template-columns:1fr 1fr}
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      overflow:hidden;
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #23232a;
+      vertical-align:top;
+    }
+    th{background:#17171c}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333
+    }
+    .tag.push{color:#ffd166;border-color:#70561a}
+    .tag.pull{color:#7ec8ff;border-color:#275a7d}
+    .tag.critico{color:#ff8b8b;border-color:#7a2f2f}
+    .barra-wrap{
+      display:grid;
+      gap:12px;
+    }
+    .barra-item{
+      display:grid;
+      gap:6px;
+    }
+    .barra-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .barra{
+      width:100%;
+      height:12px;
+      background:#1a1a20;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #2a2a32;
+    }
+    .barra-fill{
+      height:100%;
+      background:linear-gradient(90deg,#ff6a00,#ffd166);
+      width:0%;
+    }
+    .muted{color:var(--muted)}
+    .nivel-box{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:18px;
+      margin-top:14px;
+    }
+    .nivel-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .nivel-actions select{
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .msg{margin-top:12px;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Dashboard SCM</h2>
+      <p class="muted" style="margin:0">
+        Consulta inventario crítico, productos más vendidos, rotación lenta, comparación Push vs Pull y el nivel SCM.
+      </p>
+    </section>
+
+    <section class="kpis">
+      <article class="kpi">
+        <small>Total de productos</small>
+        <strong id="kpi-productos">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Inventario crítico</small>
+        <strong id="kpi-critico">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Productos Push</small>
+        <strong id="kpi-push">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Productos Pull</small>
+        <strong id="kpi-pull">0</strong>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="section">
+        <h3 style="margin-top:0">Inventario crítico</h3>
+        <div id="inventario-critico-wrap"></div>
+      </article>
+
+      <article class="section">
+        <h3 style="margin-top:0">Comparación Push vs Pull</h3>
+        <div id="push-pull-wrap"></div>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="section">
+        <h3 style="margin-top:0">Productos más vendidos</h3>
+        <div id="mas-vendidos-wrap"></div>
+      </article>
+
+      <article class="section">
+        <h3 style="margin-top:0">Rotación lenta</h3>
+        <div id="rotacion-lenta-wrap"></div>
+      </article>
+    </section>
+
+    <section class="section">
+      <h3 style="margin-top:0">Nivel de madurez SCM</h3>
+      <div class="nivel-box">
+        <p><strong>Nivel actual:</strong> <span id="nivel-actual">Cargando...</span></p>
+        <p class="muted" id="nivel-desc">Cargando descripción...</p>
+
+        <div class="nivel-actions">
+          <select id="nivel_scm">
+            <option value="Inicial">Inicial</option>
+            <option value="En desarrollo">En desarrollo</option>
+            <option value="Optimizado">Optimizado</option>
+          </select>
+          <button class="btn" id="btn-actualizar-nivel">Actualizar nivel</button>
+        </div>
+
+        <div id="msg-nivel" class="msg"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    function renderTablaSimple(wrapId, lista, tituloCampo = 'nombre', valorCampo = 'total_salidas') {
+      const wrap = document.getElementById(wrapId);
+
+      if (!lista || !lista.length) {
+        wrap.innerHTML = '<div class="empty">No hay datos para mostrar.</div>';
+        return;
+      }
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(item => `
+              <tr>
+                <td>${item[tituloCampo]}</td>
+                <td>${item[valorCampo]}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderInventarioCritico(lista) {
+      const wrap = document.getElementById('inventario-critico-wrap');
+
+      if (!lista || !lista.length) {
+        wrap.innerHTML = '<div class="empty">No hay inventario crítico.</div>';
+        return;
+      }
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Stock actual</th>
+              <th>Stock mínimo</th>
+              <th>Estrategia</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(item => `
+              <tr>
+                <td>${item.nombre}</td>
+                <td><span class="tag critico">${item.stock_actual}</span></td>
+                <td>${item.stock_minimo}</td>
+                <td><span class="tag ${item.estrategia_logistica.toLowerCase()}">${item.estrategia_logistica}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderPushPull(push, pull, total) {
+      const wrap = document.getElementById('push-pull-wrap');
+
+      if (total === 0) {
+        wrap.innerHTML = '<div class="empty">No hay productos para comparar.</div>';
+        return;
+      }
+
+      const porcentajePush = Math.round((push / total) * 100);
+      const porcentajePull = Math.round((pull / total) * 100);
+
+      wrap.innerHTML = `
+        <div class="barra-wrap">
+          <div class="barra-item">
+            <div class="barra-top">
+              <strong>Push</strong>
+              <span>${push} (${porcentajePush}%)</span>
+            </div>
+            <div class="barra"><div class="barra-fill" style="width:${porcentajePush}%"></div></div>
+          </div>
+
+          <div class="barra-item">
+            <div class="barra-top">
+              <strong>Pull</strong>
+              <span>${pull} (${porcentajePull}%)</span>
+            </div>
+            <div class="barra"><div class="barra-fill" style="width:${porcentajePull}%"></div></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function descripcionNivel(nivel) {
+      if (nivel === 'Inicial') {
+        return 'El SCM apenas comienza. Ya existe control básico de productos, inventario y proveedores.';
+      }
+      if (nivel === 'En desarrollo') {
+        return 'El SCM ya integra inventario, movimientos, pedidos y parte de la lógica logística.';
+      }
+      return 'El SCM está optimizado: hay visibilidad, reglas push/pull, trazabilidad y dashboard de apoyo.';
+    }
+
+    async function cargarDashboard() {
+      try {
+        const [productosRes, criticoRes, vendidosRes, lentaRes, estadoRes] = await Promise.all([
+          fetch('/api/productos'),
+          fetch('/api/scm/reportes/inventario-critico'),
+          fetch('/api/scm/reportes/mas-vendidos'),
+          fetch('/api/scm/reportes/rotacion-lenta'),
+          fetch('/api/scm/estado')
+        ]);
+
+        const productos = await productosRes.json();
+        const inventarioCritico = await criticoRes.json();
+        const masVendidos = await vendidosRes.json();
+        const rotacionLenta = await lentaRes.json();
+        const estado = await estadoRes.json();
+
+        const totalProductos = productos.length;
+        const push = productos.filter(p => p.estrategia_logistica === 'PUSH').length;
+        const pull = productos.filter(p => p.estrategia_logistica === 'PULL').length;
+
+        document.getElementById('kpi-productos').textContent = totalProductos;
+        document.getElementById('kpi-critico').textContent = inventarioCritico.length;
+        document.getElementById('kpi-push').textContent = push;
+        document.getElementById('kpi-pull').textContent = pull;
+
+        renderInventarioCritico(inventarioCritico);
+        renderPushPull(push, pull, totalProductos);
+        renderTablaSimple('mas-vendidos-wrap', masVendidos);
+        renderTablaSimple('rotacion-lenta-wrap', rotacionLenta);
+
+        document.getElementById('nivel-actual').textContent = estado.nivel_scm;
+        document.getElementById('nivel-desc').textContent = descripcionNivel(estado.nivel_scm);
+        document.getElementById('nivel_scm').value = estado.nivel_scm;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('inventario-critico-wrap').innerHTML = '<div class="empty">No se pudo cargar el dashboard.</div>';
+        document.getElementById('push-pull-wrap').innerHTML = '<div class="empty">No se pudo cargar la comparación Push/Pull.</div>';
+        document.getElementById('mas-vendidos-wrap').innerHTML = '<div class="empty">No se pudieron cargar los más vendidos.</div>';
+        document.getElementById('rotacion-lenta-wrap').innerHTML = '<div class="empty">No se pudo cargar la rotación lenta.</div>';
+      }
+    }
+
+    document.getElementById('btn-actualizar-nivel').addEventListener('click', async () => {
+      const msg = document.getElementById('msg-nivel');
+      msg.textContent = '';
+      msg.className = 'msg';
+
+      const nivel_scm = document.getElementById('nivel_scm').value;
+
+      try {
+        const resp = await fetch('/api/scm/nivel', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nivel_scm })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          msg.textContent = data.message || 'No se pudo actualizar el nivel SCM';
+          msg.classList.add('error');
+          return;
+        }
+
+        msg.textContent = 'Nivel SCM actualizado correctamente';
+        msg.classList.add('ok');
+        await cargarDashboard();
+      } catch (error) {
+        console.error(error);
+        msg.textContent = 'Error de conexión con el servidor';
+        msg.classList.add('error');
+      }
+    });
+
+    cargarDashboard();
+  </script>
+</body>
+</html>

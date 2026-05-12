@@ -5,72 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ballers 🏀👟 | Inicio</title>
   <link rel="stylesheet" href="src/assets/css/base.css"/>
-</head>
-<body>
-
-  <!-- 🔔 Banner de Cookies -->
-  <div id="cookie-banner" style="
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #111;
-    color: #fff;
-    text-align: center;
-    padding: 20px 10px;
-    font-size: 15px;
-    z-index: 1000;
-    box-shadow: 0 -2px 6px rgba(0,0,0,0.3);
-    animation: slideUp 0.6s ease-out;
-  ">
-    <p style="max-width: 800px; margin: 0 auto 15px;">
-      Nuestras cookies te ofrecen una excelente experiencia online y hacen que nuestro sitio web funcione. 
-      También las usamos para analizar cómo se usa nuestra web y ofrecer contenido online personalizado. 
-      Para más información, <a href="src/assets/views/cookies.html" style="color:#ffd166; text-decoration:underline;">consulta aquí</a>.
-    </p>
-    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-      <button id="accept-cookies" style="
-        background-color: #0a7d46;
-        color: #fff;
-        border: none;
-        border-radius: 50px;
-        padding: 10px 24px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s;
-      ">
-        Aceptar todas las cookies
-      </button>
-      <button id="only-necessary" style="
-        background-color: #000;
-        color: #fff;
-        border: 2px solid #333;
-        border-radius: 50px;
-        padding: 10px 24px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s;
-      ">
-        Cookies estrictamente necesarias
-      </button>
-    </div>
-  </div>
-
-  <script>
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtn = document.getElementById('accept-cookies');
-    const necessaryBtn = document.getElementById('only-necessary');
-    acceptBtn.addEventListener('click', () => banner.style.display = 'none');
-    necessaryBtn.addEventListener('click', () => banner.style.display = 'none');
-  </script>
-
   <style>
-    @keyframes slideUp {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* Bloque de métodos de pago tradicionales */
     .payment-section {
       background: #050505;
       color: #f5f5f5;
@@ -130,7 +65,85 @@
       font-size: 0.9rem;
       color: #c5c5c5;
     }
+
+    .msg-box{
+      margin:18px 0 0;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .public-note{
+      margin: 18px auto 0;
+      max-width: 1100px;
+      padding: 14px 16px;
+      border: 1px solid #2a2a32;
+      border-radius: 14px;
+      background: #111;
+      color: var(--muted);
+    }
+
+    .card__extra{
+      margin: 8px 0 10px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .stock-ok{
+      color:#7CFC98;
+      font-weight:700;
+    }
+
+    .stock-low{
+      color:#ffd166;
+      font-weight:700;
+    }
+
+    .stock-out{
+      color:#ff8b8b;
+      font-weight:700;
+    }
+
+    .promo-badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#2a1408;
+      color:#ffd166;
+      font-weight:700;
+      font-size:.85rem;
+      border:1px solid #5a3418;
+    }
+
+    .price-old{
+      text-decoration:line-through;
+      color:#aaa;
+      margin-right:8px;
+    }
+
+    .price-new{
+      color:#7CFC98;
+      font-weight:800;
+    }
   </style>
+</head>
+<body>
 
   <!-- Header -->
   <header class="header">
@@ -149,9 +162,7 @@
         <ul>
           <li><a class="active" href="index.html" aria-current="page">Inicio</a></li>
           <li><a href="src/assets/views/catalog.html">Catálogo</a></li>
-          <li><a href="src/assets/views/intranet.html">Intranet</a></li>
 
-          <!-- Monito (login) -->
           <li>
             <a class="nav__user" href="src/assets/views/login.html" aria-label="Iniciar sesión">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -159,20 +170,6 @@
                 <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2" fill="none"/>
               </svg>
             </a>
-          </li>
-
-          <!-- Submenú Documentación -->
-          <li class="has-submenu">
-            <button class="submenu__toggle" type="button"
-                    aria-haspopup="true" aria-expanded="false" aria-controls="doc-submenu">
-              Documentación <span class="caret" aria-hidden="true">▾</span>
-            </button>
-            <ul id="doc-submenu" class="submenu" role="menu" hidden>
-              <li role="none"><a role="menuitem" href="src/assets/views/tecnologia.html">Tecnología propuesta</a></li>
-              <li role="none"><a role="menuitem" href="src/assets/views/infraestructura.html">Infraestructura</a></li>
-              <li role="none"><a role="menuitem" href="src/assets/views/status.html">Estatus</a></li>
-              <li role="none"><a role="menuitem" href="src/assets/views/disponibilidad.html">Disponibilidad</a></li>
-            </ul>
           </li>
         </ul>
       </nav>
@@ -191,23 +188,32 @@
     </div>
   </section>
 
+  <div class="container">
+    <div id="mensaje" class="msg-box"></div>
+  </div>
+
+  <div class="public-note">
+    Puedes explorar el catálogo públicamente. Para agregar productos al carrito, comprar o dar seguimiento a tus pedidos, necesitas crear una cuenta e iniciar sesión.
+  </div>
+
   <!-- Filtros -->
   <section class="filters">
     <div class="container filters__inner">
       <div class="chips">
         <button class="chip is-active" data-cat="todo">Todo</button>
-        <button class="chip" data-cat="sneakers">Sneakers</button>
-        <button class="chip" data-cat="jerseys">Jerseys</button>
-        <button class="chip" data-cat="gorras">Gorras</button>
-        <button class="chip" data-cat="accesorios">Accesorios</button>
+        <button class="chip" data-cat="Sneakers">Sneakers</button>
+        <button class="chip" data-cat="Jerseys">Jerseys</button>
+        <button class="chip" data-cat="Gorras">Gorras</button>
+        <button class="chip" data-cat="Accesorios">Accesorios</button>
       </div>
       <div class="sort">
         <label for="orden">Ordenar:</label>
         <select id="orden">
           <option value="popular">Más populares</option>
-          <option value="nuevo">Novedades</option>
+          <option value="nombre-asc">Nombre A-Z</option>
           <option value="precio-asc">Precio: bajo a alto</option>
           <option value="precio-desc">Precio: alto a bajo</option>
+          <option value="stock-desc">Mayor stock</option>
         </select>
       </div>
     </div>
@@ -256,129 +262,273 @@
     </div>
   </section>
 
-<!-- Footer actualizado -->
-<footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
-  <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
-    <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
 
-    <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
-      <a href="src/assets/views/aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
-      <a href="src/assets/views/terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
-      <a href="src/assets/views/cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
-      <a href="src/assets/views/certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
-      <a href="src/assets/views/politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
-    </nav>
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="src/assets/views/aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="src/assets/views/terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="src/assets/views/cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="src/assets/views/certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="src/assets/views/politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
 
-    <div style="margin-top:8px; color:#fff;">
-      <strong>Contacto:</strong><br>
-      Teléfono: +52 449 123 4567<br>
-      Correo: contacto@ballers.com
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
 
-
-
-  <!-- JS global -->
   <script src="src/assets/js/app.js"></script>
 
-  <!-- Script de productos -->
   <script>
-  (async () => {
-    const grid   = document.getElementById('home-grid');
-    const chips  = Array.from(document.querySelectorAll('.chip'));
-    const select = document.getElementById('orden');
-    const qInput = document.getElementById('q');
+    (() => {
+      const grid = document.getElementById('home-grid');
+      const chips = Array.from(document.querySelectorAll('.chip'));
+      const select = document.getElementById('orden');
+      const qInput = document.getElementById('q');
+      const mensaje = document.getElementById('mensaje');
 
-    const money = n => n.toLocaleString('es-MX', { style:'currency', currency:'MXN' });
+      let productos = [];
+      let promociones = [];
+      let current = [];
 
-    const fixImg = (path) => {
-      if (!path) return '';
-      if (path.startsWith('src/assets/img/')) return path;
-      if (path.startsWith('../img/')) return 'src/assets/' + path.replace('../','');
-      return path;
-    };
+      function mostrarMensaje(texto, tipo = 'ok') {
+        mensaje.textContent = texto;
+        mensaje.className = `msg-box ${tipo}`;
 
-    let products = [];
-    try {
-      const res = await fetch('src/assets/data/products.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error('No se pudo cargar products.json');
-      products = await res.json();
-    } catch (err) {
-      grid.innerHTML = `<article class="card" style="padding:16px">
-        <h3>Error cargando destacados</h3>
-        <p class="muted">${err.message}</p>
-      </article>`;
-      return;
-    }
-
-    function cardTemplate(p) {
-      const img = fixImg(p.image);
-      const bg  = img
-        ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${img}') center/cover no-repeat`
-        : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
-
-      return `
-        <article class="card" data-category="${p.category}">
-          <div class="card__img" role="img" aria-label="${p.name}" style="background:${bg};"></div>
-          <div class="card__body">
-            <h3 class="card__title">${p.name}</h3>
-            <p class="card__price">${money(p.price)}</p>
-            <div class="card__actions">
-              <button class="btn btn--ghost" aria-label="Favorito">♡</button>
-              <a class="btn" href="src/assets/views/catalog.html">Ver</a>
-            </div>
-          </div>
-        </article>`;
-    }
-
-    let current = [...products];
-
-    function applyFilters() {
-      const active = document.querySelector('.chip.is-active');
-      const cat = active ? active.dataset.cat : 'todo';
-      const term = (qInput?.value || '').trim().toLowerCase();
-
-      current = products.filter(p => {
-        const inCat  = (cat === 'todo') || (p.category === cat);
-        const inText = term === '' ||
-          p.name.toLowerCase().includes(term) ||
-          (p.description || '').toLowerCase().includes(term);
-        return inCat && inText;
-      });
-    }
-
-    function applySort() {
-      const v = select.value;
-      if (v === 'precio-asc')  current.sort((a,b) => a.price - b.price);
-      if (v === 'precio-desc') current.sort((a,b) => b.price - a.price);
-      if (v === 'nuevo')       current.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      if (v === 'popular')     current.sort((a,b) => (b.popularity || 0) - (a.popularity || 0));
-    }
-
-    function render(list){
-      const slice = list.slice(0, 8);
-      if (!slice.length) {
-        grid.innerHTML = `<article class="card" style="padding:16px">
-          <h3>Sin destacados</h3>
-          <p class="muted">Ajusta la categoría o el término de búsqueda.</p>
-        </article>`;
-        return;
+        setTimeout(() => {
+          mensaje.className = 'msg-box';
+          mensaje.textContent = '';
+        }, 2500);
       }
-      grid.innerHTML = slice.map(cardTemplate).join('');
-    }
 
-    chips.forEach(chip => chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('is-active'));
-      chip.classList.add('is-active');
-      applyFilters(); applySort(); render(current);
-    }));
+      function money(n) {
+        return Number(n || 0).toLocaleString('es-MX', {
+          style: 'currency',
+          currency: 'MXN'
+        });
+      }
 
-    select.addEventListener('change', () => { applySort(); render(current); });
-    qInput?.addEventListener('input', () => { applyFilters(); applySort(); render(current); });
+      function escaparHtml(texto) {
+        return String(texto ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
 
-    applyFilters(); applySort(); render(current);
-  })();
+      function obtenerImagen(producto) {
+        if (producto.imagen_url && String(producto.imagen_url).trim() !== '') {
+          return String(producto.imagen_url).trim();
+        }
+        if (producto.imagen && String(producto.imagen).trim() !== '') {
+          return String(producto.imagen).trim();
+        }
+        return '';
+      }
+
+      function estadoStock(stock) {
+        const n = Number(stock || 0);
+        if (n <= 0) return '<span class="stock-out">Sin stock</span>';
+        if (n <= 5) return `<span class="stock-low">Stock bajo: ${n}</span>`;
+        return `<span class="stock-ok">Disponible: ${n}</span>`;
+      }
+
+      function obtenerPromocionProducto(productoId) {
+        return promociones.find(p => Number(p.producto_id) === Number(productoId)) || null;
+      }
+
+      function calcularPrecioFinal(producto) {
+        const precioBase = Number(producto.precio ?? producto.precio_venta ?? producto.costo_unitario ?? 0);
+        const promo = obtenerPromocionProducto(producto.id);
+
+        if (!promo) {
+          return {
+            precioBase,
+            precioFinal: precioBase,
+            descuento: 0,
+            promo: null
+          };
+        }
+
+        const descuento = Number(promo.valor_descuento || 0);
+        const precioFinal = precioBase - (precioBase * (descuento / 100));
+
+        return {
+          precioBase,
+          precioFinal,
+          descuento,
+          promo
+        };
+      }
+
+      function applyFilters() {
+        const active = document.querySelector('.chip.is-active');
+        const cat = active ? active.dataset.cat : 'todo';
+        const term = (qInput?.value || '').trim().toLowerCase();
+
+        current = productos.filter(p => {
+          const inCat = (cat === 'todo') || (String(p.categoria || '') === cat);
+          const inText =
+            term === '' ||
+            String(p.nombre || '').toLowerCase().includes(term) ||
+            String(p.descripcion || '').toLowerCase().includes(term);
+          return inCat && inText;
+        });
+      }
+
+      function applySort() {
+        const v = select.value;
+
+        if (v === 'precio-asc') {
+          current.sort((a, b) => calcularPrecioFinal(a).precioFinal - calcularPrecioFinal(b).precioFinal);
+        }
+
+        if (v === 'precio-desc') {
+          current.sort((a, b) => calcularPrecioFinal(b).precioFinal - calcularPrecioFinal(a).precioFinal);
+        }
+
+        if (v === 'stock-desc') {
+          current.sort((a, b) => Number(b.stock_actual || 0) - Number(a.stock_actual || 0));
+        }
+
+        if (v === 'nombre-asc') {
+          current.sort((a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es'));
+        }
+
+        if (v === 'popular') {
+          current.sort((a, b) => Number(b.destacado || 0) - Number(a.destacado || 0));
+        }
+      }
+
+      function cardTemplate(p) {
+        const img = obtenerImagen(p);
+        const bg = img
+          ? `linear-gradient(135deg, rgba(255,106,0,.20), rgba(255,209,102,.20)), url('${img.replace(/'/g, "%27")}') center/cover no-repeat`
+          : `linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,209,102,.25)), linear-gradient(160deg,#23232a,#1a1a20)`;
+
+        const precioInfo = calcularPrecioFinal(p);
+
+        const promoHtml = precioInfo.promo
+          ? `
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <span class="promo-badge">${Number(precioInfo.descuento)}% OFF</span>
+              <span class="muted">${escaparHtml(precioInfo.promo.nombre || 'Promoción')}</span>
+            </div>
+          `
+          : '';
+
+        const precioHtml = precioInfo.promo
+          ? `
+            <p class="card__price" style="margin:0 0 6px;">
+              <span class="price-old">${money(precioInfo.precioBase)}</span>
+              <span class="price-new">${money(precioInfo.precioFinal)}</span>
+            </p>
+          `
+          : `
+            <p class="card__price">${money(precioInfo.precioBase)}</p>
+          `;
+
+        return `
+          <article class="card" data-category="${escaparHtml(p.categoria || '')}">
+            <div class="card__img" role="img" aria-label="${escaparHtml(p.nombre || 'Producto')}" style="background:${bg};"></div>
+            <div class="card__body">
+              ${promoHtml}
+              <h3 class="card__title">${escaparHtml(p.nombre || 'Producto sin nombre')}</h3>
+              ${precioHtml}
+              <p class="muted" style="margin:0 0 6px">${escaparHtml(p.categoria || 'Sin categoría')}</p>
+              <p class="card__extra">${estadoStock(p.stock_actual)}</p>
+              <div class="card__actions">
+                <a class="btn" href="src/assets/views/catalog.html">Ver</a>
+                <button class="btn btn--ghost" onclick="mostrarLoginNecesario()">Inicia sesión para comprar</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function render(list) {
+        const slice = list.slice(0, 8);
+
+        if (!slice.length) {
+          grid.innerHTML = `<article class="card" style="padding:16px">
+            <h3>Sin destacados</h3>
+            <p class="muted">Ajusta la categoría o el término de búsqueda.</p>
+          </article>`;
+          return;
+        }
+
+        grid.innerHTML = slice.map(cardTemplate).join('');
+      }
+
+      async function cargarCatalogo() {
+        try {
+          const [respProductos, respPromos] = await Promise.all([
+            fetch('/api/catalogo'),
+            fetch('/api/promociones/activas/catalogo')
+          ]);
+
+          const dataProductos = await respProductos.json();
+          const dataPromos = await respPromos.json();
+
+          if (!respProductos.ok) {
+            throw new Error(dataProductos.message || 'No se pudo cargar el catálogo');
+          }
+
+          productos = Array.isArray(dataProductos) ? dataProductos : [];
+          promociones = (respPromos.ok && dataPromos.ok && Array.isArray(dataPromos.promociones))
+            ? dataPromos.promociones
+            : [];
+
+          applyFilters();
+          applySort();
+          render(current);
+        } catch (err) {
+          console.error(err);
+          grid.innerHTML = `<article class="card" style="padding:16px">
+            <h3>Error cargando destacados</h3>
+            <p class="muted">${escaparHtml(err.message)}</p>
+          </article>`;
+        }
+      }
+
+      window.mostrarLoginNecesario = function () {
+        mostrarMensaje('Debes iniciar sesión o crear una cuenta para comprar.', 'error');
+      };
+
+      chips.forEach(chip => chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        applyFilters();
+        applySort();
+        render(current);
+      }));
+
+      select.addEventListener('change', () => {
+        applySort();
+        render(current);
+      });
+
+      qInput?.addEventListener('input', () => {
+        applyFilters();
+        applySort();
+        render(current);
+      });
+
+      document.querySelector('.search')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        applyFilters();
+        applySort();
+        render(current);
+      });
+
+      cargarCatalogo();
+    })();
   </script>
 </body>
 </html>

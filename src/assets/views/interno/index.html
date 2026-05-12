@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel interno | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .grid-3{display:grid;gap:16px}
+    @media (min-width:920px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+    .card{
+      background:var(--card);
+      border:1px solid #23232a;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:var(--shadow-soft)
+    }
+    .card__body{padding:16px}
+    .muted{color:var(--muted)}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+    .kpis{display:grid;gap:14px}
+    @media (min-width:800px){.kpis{grid-template-columns:repeat(4,1fr)}}
+    .kpi{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:16px
+    }
+    .kpi small{display:block;color:var(--muted);margin-bottom:6px}
+    .kpi strong{font-size:1.6rem}
+    .list-simple{margin:12px 0 0;padding-left:18px}
+    .topbar-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+    .menu-wrap{
+      position:relative;
+      display:inline-block;
+    }
+    .menu-toggle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .menu-dropdown{
+      position:absolute;
+      top:110%;
+      right:0;
+      min-width:230px;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      padding:10px;
+      z-index:30;
+      display:none;
+    }
+    .menu-dropdown.show{
+      display:block;
+    }
+    .menu-dropdown a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      color:var(--text);
+      text-decoration:none;
+      transition:.2s;
+    }
+    .menu-dropdown a:hover{
+      background:#1a1a20;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a class="active" href="index.html" aria-current="page">Inicio</a></li>
+          <li><a href="clientes.html">Clientes</a></li>
+          <li><a href="interacciones.html">Interacciones</a></li>
+          <li><a href="metricas.html">Métricas CRM</a></li>
+          <li><a href="usuarios.html">Usuarios internos</a></li>
+          <li><a href="actividad.html">Mi actividad</a></li>
+          <li><a href="soporte.html">Soporte</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Panel interno</h2>
+      <p class="muted" style="margin:0">
+        Gestiona clientes, interacciones, seguimiento comercial y métricas de relación con clientes.
+      </p>
+
+      <div class="topbar-actions">
+        <a class="btn" href="clientes.html">Ir a clientes</a>
+        <a class="btn btn--ghost" href="interacciones.html">Registrar interacción</a>
+
+        <div class="menu-wrap">
+          <button class="btn btn--ghost menu-toggle" id="btn-ops-menu" type="button" aria-expanded="false">
+            ☰ Operaciones
+          </button>
+
+          <div class="menu-dropdown" id="ops-dropdown">
+  <a href="productos.html">Productos</a>
+  <a href="inventario.html">Inventario</a>
+  <a href="pedidos.html">Pedidos</a>
+  <a href="impuestos.html">Impuestos / IVA</a>
+  <a href="analytics.html">Analytics</a>
+  <a href="promociones.html">Promociones</a>
+  <a href="seguimiento.html">Seguimiento</a>
+</div>
+        </div>
+
+        <div class="menu-wrap">
+          <button class="btn btn--ghost menu-toggle" id="btn-erp-menu" type="button" aria-expanded="false">
+            ☰ ERP
+          </button>
+
+          <div class="menu-dropdown" id="erp-dropdown">
+            <a href="dashboard-erp-admin.html">Dashboard ERP</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpis" style="margin:18px 0">
+      <article class="kpi">
+        <small>Total de clientes</small>
+        <strong id="kpi-total">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Clientes activos</small>
+        <strong id="kpi-activos">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Clientes inactivos</small>
+        <strong id="kpi-inactivos">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Clientes en riesgo</small>
+        <strong id="kpi-riesgo">0</strong>
+      </article>
+    </section>
+
+    <section class="grid-3">
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Gestión de clientes</h3>
+          <p class="muted">Alta, edición, eliminación, búsqueda, filtro por estado y etapa CRM.</p>
+          <p style="margin-top:10px"><a class="btn" href="clientes.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Interacciones</h3>
+          <p class="muted">Registra llamadas, correos y reuniones con historial por cliente.</p>
+          <p style="margin-top:10px"><a class="btn" href="interacciones.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Métricas CRM</h3>
+          <p class="muted">Visualiza clientes activos, inactivos y clientes sin interacción reciente.</p>
+          <p style="margin-top:10px"><a class="btn" href="metricas.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Usuarios internos</h3>
+          <p class="muted">Consulta las cuentas internas del sistema y sus roles.</p>
+          <p style="margin-top:10px"><a class="btn" href="usuarios.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Mi actividad</h3>
+          <p class="muted">Consulta las interacciones registradas por tu usuario.</p>
+          <p style="margin-top:10px"><a class="btn" href="actividad.html">Abrir</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Clientes en riesgo</h3>
+          <p class="muted">Seguimiento a clientes sin interacción reciente.</p>
+          <ul id="lista-riesgo" class="list-simple">
+            <li class="muted">Cargando...</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    async function cargarMetricasCRM() {
+      try {
+        const resp = await fetch('/api/metricas/crm');
+        const data = await resp.json();
+
+        document.getElementById('kpi-total').textContent = data.total_clientes ?? 0;
+        document.getElementById('kpi-activos').textContent = data.clientes_activos ?? 0;
+        document.getElementById('kpi-inactivos').textContent = data.clientes_inactivos ?? 0;
+        document.getElementById('kpi-riesgo').textContent = (data.clientes_sin_interaccion_reciente || []).length;
+
+        const lista = document.getElementById('lista-riesgo');
+        const riesgo = data.clientes_sin_interaccion_reciente || [];
+
+        if (!riesgo.length) {
+          lista.innerHTML = '<li class="muted">No hay clientes en riesgo.</li>';
+          return;
+        }
+
+        lista.innerHTML = riesgo.slice(0, 5).map(c => `<li>${c.nombre}</li>`).join('');
+      } catch (error) {
+        console.error(error);
+        document.getElementById('lista-riesgo').innerHTML = '<li class="muted">No se pudieron cargar las métricas.</li>';
+      }
+    }
+
+    const btnOps = document.getElementById('btn-ops-menu');
+    const opsDropdown = document.getElementById('ops-dropdown');
+    const btnErp = document.getElementById('btn-erp-menu');
+    const erpDropdown = document.getElementById('erp-dropdown');
+
+    btnOps.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = btnOps.getAttribute('aria-expanded') === 'true';
+      btnOps.setAttribute('aria-expanded', String(!expanded));
+      opsDropdown.classList.toggle('show');
+
+      btnErp.setAttribute('aria-expanded', 'false');
+      erpDropdown.classList.remove('show');
+    });
+
+    btnErp.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = btnErp.getAttribute('aria-expanded') === 'true';
+      btnErp.setAttribute('aria-expanded', String(!expanded));
+      erpDropdown.classList.toggle('show');
+
+      btnOps.setAttribute('aria-expanded', 'false');
+      opsDropdown.classList.remove('show');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!btnOps.contains(e.target) && !opsDropdown.contains(e.target)) {
+        btnOps.setAttribute('aria-expanded', 'false');
+        opsDropdown.classList.remove('show');
+      }
+
+      if (!btnErp.contains(e.target) && !erpDropdown.contains(e.target)) {
+        btnErp.setAttribute('aria-expanded', 'false');
+        erpDropdown.classList.remove('show');
+      }
+    });
+
+    cargarMetricasCRM();
+  </script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Impuestos | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0;
+    }
+
+    .grid-1{
+      display:grid;
+      gap:18px;
+      max-width:520px;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .form-row{
+      display:grid;
+      gap:6px;
+    }
+
+    .form-row input,
+    .form-row select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+      box-sizing:border-box;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .msg{
+      margin-top:12px;
+      font-weight:700;
+    }
+
+    .msg.error{ color:#ff6b6b; }
+    .msg.ok{ color:#7CFC98; }
+
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333;
+    }
+
+    .tag.activo{
+      color:#7CFC98;
+      border-color:#1f6b37;
+    }
+
+    .tag.inactivo{
+      color:#ff8b8b;
+      border-color:#7a2f2f;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .highlight-box{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:14px;
+      padding:16px;
+      display:grid;
+      gap:8px;
+    }
+
+    .highlight-box strong{
+      font-size:1.2rem;
+    }
+
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted);
+      background:#111;
+    }
+  </style>
+</head>
+<body>
+  <header class="internal-header">
+    <div class="container internal-header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+        ← Volver
+      </button>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Configuración de impuestos</h2>
+      <p class="muted" style="margin:0">
+        Aquí puedes consultar el IVA actual del sistema y actualizar el porcentaje que se aplica en las compras.
+      </p>
+    </section>
+
+    <section class="grid-1">
+      <article class="section">
+        <h3 style="margin-top:0">Editar IVA</h3>
+
+        <div id="impuesto-activo-box" class="highlight-box" style="margin-bottom:16px;">
+          <span class="muted">Cargando IVA activo...</span>
+        </div>
+
+        <form id="impuesto-form" class="form-grid">
+          <input type="hidden" id="impuesto_id" />
+
+          <div class="form-row">
+            <label for="nombre">Nombre del impuesto</label>
+            <input id="nombre" type="text" placeholder="IVA" required />
+          </div>
+
+          <div class="form-row">
+            <label for="porcentaje">Porcentaje</label>
+            <input id="porcentaje" type="number" min="0" step="0.01" placeholder="16" required />
+          </div>
+
+          <div class="form-row">
+            <label for="estado">Estado</label>
+            <select id="estado" required>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Guardar cambios</button>
+            <button class="btn btn--ghost" type="button" id="btn-recargar">Recargar</button>
+          </div>
+
+          <div id="mensaje" class="msg"></div>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const impuestoActivoBox = document.getElementById('impuesto-activo-box');
+    const form = document.getElementById('impuesto-form');
+    const mensaje = document.getElementById('mensaje');
+    const btnRecargar = document.getElementById('btn-recargar');
+
+    const impuestoId = document.getElementById('impuesto_id');
+    const nombre = document.getElementById('nombre');
+    const porcentaje = document.getElementById('porcentaje');
+    const estado = document.getElementById('estado');
+
+    function setMensaje(texto, tipo = '') {
+      mensaje.textContent = texto;
+      mensaje.className = 'msg';
+      if (tipo) mensaje.classList.add(tipo);
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function cargarImpuestoActivo() {
+      try {
+        const resp = await fetch('/api/impuestos/activo');
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          impuestoActivoBox.innerHTML = `
+            <div class="empty">
+              No hay IVA activo configurado.
+            </div>
+          `;
+
+          impuestoId.value = '';
+          nombre.value = '';
+          porcentaje.value = '';
+          estado.value = 'activo';
+          setMensaje('No se encontró un IVA activo. Activa uno desde la base actual.', 'error');
+          return;
+        }
+
+        const impuesto = data.impuesto;
+
+        impuestoActivoBox.innerHTML = `
+          <span class="muted">IVA actual del sistema</span>
+          <strong>${escaparHtml(impuesto.nombre)} - ${Number(impuesto.porcentaje)}%</strong>
+          <span class="tag ${escaparHtml(impuesto.estado)}">${escaparHtml(impuesto.estado)}</span>
+        `;
+
+        impuestoId.value = impuesto.id;
+        nombre.value = impuesto.nombre || '';
+        porcentaje.value = impuesto.porcentaje ?? 0;
+        estado.value = impuesto.estado || 'activo';
+      } catch (error) {
+        console.error(error);
+        impuestoActivoBox.innerHTML = `
+          <div class="empty">
+            No se pudo cargar el IVA actual.
+          </div>
+        `;
+        impuestoId.value = '';
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setMensaje('');
+
+      const id = impuestoId.value.trim();
+      const payload = {
+        nombre: nombre.value.trim(),
+        porcentaje: Number(porcentaje.value || 0),
+        estado: estado.value
+      };
+
+      if (!id) {
+        setMensaje('No se encontró el IVA principal para actualizar.', 'error');
+        return;
+      }
+
+      if (!payload.nombre || Number.isNaN(payload.porcentaje)) {
+        setMensaje('Completa correctamente los campos.', 'error');
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/impuestos/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          setMensaje(data.message || 'No se pudo actualizar el IVA.', 'error');
+          return;
+        }
+
+        setMensaje('IVA actualizado correctamente.', 'ok');
+        await cargarImpuestoActivo();
+      } catch (error) {
+        console.error(error);
+        setMensaje('Error de conexión con el servidor.', 'error');
+      }
+    });
+
+    btnRecargar.addEventListener('click', async () => {
+      setMensaje('');
+      await cargarImpuestoActivo();
+    });
+
+    cargarImpuestoActivo();
+  </script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrito | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .cart-top{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .cart-top h2{
+      margin:0 0 8px;
+    }
+
+    .cart-top p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .cart-list{
+      display:grid;
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .cart-item{
+      background:var(--card);
+      border:1px solid #23232a;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:var(--shadow-soft);
+      display:grid;
+      grid-template-columns:130px 1fr auto;
+      gap:14px;
+      align-items:center;
+      padding:14px;
+    }
+
+    .cart-item__img{
+      height:95px;
+      border-radius:14px;
+      background:#18181d center/cover no-repeat;
+      border:1px solid #23232a;
+    }
+
+    .cart-item__title{
+      margin:0 0 6px;
+      font-size:1.08rem;
+      color:#fff;
+    }
+
+    .cart-item__main{
+      display:grid;
+      gap:14px;
+    }
+
+    .cart-item__columns{
+      display:grid;
+      grid-template-columns:1fr 260px;
+      gap:18px;
+      align-items:start;
+    }
+
+    .cart-col-left{
+      display:grid;
+      gap:6px;
+      color:var(--muted);
+    }
+
+    .cart-col-right{
+      display:grid;
+      gap:8px;
+      justify-items:end;
+      text-align:right;
+      color:var(--muted);
+    }
+
+    .cart-item__price{
+      color:#fff;
+      font-weight:700;
+      font-size:1.05rem;
+    }
+
+    .cart-item__subtotal{
+      color:#fff;
+      font-weight:700;
+      font-size:1rem;
+    }
+
+    .cart-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .qty-box{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+
+    .qty-box input{
+      width:84px;
+      padding:9px 10px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+    }
+
+    .cart-summary{
+      margin-top:22px;
+      padding:18px;
+      border:1px solid #23232a;
+      border-radius:16px;
+      background:#111;
+      display:grid;
+      gap:12px;
+    }
+
+    .summary-line{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      color:#d5d5da;
+    }
+
+    .cart-total{
+      font-size:1.2rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    .msg-box{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .muted-link{
+      color:#ffd166;
+      text-decoration:none;
+    }
+
+    .btn[disabled]{
+      opacity:.55;
+      cursor:not-allowed;
+      pointer-events:none;
+    }
+
+    .promo-badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#2a1408;
+      color:#ffd166;
+      font-weight:700;
+      font-size:.85rem;
+      border:1px solid #5a3418;
+      width:max-content;
+    }
+
+    .price-old{
+      text-decoration:line-through;
+      color:#aaa;
+      margin-right:8px;
+    }
+
+    .price-new{
+      color:#7CFC98;
+      font-weight:800;
+    }
+
+    @media (max-width:900px){
+      .cart-item{
+        grid-template-columns:1fr;
+      }
+
+      .cart-item__columns{
+        grid-template-columns:1fr;
+      }
+
+      .cart-col-right{
+        justify-items:start;
+        text-align:left;
+      }
+
+      .cart-actions{
+        justify-content:flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a class="active" href="cart.html" aria-current="page">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="cart-top">
+      <h2>Carrito</h2>
+      <p>Revisa tus productos, actualiza cantidades o continúa con tu pago.</p>
+    </section>
+
+    <div id="cart-msg" class="msg-box"></div>
+
+    <section id="cart-list" class="cart-list">
+      <div class="empty-box">Cargando carrito...</div>
+    </section>
+
+    <section class="cart-summary">
+      <div id="summary-subtotal" class="summary-line">
+        <span>Subtotal</span>
+        <strong>$0.00</strong>
+      </div>
+
+      <div id="summary-descuento" class="summary-line">
+        <span>Descuento</span>
+        <strong>$0.00</strong>
+      </div>
+
+      <div id="cart-total" class="cart-total">Total: $0.00</div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="btn-vaciar" class="btn btn--ghost">Vaciar carrito</button>
+        <a id="btn-pago" href="pago.html" class="btn">Continuar con el pago</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const listEl = document.getElementById('cart-list');
+    const totalEl = document.getElementById('cart-total');
+    const subtotalEl = document.getElementById('summary-subtotal');
+    const descuentoEl = document.getElementById('summary-descuento');
+    const msgEl = document.getElementById('cart-msg');
+    const btnVaciar = document.getElementById('btn-vaciar');
+    const btnPago = document.getElementById('btn-pago');
+
+    let carrito = [];
+    let promociones = [];
+    let clienteId = null;
+    let updateTimeouts = {};
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      msgEl.textContent = texto;
+      msgEl.className = `msg-box ${tipo}`;
+
+      setTimeout(() => {
+        msgEl.className = 'msg-box';
+        msgEl.textContent = '';
+      }, 2500);
+    }
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function obtenerImagen(item) {
+      if (item.imagen_url && String(item.imagen_url).trim() !== '') {
+        return String(item.imagen_url).trim();
+      }
+      return '';
+    }
+
+    function obtenerPromocionProducto(productoId) {
+      return promociones.find(p => Number(p.producto_id) === Number(productoId)) || null;
+    }
+
+    function calcularPreciosItem(item) {
+      const precioBase = Number(item.precio_unitario || 0);
+      const promo = obtenerPromocionProducto(item.producto_id);
+      const cantidad = Number(item.cantidad || 0);
+
+      if (!promo) {
+        return {
+          promo: null,
+          precioBase,
+          precioFinal: precioBase,
+          subtotalBase: precioBase * cantidad,
+          subtotalFinal: precioBase * cantidad,
+          descuentoTotal: 0
+        };
+      }
+
+      const descuento = Number(promo.valor_descuento || 0);
+      const precioFinal = precioBase - (precioBase * (descuento / 100));
+      const subtotalBase = precioBase * cantidad;
+      const subtotalFinal = precioFinal * cantidad;
+
+      return {
+        promo,
+        precioBase,
+        precioFinal,
+        subtotalBase,
+        subtotalFinal,
+        descuentoTotal: subtotalBase - subtotalFinal
+      };
+    }
+
+    function render() {
+      if (!carrito.length) {
+        listEl.innerHTML = `
+          <div class="empty-box">
+            Tu carrito está vacío.
+            <a class="muted-link" href="catalog_user.html">Ir al catálogo</a>
+          </div>
+        `;
+        subtotalEl.innerHTML = `<span>Subtotal</span><strong>${money(0)}</strong>`;
+        descuentoEl.innerHTML = `<span>Descuento</span><strong>${money(0)}</strong>`;
+        totalEl.textContent = 'Total: ' + money(0);
+        btnPago.classList.add('btn--ghost');
+        btnPago.style.pointerEvents = 'none';
+        btnVaciar.disabled = true;
+        return;
+      }
+
+      btnPago.classList.remove('btn--ghost');
+      btnPago.style.pointerEvents = 'auto';
+      btnVaciar.disabled = false;
+
+      listEl.innerHTML = carrito.map(item => {
+        const imagen = obtenerImagen(item);
+        const fondo = imagen
+          ? `background-image:url('${imagen.replace(/'/g, "%27")}')`
+          : `background-image:linear-gradient(135deg, rgba(255,106,0,.18), rgba(255,209,102,.18))`;
+
+        const precioInfo = calcularPreciosItem(item);
+
+        const precioHtml = precioInfo.promo
+          ? `
+            <div class="cart-item__price">
+              <span class="price-old">${money(precioInfo.precioBase)}</span>
+              <span class="price-new">${money(precioInfo.precioFinal)} c/u</span>
+            </div>
+          `
+          : `
+            <div class="cart-item__price">${money(precioInfo.precioBase)} c/u</div>
+          `;
+
+        const promoHtml = precioInfo.promo
+          ? `
+            <div class="promo-badge">${Number(precioInfo.promo.valor_descuento || 0)}% OFF</div>
+          `
+          : '';
+
+        const subtotalHtml = precioInfo.promo
+          ? `
+            <div class="cart-item__subtotal">
+              <span class="price-old">${money(precioInfo.subtotalBase)}</span>
+              <span class="price-new">${money(precioInfo.subtotalFinal)}</span>
+            </div>
+          `
+          : `
+            <div class="cart-item__subtotal">${money(precioInfo.subtotalFinal)}</div>
+          `;
+
+        return `
+          <article class="cart-item">
+            <div class="cart-item__img" style="${fondo};"></div>
+
+            <div class="cart-item__main">
+              <div class="cart-item__columns">
+                <div class="cart-col-left">
+                  <h3 class="cart-item__title">${escaparHtml(item.nombre || 'Producto')}</h3>
+                  <div>${escaparHtml(item.descripcion || 'Sin descripción')}</div>
+                  <div>Categoría: ${escaparHtml(item.categoria || 'Sin categoría')}</div>
+                  <div>Stock disponible: ${Number(item.stock_actual || 0)}</div>
+                  ${promoHtml}
+                </div>
+
+                <div class="cart-col-right">
+                  ${precioHtml}
+                  <div><strong>Subtotal:</strong></div>
+                  ${subtotalHtml}
+                </div>
+              </div>
+
+              <div class="qty-box">
+                <label for="qty-${item.id}">Cantidad:</label>
+                <input
+                  id="qty-${item.id}"
+                  type="number"
+                  min="1"
+                  max="${Number(item.stock_actual || 1)}"
+                  value="${Number(item.cantidad || 1)}"
+                  onchange="actualizarCantidadAuto(${Number(item.id)})"
+                />
+              </div>
+            </div>
+
+            <div class="cart-actions">
+              <button class="btn" onclick="eliminarItem(${Number(item.id)})">Eliminar</button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      const subtotalGeneral = carrito.reduce((acc, item) => acc + Number(item.precio_unitario || 0) * Number(item.cantidad || 0), 0);
+      const totalFinal = carrito.reduce((acc, item) => acc + calcularPreciosItem(item).subtotalFinal, 0);
+      const descuentoTotal = subtotalGeneral - totalFinal;
+
+      subtotalEl.innerHTML = `<span>Subtotal</span><strong>${money(subtotalGeneral)}</strong>`;
+      descuentoEl.innerHTML = `<span>Descuento</span><strong>${money(descuentoTotal)}</strong>`;
+      totalEl.textContent = 'Total: ' + money(totalFinal);
+    }
+
+    async function cargarCarrito() {
+      try {
+        clienteId = localStorage.getItem('ballers_user_id');
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
+
+        if (!clienteId) {
+          listEl.innerHTML = `<div class="empty-box">Primero debes iniciar sesión.</div>`;
+          subtotalEl.innerHTML = `<span>Subtotal</span><strong>${money(0)}</strong>`;
+          descuentoEl.innerHTML = `<span>Descuento</span><strong>${money(0)}</strong>`;
+          totalEl.textContent = 'Total: ' + money(0);
+          btnVaciar.disabled = true;
+          btnPago.style.pointerEvents = 'none';
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          listEl.innerHTML = `<div class="empty-box">Solo un cliente puede acceder al carrito.</div>`;
+          subtotalEl.innerHTML = `<span>Subtotal</span><strong>${money(0)}</strong>`;
+          descuentoEl.innerHTML = `<span>Descuento</span><strong>${money(0)}</strong>`;
+          totalEl.textContent = 'Total: ' + money(0);
+          btnVaciar.disabled = true;
+          btnPago.style.pointerEvents = 'none';
+          return;
+        }
+
+        const [respCarrito, respPromos] = await Promise.all([
+          fetch(`/api/carrito/${Number(clienteId)}`),
+          fetch('/api/promociones/activas/catalogo')
+        ]);
+
+        const dataCarrito = await respCarrito.json();
+        const dataPromos = await respPromos.json();
+
+        if (!respCarrito.ok) {
+          throw new Error(dataCarrito.message || 'No se pudo cargar el carrito');
+        }
+
+        carrito = Array.isArray(dataCarrito) ? dataCarrito : [];
+        promociones = (respPromos.ok && dataPromos.ok && Array.isArray(dataPromos.promociones))
+          ? dataPromos.promociones
+          : [];
+
+        render();
+      } catch (error) {
+        console.error(error);
+        listEl.innerHTML = `<div class="empty-box">Error al cargar carrito: ${escaparHtml(error.message)}</div>`;
+        subtotalEl.innerHTML = `<span>Subtotal</span><strong>${money(0)}</strong>`;
+        descuentoEl.innerHTML = `<span>Descuento</span><strong>${money(0)}</strong>`;
+        totalEl.textContent = 'Total: ' + money(0);
+      }
+    }
+
+    async function actualizarCantidad(itemId) {
+      try {
+        const input = document.getElementById(`qty-${itemId}`);
+        const cantidad = Number(input.value);
+
+        if (!cantidad || cantidad <= 0) {
+          mostrarMensaje('La cantidad debe ser mayor a 0', 'error');
+          return;
+        }
+
+        const resp = await fetch(`/api/carrito/item/${itemId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cantidad })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo actualizar la cantidad', 'error');
+          await cargarCarrito();
+          return;
+        }
+
+        mostrarMensaje('Cantidad actualizada correctamente', 'ok');
+        await cargarCarrito();
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    function actualizarCantidadAuto(itemId) {
+      clearTimeout(updateTimeouts[itemId]);
+      updateTimeouts[itemId] = setTimeout(() => {
+        actualizarCantidad(itemId);
+      }, 300);
+    }
+
+    async function eliminarItem(itemId) {
+      try {
+        const resp = await fetch(`/api/carrito/item/${itemId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo eliminar el producto', 'error');
+          return;
+        }
+
+        mostrarMensaje('Producto eliminado del carrito', 'ok');
+        await cargarCarrito();
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    async function vaciarCarrito() {
+      try {
+        if (!clienteId) return;
+
+        const resp = await fetch(`/api/carrito/vaciar/${Number(clienteId)}`, {
+          method: 'DELETE'
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo vaciar el carrito', 'error');
+          return;
+        }
+
+        mostrarMensaje('Carrito vaciado correctamente', 'ok');
+        await cargarCarrito();
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor', 'error');
+      }
+    }
+
+    window.actualizarCantidadAuto = actualizarCantidadAuto;
+    window.eliminarItem = eliminarItem;
+
+    btnVaciar.addEventListener('click', vaciarCarrito);
+
+    cargarCarrito();
+  </script>
+</body>
+</html>

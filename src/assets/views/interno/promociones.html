@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Promociones | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0;
+    }
+
+    .grid-2{
+      display:grid;
+      gap:18px;
+    }
+
+    @media (min-width:1100px){
+      .grid-2{
+        grid-template-columns:380px 1fr;
+      }
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .form-row{
+      display:grid;
+      gap:6px;
+    }
+
+    .form-row input,
+    .form-row select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+      box-sizing:border-box;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .msg{
+      margin-top:12px;
+      font-weight:700;
+    }
+
+    .msg.error{ color:#ff6b6b; }
+    .msg.ok{ color:#7CFC98; }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      overflow:hidden;
+    }
+
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #23232a;
+      vertical-align:top;
+    }
+
+    th{
+      background:#17171c;
+    }
+
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333;
+    }
+
+    .tag.activo{
+      color:#7CFC98;
+      border-color:#1f6b37;
+    }
+
+    .tag.inactivo{
+      color:#ff8b8b;
+      border-color:#7a2f2f;
+    }
+
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+  </style>
+</head>
+<body>
+  <header class="internal-header">
+    <div class="container internal-header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+        ← Volver
+      </button>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Gestión de promociones</h2>
+      <p class="muted" style="margin:0">
+        Aquí puedes crear promociones por producto y controlar si están activas o inactivas.
+      </p>
+    </section>
+
+    <section class="grid-2">
+      <article class="section">
+        <h3 style="margin-top:0">Formulario de promoción</h3>
+
+        <form id="promo-form" class="form-grid">
+          <input type="hidden" id="promo_id" />
+
+          <div class="form-row">
+            <label for="nombre">Nombre de la promoción</label>
+            <input id="nombre" type="text" placeholder="Promo Jordan 10%" required />
+          </div>
+
+          <div class="form-row">
+            <label for="producto_id">Producto</label>
+            <select id="producto_id" required>
+              <option value="">Selecciona un producto</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="valor_descuento">Descuento (%)</label>
+            <input id="valor_descuento" type="number" min="1" max="100" step="0.01" placeholder="10" required />
+          </div>
+
+          <div class="form-row">
+            <label for="fecha_inicio">Fecha de inicio</label>
+            <input id="fecha_inicio" type="date" />
+          </div>
+
+          <div class="form-row">
+            <label for="fecha_fin">Fecha de fin</label>
+            <input id="fecha_fin" type="date" />
+          </div>
+
+          <div class="form-row">
+            <label for="estado">Estado</label>
+            <select id="estado" required>
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Guardar promoción</button>
+            <button class="btn btn--ghost" type="button" id="btn-limpiar">Limpiar</button>
+          </div>
+
+          <div id="mensaje" class="msg"></div>
+        </form>
+      </article>
+
+      <article class="section">
+        <div class="toolbar">
+          <h3 style="margin:0">Lista de promociones</h3>
+          <button class="btn btn--ghost" type="button" id="btn-recargar">Recargar</button>
+        </div>
+
+        <div id="tabla-promos"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const form = document.getElementById('promo-form');
+    const mensaje = document.getElementById('mensaje');
+    const tablaPromos = document.getElementById('tabla-promos');
+    const btnLimpiar = document.getElementById('btn-limpiar');
+    const btnRecargar = document.getElementById('btn-recargar');
+
+    const promoId = document.getElementById('promo_id');
+    const nombre = document.getElementById('nombre');
+    const productoId = document.getElementById('producto_id');
+    const valorDescuento = document.getElementById('valor_descuento');
+    const fechaInicio = document.getElementById('fecha_inicio');
+    const fechaFin = document.getElementById('fecha_fin');
+    const estado = document.getElementById('estado');
+
+    function setMensaje(texto, tipo = '') {
+      mensaje.textContent = texto;
+      mensaje.className = 'msg';
+      if (tipo) mensaje.classList.add(tipo);
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function limpiarFormulario() {
+      promoId.value = '';
+      nombre.value = '';
+      productoId.value = '';
+      valorDescuento.value = '';
+      fechaInicio.value = '';
+      fechaFin.value = '';
+      estado.value = 'activo';
+      setMensaje('');
+    }
+
+    async function cargarProductos() {
+      try {
+        const resp = await fetch('/api/productos');
+        const data = await resp.json();
+
+        const productos = Array.isArray(data) ? data : [];
+
+        productoId.innerHTML = `
+          <option value="">Selecciona un producto</option>
+          ${productos.map(p => `
+            <option value="${p.id}">${escaparHtml(p.nombre)}</option>
+          `).join('')}
+        `;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function cargarPromociones() {
+      try {
+        const resp = await fetch('/api/promociones');
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudieron cargar las promociones');
+        }
+
+        const lista = Array.isArray(data.promociones) ? data.promociones : [];
+
+        if (!lista.length) {
+          tablaPromos.innerHTML = '<div class="empty">No hay promociones registradas.</div>';
+          return;
+        }
+
+        tablaPromos.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Promoción</th>
+                <th>Producto</th>
+                <th>Descuento</th>
+                <th>Fechas</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${lista.map(item => `
+                <tr>
+                  <td>${item.id}</td>
+                  <td>${escaparHtml(item.nombre)}</td>
+                  <td>${escaparHtml(item.producto_nombre || '-')}</td>
+                  <td>${Number(item.valor_descuento)}%</td>
+                  <td>
+                    ${item.fecha_inicio || '-'}<br>
+                    ${item.fecha_fin || '-'}
+                  </td>
+                  <td>
+                    <span class="tag ${escaparHtml(item.estado)}">${escaparHtml(item.estado)}</span>
+                  </td>
+                  <td>
+                    <button class="btn btn--ghost" type="button" onclick="editarPromo(${item.id})">Editar</button>
+                    <button class="btn btn--ghost" type="button" onclick="eliminarPromo(${item.id})">Eliminar</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        console.error(error);
+        tablaPromos.innerHTML = '<div class="empty">No se pudieron cargar las promociones.</div>';
+      }
+    }
+
+    window.editarPromo = async function(id) {
+      try {
+        const resp = await fetch(`/api/promociones/${id}`);
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          setMensaje(data.message || 'No se pudo cargar la promoción', 'error');
+          return;
+        }
+
+        const promo = data.promocion;
+
+        promoId.value = promo.id;
+        nombre.value = promo.nombre || '';
+        productoId.value = promo.producto_id || '';
+        valorDescuento.value = promo.valor_descuento || '';
+        fechaInicio.value = promo.fecha_inicio ? String(promo.fecha_inicio).slice(0, 10) : '';
+        fechaFin.value = promo.fecha_fin ? String(promo.fecha_fin).slice(0, 10) : '';
+        estado.value = promo.estado || 'activo';
+
+        setMensaje('Promoción cargada para edición.', 'ok');
+      } catch (error) {
+        console.error(error);
+        setMensaje('Error al cargar la promoción.', 'error');
+      }
+    };
+
+    window.eliminarPromo = async function(id) {
+      const confirmar = confirm('¿Seguro que quieres eliminar esta promoción?');
+      if (!confirmar) return;
+
+      try {
+        const resp = await fetch(`/api/promociones/${id}`, {
+          method: 'DELETE'
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          setMensaje(data.message || 'No se pudo eliminar la promoción', 'error');
+          return;
+        }
+
+        setMensaje('Promoción eliminada correctamente.', 'ok');
+        await cargarPromociones();
+        limpiarFormulario();
+      } catch (error) {
+        console.error(error);
+        setMensaje('Error al eliminar la promoción.', 'error');
+      }
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setMensaje('');
+
+      const id = promoId.value.trim();
+
+      const payload = {
+        nombre: nombre.value.trim(),
+        tipo_descuento: 'porcentaje',
+        valor_descuento: Number(valorDescuento.value || 0),
+        producto_id: Number(productoId.value || 0),
+        fecha_inicio: fechaInicio.value || null,
+        fecha_fin: fechaFin.value || null,
+        estado: estado.value
+      };
+
+      if (!payload.nombre || !payload.producto_id || !payload.valor_descuento) {
+        setMensaje('Completa correctamente los campos obligatorios.', 'error');
+        return;
+      }
+
+      try {
+        let resp;
+        let data;
+
+        if (id) {
+          resp = await fetch(`/api/promociones/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          data = await resp.json();
+        } else {
+          resp = await fetch('/api/promociones', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          data = await resp.json();
+        }
+
+        if (!resp.ok || !data.ok) {
+          setMensaje(data.message || 'No se pudo guardar la promoción.', 'error');
+          return;
+        }
+
+        setMensaje('Promoción guardada correctamente.', 'ok');
+        limpiarFormulario();
+        await cargarPromociones();
+      } catch (error) {
+        console.error(error);
+        setMensaje('Error de conexión con el servidor.', 'error');
+      }
+    });
+
+    btnLimpiar.addEventListener('click', limpiarFormulario);
+    btnRecargar.addEventListener('click', cargarPromociones);
+
+    cargarProductos();
+    cargarPromociones();
+  </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Comprados | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .top-box{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .top-box h2{
+      margin:0 0 8px;
+    }
+
+    .top-box p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .msg-box{
+      margin:18px 0;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .compras-list{
+      display:grid;
+      gap:18px;
+    }
+
+    .orden-card{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:20px;
+      display:grid;
+      gap:16px;
+    }
+
+    .orden-head{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .orden-title{
+      font-size:1.08rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .orden-meta{
+      color:var(--muted);
+      display:grid;
+      gap:4px;
+    }
+
+    .estado-badge{
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      font-weight:700;
+      border:1px solid #333;
+      width:max-content;
+      text-transform:capitalize;
+    }
+
+    .estado-procesada{
+      color:#7CFC98;
+      border-color:#2f5e3a;
+      background:#102014;
+    }
+
+    .estado-pendiente{
+      color:#ffd166;
+      border-color:#6a5720;
+      background:#1e1807;
+    }
+
+    .estado-cancelada{
+      color:#ff8b8b;
+      border-color:#6d2c2c;
+      background:#241313;
+    }
+
+    .estado-general{
+      color:#9ecbff;
+      border-color:#355c9a;
+      background:#10213d;
+    }
+
+    .items-list{
+      display:grid;
+      gap:12px;
+    }
+
+    .item-card{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:14px;
+      padding:14px;
+      border:1px solid #23232a;
+      border-radius:14px;
+      background:#111;
+    }
+
+    .item-img{
+      height:95px;
+      border-radius:12px;
+      background:#18181d center/cover no-repeat;
+      border:1px solid #23232a;
+    }
+
+    .item-title{
+      margin:0 0 6px;
+      font-weight:700;
+      color:#fff;
+    }
+
+    .item-meta{
+      display:grid;
+      gap:5px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .orden-footer{
+      padding-top:10px;
+      border-top:1px solid #23232a;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .orden-total{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:1.08rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .orden-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    @media (max-width:700px){
+      .item-card{
+        grid-template-columns:1fr;
+      }
+
+      .orden-footer{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a class="active" href="comprados.html" aria-current="page">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="top-box">
+      <h2>Mis compras</h2>
+      <p>Aquí puedes ver el historial de productos que ya compraste.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section id="compras-list" class="compras-list">
+      <div class="empty-box">Cargando compras...</div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const mensaje = document.getElementById('mensaje');
+    const comprasList = document.getElementById('compras-list');
+
+    function mostrarError(texto) {
+      mensaje.textContent = texto;
+      mensaje.className = 'msg-box error';
+    }
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      const f = new Date(fecha);
+      if (Number.isNaN(f.getTime())) return String(fecha);
+      return f.toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function obtenerTextoEstado(estado) {
+      const valor = String(estado || '').toLowerCase();
+
+      if (valor === 'procesada') return 'Procesada';
+      if (valor === 'pendiente') return 'Pendiente';
+      if (valor === 'cancelada') return 'Cancelada';
+      if (valor === 'pagado') return 'Pagado';
+      return valor ? valor.charAt(0).toUpperCase() + valor.slice(1) : 'Sin estado';
+    }
+
+    function obtenerClaseEstado(estado) {
+      const valor = String(estado || '').toLowerCase();
+
+      if (valor === 'procesada') return 'estado-badge estado-procesada';
+      if (valor === 'pendiente') return 'estado-badge estado-pendiente';
+      if (valor === 'cancelada') return 'estado-badge estado-cancelada';
+      return 'estado-badge estado-general';
+    }
+
+    function obtenerImagen(item) {
+      if (item.imagen_url && String(item.imagen_url).trim() !== '') {
+        return String(item.imagen_url).trim();
+      }
+      return '';
+    }
+
+    function agruparOrdenes(rows) {
+      const mapa = {};
+
+      rows.forEach(row => {
+        if (!mapa[row.orden_id]) {
+          mapa[row.orden_id] = {
+            orden_id: row.orden_id,
+            fecha: row.fecha,
+            estado: row.estado,
+            total: row.total,
+            tiene_factura: Boolean(row.tiene_factura),
+            items: []
+          };
+        }
+
+        mapa[row.orden_id].items.push({
+          producto_id: row.producto_id,
+          nombre: row.nombre,
+          descripcion: row.descripcion,
+          categoria: row.categoria,
+          imagen_url: row.imagen_url,
+          cantidad: row.cantidad,
+          precio_unitario: row.precio_unitario,
+          subtotal: row.subtotal
+        });
+      });
+
+      return Object.values(mapa);
+    }
+
+    function renderCompras(ordenes) {
+      if (!ordenes.length) {
+        comprasList.innerHTML = `
+          <div class="empty-box">
+            Aún no tienes compras registradas.
+          </div>
+        `;
+        return;
+      }
+
+      comprasList.innerHTML = ordenes.map(orden => `
+        <article class="orden-card">
+          <div class="orden-head">
+            <div class="orden-meta">
+              <div class="orden-title">Pedido #${escaparHtml(orden.orden_id)}</div>
+              <div>Fecha: ${formatearFecha(orden.fecha)}</div>
+            </div>
+
+            <span class="${obtenerClaseEstado(orden.estado)}">
+              ${escaparHtml(obtenerTextoEstado(orden.estado))}
+            </span>
+          </div>
+
+          <div class="items-list">
+            ${orden.items.map(item => {
+              const img = obtenerImagen(item);
+              const bg = img
+                ? `background-image:url('${img.replace(/'/g, "%27")}')`
+                : `background-image:linear-gradient(135deg, rgba(255,106,0,.18), rgba(255,209,102,.18))`;
+
+              return `
+                <article class="item-card">
+                  <div class="item-img" style="${bg};"></div>
+
+                  <div>
+                    <h3 class="item-title">${escaparHtml(item.nombre || 'Producto')}</h3>
+                    <div class="item-meta">
+                      <div>${escaparHtml(item.descripcion || 'Sin descripción')}</div>
+                      <div>Categoría: ${escaparHtml(item.categoria || 'Sin categoría')}</div>
+                      <div>Cantidad: ${Number(item.cantidad || 0)}</div>
+                      <div>Precio unitario: ${money(item.precio_unitario)}</div>
+                      <div>Subtotal: ${money(item.subtotal)}</div>
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="orden-footer">
+            <div class="orden-total">
+              <span>Total de la orden</span>
+              <span>${money(orden.total)}</span>
+            </div>
+
+            <div class="orden-actions">
+              <a class="btn btn--ghost" href="recibo.html?orden_id=${encodeURIComponent(orden.orden_id)}">Ver recibo</a>
+              ${orden.tiene_factura ? `<a class="btn btn--ghost" href="factura.html?orden_id=${encodeURIComponent(orden.orden_id)}">Ver factura</a>` : ''}
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    async function cargarCompras() {
+      try {
+        const clienteId = localStorage.getItem('ballers_user_id');
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
+
+        if (!clienteId) {
+          mostrarError('Primero debes iniciar sesión.');
+          comprasList.innerHTML = `<div class="empty-box">No has iniciado sesión.</div>`;
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          mostrarError('Solo un cliente puede ver sus compras.');
+          comprasList.innerHTML = `<div class="empty-box">Acceso no permitido.</div>`;
+          return;
+        }
+
+        const resp = await fetch(`/api/compras/${Number(clienteId)}`);
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.message || 'No se pudieron cargar las compras');
+        }
+
+        const filas = Array.isArray(data.compras) ? data.compras : [];
+        const ordenes = agruparOrdenes(filas);
+        renderCompras(ordenes);
+      } catch (error) {
+        console.error(error);
+        mostrarError(error.message || 'Error al cargar compras');
+        comprasList.innerHTML = `<div class="empty-box">Error al cargar compras.</div>`;
+      }
+    }
+
+    cargarCompras();
+  </script>
+</body>
+</html>

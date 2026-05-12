@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Logística | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0;
+    }
+    .grid-2{display:grid;gap:16px}
+    @media (min-width:920px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+    .card{
+      background:var(--card);
+      border:1px solid #23232a;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:var(--shadow-soft);
+    }
+    .card__body{padding:16px}
+    .muted{color:var(--muted)}
+    .header__inner{display:flex;align-items:center;gap:12px}
+    .nav{margin-left:auto}
+    .kpis{display:grid;gap:14px}
+    @media (min-width:800px){.kpis{grid-template-columns:repeat(4,1fr)}}
+    .kpi{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:16px;
+    }
+    .kpi small{display:block;color:var(--muted);margin-bottom:6px}
+    .kpi strong{font-size:1.6rem}
+    .topbar-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .log-menu-wrap{
+      position:relative;
+      display:inline-block;
+    }
+    .log-toggle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .log-dropdown{
+      position:absolute;
+      top:110%;
+      right:0;
+      min-width:230px;
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      padding:10px;
+      z-index:30;
+      display:none;
+    }
+    .log-dropdown.show{
+      display:block;
+    }
+    .log-dropdown a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      color:var(--text);
+      text-decoration:none;
+      transition:.2s;
+    }
+    .log-dropdown a:hover{
+      background:#1a1a20;
+    }
+    .list-simple{margin:12px 0 0;padding-left:18px}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a class="active" href="index-logistica.html" aria-current="page">Inicio logística</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Panel de logística</h2>
+      <p class="muted" style="margin:0">
+        Acceso rápido al ERP logístico para consultar inventario, órdenes, procesos y recursos operativos.
+      </p>
+
+      <div class="topbar-actions">
+        <a class="btn" href="dashboard-erp-logistica.html">Entrar al ERP logística</a>
+
+        <div class="log-menu-wrap">
+          <button class="btn btn--ghost log-toggle" id="btn-log-erp" type="button" aria-expanded="false">
+            ☰ ERP logística
+          </button>
+
+          <div class="log-dropdown" id="log-dropdown">
+            <a href="dashboard-erp-logistica.html">Entrar al ERP logística</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="kpis" style="margin:18px 0">
+      <article class="kpi">
+        <small>Inventario disponible</small>
+        <strong id="kpi-inventario">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Órdenes procesadas</small>
+        <strong id="kpi-ordenes">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Productos con stock crítico</small>
+        <strong id="kpi-criticos">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Recursos operativos</small>
+        <strong id="kpi-recursos">0</strong>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">ERP de logística</h3>
+          <p class="muted">
+            Desde aquí puedes entrar al ERP logístico y navegar por inventario, órdenes, procesos y recursos según tu perfil.
+          </p>
+          <p style="margin-top:10px"><a class="btn" href="dashboard-erp-logistica.html">Abrir ERP</a></p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Productos en riesgo</h3>
+          <p class="muted">Resumen rápido de productos con stock por debajo o igual al mínimo permitido.</p>
+          <ul id="lista-criticos" class="list-simple">
+            <li class="muted">Cargando...</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    async function cargarResumenLogistica() {
+      try {
+        const [erpResp, productosResp, recursosResp] = await Promise.all([
+          fetch('/api/erp/metricas'),
+          fetch('/api/productos'),
+          fetch('/api/recursos').catch(() => null)
+        ]);
+
+        const erp = await erpResp.json();
+        const productos = await productosResp.json();
+
+        let recursos = [];
+        if (recursosResp && recursosResp.ok) {
+          recursos = await recursosResp.json();
+        }
+
+        const listaProductos = Array.isArray(productos) ? productos : [];
+        const criticos = listaProductos.filter(p => Number(p.stock_actual) <= Number(p.stock_minimo));
+
+        document.getElementById('kpi-inventario').textContent = erp.inventario_disponible ?? 0;
+        document.getElementById('kpi-ordenes').textContent = erp.ordenes_procesadas ?? 0;
+        document.getElementById('kpi-criticos').textContent = criticos.length;
+        document.getElementById('kpi-recursos').textContent = Array.isArray(recursos) && recursos.length ? recursos.length : 4;
+
+        const lista = document.getElementById('lista-criticos');
+
+        if (!criticos.length) {
+          lista.innerHTML = '<li class="muted">No hay productos en nivel crítico.</li>';
+          return;
+        }
+
+        lista.innerHTML = criticos
+          .slice(0, 5)
+          .map(p => `<li>${p.nombre} - Stock: ${p.stock_actual}/${p.stock_minimo}</li>`)
+          .join('');
+      } catch (error) {
+        console.error(error);
+        document.getElementById('lista-criticos').innerHTML =
+          '<li class="muted">No se pudo cargar la información.</li>';
+      }
+    }
+
+    const btnLogErp = document.getElementById('btn-log-erp');
+    const logDropdown = document.getElementById('log-dropdown');
+
+    btnLogErp.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = btnLogErp.getAttribute('aria-expanded') === 'true';
+      btnLogErp.setAttribute('aria-expanded', String(!expanded));
+      logDropdown.classList.toggle('show');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!btnLogErp.contains(e.target) && !logDropdown.contains(e.target)) {
+        btnLogErp.setAttribute('aria-expanded', 'false');
+        logDropdown.classList.remove('show');
+      }
+    });
+
+    cargarResumenLogistica();
+  </script>
+</body>
+</html>

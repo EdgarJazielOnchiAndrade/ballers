@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi actividad | Ballers CRM</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .toolbar{
+      display:grid;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    @media (min-width:900px){
+      .toolbar{grid-template-columns:1fr 220px}
+    }
+    .toolbar input,.toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+    }
+    .kpis{
+      display:grid;
+      gap:16px;
+    }
+    @media (min-width:900px){
+      .kpis{grid-template-columns:repeat(3,1fr)}
+    }
+    .kpi{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:18px;
+    }
+    .kpi small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    .kpi strong{
+      font-size:1.8rem;
+    }
+    .timeline{
+      display:grid;
+      gap:14px;
+    }
+    .timeline-item{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:14px;
+      padding:14px;
+    }
+    .timeline-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333;
+    }
+    .tag.llamada{color:#ffd166;border-color:#70561a}
+    .tag.correo{color:#7ec8ff;border-color:#275a7d}
+    .tag.reunion{color:#7CFC98;border-color:#1f6b37}
+    .muted{color:var(--muted)}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Mi actividad</h2>
+      <p class="muted" style="margin:0">
+        Aquí puedes consultar las interacciones registradas con tu usuario interno.
+      </p>
+    </section>
+
+    <section class="kpis">
+      <article class="kpi">
+        <small>Total de interacciones</small>
+        <strong id="kpi-total">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Llamadas</small>
+        <strong id="kpi-llamadas">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Correos y reuniones</small>
+        <strong id="kpi-otros">0</strong>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="toolbar">
+        <input id="buscar-texto" type="text" placeholder="Buscar por cliente o descripción" />
+        <select id="filtro-tipo">
+          <option value="">Todos los tipos</option>
+          <option value="llamada">Llamada</option>
+          <option value="correo">Correo</option>
+          <option value="reunion">Reunión</option>
+        </select>
+      </div>
+
+      <div id="actividad-wrap"></div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const actividadWrap = document.getElementById('actividad-wrap');
+    const buscarTexto = document.getElementById('buscar-texto');
+    const filtroTipo = document.getElementById('filtro-tipo');
+
+    let actividades = [];
+
+    function formatoFecha(fecha) {
+      return new Date(fecha).toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function actualizarKpis(lista) {
+      const total = lista.length;
+      const llamadas = lista.filter(i => i.tipo === 'llamada').length;
+      const otros = lista.filter(i => i.tipo === 'correo' || i.tipo === 'reunion').length;
+
+      document.getElementById('kpi-total').textContent = total;
+      document.getElementById('kpi-llamadas').textContent = llamadas;
+      document.getElementById('kpi-otros').textContent = otros;
+    }
+
+    function filtrarActividades() {
+      const texto = buscarTexto.value.trim().toLowerCase();
+      const tipo = filtroTipo.value;
+
+      return actividades.filter(item => {
+        const coincideTexto =
+          !texto ||
+          (item.cliente_nombre || '').toLowerCase().includes(texto) ||
+          (item.descripcion || '').toLowerCase().includes(texto);
+
+        const coincideTipo = !tipo || item.tipo === tipo;
+
+        return coincideTexto && coincideTipo;
+      });
+    }
+
+    function renderActividad() {
+      const lista = filtrarActividades();
+      actualizarKpis(lista);
+
+      if (!lista.length) {
+        actividadWrap.innerHTML = `<div class="empty">No hay actividad para mostrar.</div>`;
+        return;
+      }
+
+      actividadWrap.innerHTML = `
+        <div class="timeline">
+          ${lista.map(item => `
+            <article class="timeline-item">
+              <div class="timeline-top">
+                <div>
+                  <span class="tag ${item.tipo}">${item.tipo}</span>
+                </div>
+                <small class="muted">${formatoFecha(item.fecha)}</small>
+              </div>
+              <p style="margin:0 0 8px"><strong>Cliente:</strong> ${item.cliente_nombre}</p>
+              <p style="margin:0">${item.descripcion}</p>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function cargarActividad() {
+      const usuarioId = localStorage.getItem('ballers_user_id');
+
+      if (!usuarioId) {
+        actividadWrap.innerHTML = `<div class="empty">No se encontró una sesión activa.</div>`;
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/usuarios/${usuarioId}/actividad`);
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.message || 'No se pudo cargar la actividad');
+        }
+
+        actividades = data;
+        renderActividad();
+      } catch (error) {
+        console.error(error);
+        actividadWrap.innerHTML = `<div class="empty">No se pudo cargar tu actividad.</div>`;
+      }
+    }
+
+    buscarTexto.addEventListener('input', renderActividad);
+    filtroTipo.addEventListener('change', renderActividad);
+
+    cargarActividad();
+  </script>
+</body>
+</html>

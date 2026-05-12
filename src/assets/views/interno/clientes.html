@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clientes | Ballers CRM</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .section{
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      border:1px solid #23232a;
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin:18px 0
+    }
+    .grid-2{display:grid;gap:18px}
+    @media (min-width:1000px){.grid-2{grid-template-columns:380px 1fr}}
+    .form-grid{display:grid;gap:12px}
+    .form-row{display:grid;gap:6px}
+    .form-row input,.form-row select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .toolbar{display:grid;gap:12px;margin-bottom:16px}
+    @media (min-width:900px){.toolbar{grid-template-columns:1.2fr .8fr .8fr}}
+    .toolbar input,.toolbar select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text)
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:16px;
+      background:#111;
+      border:1px solid #23232a
+    }
+    th,td{
+      padding:12px 10px;
+      text-align:left;
+      border-bottom:1px solid #23232a;
+      vertical-align:top
+    }
+    th{background:#17171c}
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:.85rem;
+      font-weight:700;
+      border:1px solid #333
+    }
+    .tag.activo{color:#7CFC98;border-color:#1f6b37}
+    .tag.inactivo{color:#ff8b8b;border-color:#7a2f2f}
+    .tag.prospecto{color:#ffd166;border-color:#70561a}
+    .tag.frecuente{color:#7ec8ff;border-color:#275a7d}
+    .msg{margin-top:12px;font-weight:700}
+    .msg.error{color:#ff6b6b}
+    .msg.ok{color:#7CFC98}
+    .mini-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .empty{
+      padding:18px;
+      border:1px dashed #333;
+      border-radius:14px;
+      color:var(--muted)
+    }
+  </style>
+</head>
+<body>
+<header class="internal-header">
+  <div class="container internal-header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
+      ← Volver
+    </button>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Gestión de clientes</h2>
+      <p class="muted" style="margin:0">
+        Alta, edición, eliminación y clasificación CRM de clientes.
+      </p>
+    </section>
+
+    <section class="grid-2">
+      <!-- FORMULARIO -->
+      <article class="section">
+        <h3 id="form-title" style="margin-top:0">Nuevo cliente</h3>
+
+        <form id="cliente-form" class="form-grid">
+          <input type="hidden" id="cliente-id" />
+
+          <div class="form-row">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" required />
+          </div>
+
+          <div class="form-row">
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" required />
+          </div>
+
+          <div class="form-row">
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" type="text" />
+          </div>
+
+          <div class="form-row">
+            <label for="empresa">Empresa</label>
+            <input id="empresa" type="text" />
+          </div>
+
+          <div class="form-row">
+            <label for="estado">Estado</label>
+            <select id="estado">
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="etapa_crm">Etapa CRM</label>
+            <select id="etapa_crm">
+              <option value="Prospecto">Prospecto</option>
+              <option value="Activo">Activo</option>
+              <option value="Frecuente">Frecuente</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit" id="btn-guardar">Guardar cliente</button>
+            <button class="btn btn--ghost" type="button" id="btn-cancelar">Cancelar edición</button>
+          </div>
+
+          <div id="mensaje" class="msg"></div>
+        </form>
+      </article>
+
+      <!-- TABLA -->
+      <article class="section">
+        <div class="toolbar">
+          <input id="buscar" type="text" placeholder="Buscar por nombre o correo" />
+          <select id="filtro-estado">
+            <option value="">Todos los estados</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+          <select id="filtro-etapa">
+            <option value="">Todas las etapas</option>
+            <option value="Prospecto">Prospecto</option>
+            <option value="Activo">Activo</option>
+            <option value="Frecuente">Frecuente</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+
+        <div id="tabla-wrap"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const form = document.getElementById('cliente-form');
+    const mensaje = document.getElementById('mensaje');
+    const tablaWrap = document.getElementById('tabla-wrap');
+    const formTitle = document.getElementById('form-title');
+
+    const clienteId = document.getElementById('cliente-id');
+    const nombre = document.getElementById('nombre');
+    const correo = document.getElementById('correo');
+    const telefono = document.getElementById('telefono');
+    const empresa = document.getElementById('empresa');
+    const estado = document.getElementById('estado');
+    const etapaCRM = document.getElementById('etapa_crm');
+
+    const buscar = document.getElementById('buscar');
+    const filtroEstado = document.getElementById('filtro-estado');
+    const filtroEtapa = document.getElementById('filtro-etapa');
+
+    let clientes = [];
+
+    function limpiarFormulario() {
+      clienteId.value = '';
+      nombre.value = '';
+      correo.value = '';
+      telefono.value = '';
+      empresa.value = '';
+      estado.value = 'activo';
+      etapaCRM.value = 'Prospecto';
+      formTitle.textContent = 'Nuevo cliente';
+      mensaje.textContent = '';
+      mensaje.className = 'msg';
+    }
+
+    function tagEstado(valor) {
+      return `<span class="tag ${valor}">${valor}</span>`;
+    }
+
+    function tagEtapa(valor) {
+      const clase = valor.toLowerCase();
+      return `<span class="tag ${clase}">${valor}</span>`;
+    }
+
+    function filtrarClientes() {
+      const texto = buscar.value.trim().toLowerCase();
+      const est = filtroEstado.value;
+      const etapa = filtroEtapa.value;
+
+      return clientes.filter(c => {
+        const coincideTexto =
+          !texto ||
+          c.nombre.toLowerCase().includes(texto) ||
+          c.correo.toLowerCase().includes(texto);
+
+        const coincideEstado = !est || c.estado === est;
+        const coincideEtapa = !etapa || c.etapa_crm === etapa;
+
+        return coincideTexto && coincideEstado && coincideEtapa;
+      });
+    }
+
+    function renderTabla() {
+      const lista = filtrarClientes();
+
+      if (!lista.length) {
+        tablaWrap.innerHTML = `<div class="empty">No hay clientes para mostrar.</div>`;
+        return;
+      }
+
+      tablaWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Empresa</th>
+              <th>Estado</th>
+              <th>Etapa CRM</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map(c => `
+              <tr>
+                <td>${c.id}</td>
+                <td>${c.nombre}</td>
+                <td>${c.correo}</td>
+                <td>${c.telefono || '-'}</td>
+                <td>${c.empresa || '-'}</td>
+                <td>${tagEstado(c.estado)}</td>
+                <td>${tagEtapa(c.etapa_crm)}</td>
+                <td>
+                  <div class="mini-actions">
+                    <button class="btn btn--ghost" onclick="editarCliente(${c.id})">Editar</button>
+                    <button class="btn btn--ghost" onclick="cambiarEtapaRapida(${c.id})">Etapa</button>
+                    <button class="btn btn--ghost" onclick="eliminarCliente(${c.id})">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function cargarClientes() {
+      try {
+        const resp = await fetch('/api/clientes');
+        clientes = await resp.json();
+        renderTabla();
+      } catch (error) {
+        console.error(error);
+        tablaWrap.innerHTML = `<div class="empty">No se pudieron cargar los clientes.</div>`;
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      mensaje.textContent = '';
+      mensaje.className = 'msg';
+
+      const payload = {
+        nombre: nombre.value.trim(),
+        correo: correo.value.trim(),
+        telefono: telefono.value.trim(),
+        empresa: empresa.value.trim(),
+        estado: estado.value,
+        etapa_crm: etapaCRM.value
+      };
+
+      if (!payload.nombre || !payload.correo) {
+        mensaje.textContent = 'Nombre y correo son obligatorios';
+        mensaje.classList.add('error');
+        return;
+      }
+
+      try {
+        let resp;
+
+        if (clienteId.value) {
+          resp = await fetch(`/api/clientes/${clienteId.value}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          resp = await fetch('/api/clientes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mensaje.textContent = data.message || 'No se pudo guardar el cliente';
+          mensaje.classList.add('error');
+          return;
+        }
+
+        mensaje.textContent = clienteId.value
+          ? 'Cliente actualizado correctamente'
+          : 'Cliente creado correctamente';
+
+        mensaje.classList.add('ok');
+
+        limpiarFormulario();
+        await cargarClientes();
+
+      } catch (error) {
+        console.error(error);
+        mensaje.textContent = 'Error de conexión con el servidor';
+        mensaje.classList.add('error');
+      }
+    });
+
+    async function editarCliente(id) {
+      const cliente = clientes.find(c => Number(c.id) === Number(id));
+      if (!cliente) return;
+
+      clienteId.value = cliente.id;
+      nombre.value = cliente.nombre;
+      correo.value = cliente.correo;
+      telefono.value = cliente.telefono || '';
+      empresa.value = cliente.empresa || '';
+      estado.value = cliente.estado;
+      etapaCRM.value = cliente.etapa_crm;
+      formTitle.textContent = `Editar cliente #${cliente.id}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function eliminarCliente(id) {
+      const confirmar = confirm('¿Seguro que deseas eliminar este cliente?');
+      if (!confirmar) return;
+
+      try {
+        const resp = await fetch(`/api/clientes/${id}`, {
+          method: 'DELETE'
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          alert(data.message || 'No se pudo eliminar el cliente');
+          return;
+        }
+
+        await cargarClientes();
+      } catch (error) {
+        console.error(error);
+        alert('Error de conexión con el servidor');
+      }
+    }
+
+    async function cambiarEtapaRapida(id) {
+      const actual = clientes.find(c => Number(c.id) === Number(id));
+      if (!actual) return;
+
+      const nuevaEtapa = prompt(
+        'Escribe la nueva etapa CRM:\nProspecto, Activo, Frecuente, Inactivo',
+        actual.etapa_crm
+      );
+
+      if (!nuevaEtapa) return;
+
+      try {
+        const resp = await fetch(`/api/clientes/${id}/etapa`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ etapa_crm: nuevaEtapa })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          alert(data.message || 'No se pudo cambiar la etapa');
+          return;
+        }
+
+        await cargarClientes();
+      } catch (error) {
+        console.error(error);
+        alert('Error de conexión con el servidor');
+      }
+    }
+
+    document.getElementById('btn-cancelar').addEventListener('click', limpiarFormulario);
+    buscar.addEventListener('input', renderTabla);
+    filtroEstado.addEventListener('change', renderTabla);
+    filtroEtapa.addEventListener('change', renderTabla);
+
+    cargarClientes();
+
+    window.editarCliente = editarCliente;
+    window.eliminarCliente = eliminarCliente;
+    window.cambiarEtapaRapida = cambiarEtapaRapida;
+  </script>
+</body>
+</html>

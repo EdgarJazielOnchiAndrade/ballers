@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pago | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+  <style>
+    .checkout-top{
+      margin:22px 0 18px;
+      padding:22px;
+      border:1px solid #23232a;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+      box-shadow:var(--shadow);
+    }
+
+    .checkout-top h2{
+      margin:0 0 8px;
+    }
+
+    .checkout-top p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .checkout-layout{
+      display:grid;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    @media (min-width:1000px){
+      .checkout-layout{
+        grid-template-columns:1.15fr .85fr;
+      }
+    }
+
+    .section-box{
+      background:var(--panel);
+      border:1px solid #23232a;
+      border-radius:18px;
+      box-shadow:var(--shadow-soft);
+      padding:20px;
+    }
+
+    .section-box h3{
+      margin:0 0 12px;
+    }
+
+    .form-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .form-row{
+      display:grid;
+      gap:6px;
+    }
+
+    .form-row label{
+      font-weight:700;
+    }
+
+    .form-row input,
+    .form-row select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #2a2a32;
+      background:#141419;
+      color:var(--text);
+      box-sizing:border-box;
+    }
+
+    .factura-box{
+      margin-top:16px;
+      padding:16px;
+      border:1px solid #2a2a32;
+      border-radius:14px;
+      background:#111;
+      display:none;
+    }
+
+    .factura-box.visible{
+      display:block;
+    }
+
+    .payment-dynamic-box{
+      margin-top:16px;
+      padding:16px;
+      border:1px solid #2a2a32;
+      border-radius:14px;
+      background:#111;
+      display:grid;
+      gap:14px;
+    }
+
+    .payment-option{
+      display:none;
+      gap:12px;
+    }
+
+    .payment-option.visible{
+      display:grid;
+    }
+
+    .payment-note{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #34343d;
+      background:#15151a;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .payment-highlight{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #5a3418;
+      background:#2a1408;
+      color:#ffd166;
+      font-weight:700;
+      word-break:break-word;
+    }
+
+    .cash-qr-box{
+      display:grid;
+      gap:10px;
+      justify-items:center;
+      text-align:center;
+      padding:16px;
+      border:1px solid #2f2f38;
+      border-radius:14px;
+      background:#15151a;
+    }
+
+    .cash-qr-box img{
+      width:220px;
+      max-width:100%;
+      height:auto;
+      display:block;
+      border-radius:12px;
+      border:1px solid #333;
+      background:#fff;
+      padding:10px;
+    }
+
+    .cash-qr-box small{
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .cash-notes{
+      margin:0;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .paypal-box{
+      display:grid;
+      gap:14px;
+      padding:16px;
+      border:1px solid #2f2f38;
+      border-radius:14px;
+      background:linear-gradient(180deg,#111827,#0f172a);
+    }
+
+    .paypal-brand{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .paypal-title{
+      font-size:1.05rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .paypal-badge{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid #355c9a;
+      background:#10213d;
+      color:#8ec5ff;
+      font-weight:700;
+      font-size:.85rem;
+    }
+
+    .paypal-note-strong{
+      color:#d6e8ff;
+      line-height:1.5;
+    }
+
+    .paypal-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .paypal-preview-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:44px;
+      padding:0 18px;
+      border:none;
+      border-radius:12px;
+      background:#ffc439;
+      color:#111;
+      font-weight:800;
+      cursor:default;
+    }
+
+    .mini-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    @media (min-width:700px){
+      .mini-grid{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+
+    .cart-summary{
+      display:grid;
+      gap:14px;
+    }
+
+    .resumen-item{
+      display:grid;
+      gap:6px;
+      padding:12px 0;
+      border-bottom:1px solid #23232a;
+    }
+
+    .resumen-item:last-child{
+      border-bottom:none;
+    }
+
+    .resumen-top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .resumen-title{
+      font-weight:700;
+      color:#fff;
+    }
+
+    .resumen-meta{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .total-box{
+      margin-top:10px;
+      padding-top:14px;
+      border-top:1px solid #23232a;
+      display:grid;
+      gap:8px;
+    }
+
+    .total-line{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:1rem;
+    }
+
+    .total-final{
+      font-size:1.2rem;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .actions{
+      margin-top:18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .msg-box{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #333;
+      display:none;
+      font-weight:700;
+    }
+
+    .msg-box.ok{
+      display:block;
+      color:#7CFC98;
+      background:#102014;
+      border-color:#224d2d;
+    }
+
+    .msg-box.error{
+      display:block;
+      color:#ff8b8b;
+      background:#241313;
+      border-color:#5a2323;
+    }
+
+    .empty-box{
+      padding:22px;
+      border:1px dashed #333;
+      border-radius:16px;
+      color:var(--muted);
+      background:#111;
+    }
+
+    .switch-line{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    .switch-line input[type="checkbox"]{
+      transform:scale(1.1);
+    }
+
+    .promo-badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#2a1408;
+      color:#ffd166;
+      font-weight:700;
+      font-size:.85rem;
+      border:1px solid #5a3418;
+      width:max-content;
+    }
+
+    .price-old{
+      text-decoration:line-through;
+      color:#aaa;
+      margin-right:8px;
+    }
+
+    .price-new{
+      color:#7CFC98;
+      font-weight:800;
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="checkout-top">
+      <h2>Finalizar compra</h2>
+      <p>Revisa tu pedido, elige tu método de pago y completa la información necesaria para finalizar tu compra.</p>
+    </section>
+
+    <div id="mensaje" class="msg-box"></div>
+
+    <section class="checkout-layout">
+      <article class="section-box">
+        <h3>Datos de pago</h3>
+
+        <form id="pago-form" class="form-grid">
+          <div class="form-row">
+            <label for="metodo_pago">Método de pago</label>
+            <select id="metodo_pago" required>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="spei">SPEI</option>
+              <option value="oxxo">OXXO</option>
+              <option value="paypal">PayPal</option>
+              <option value="efectivo">Efectivo</option>
+            </select>
+          </div>
+
+          <section id="payment-dynamic-box" class="payment-dynamic-box">
+            <div id="pago-tarjeta" class="payment-option visible">
+              <div class="payment-note">
+                Ingresa los datos de tu tarjeta para completar tu compra de forma segura.
+              </div>
+
+              <div class="form-row">
+                <label for="tarjeta_titular">Nombre del titular</label>
+                <input id="tarjeta_titular" type="text" placeholder="Como aparece en la tarjeta" />
+              </div>
+
+              <div class="form-row">
+                <label for="tarjeta_numero">Número de tarjeta</label>
+                <input id="tarjeta_numero" type="text" maxlength="19" placeholder="1234 5678 9012 3456" />
+              </div>
+
+              <div class="mini-grid">
+                <div class="form-row">
+                  <label for="tarjeta_vencimiento">Vencimiento</label>
+                  <input id="tarjeta_vencimiento" type="text" maxlength="5" placeholder="MM/AA" />
+                </div>
+
+                <div class="form-row">
+                  <label for="tarjeta_cvv">CVV</label>
+                  <input id="tarjeta_cvv" type="password" maxlength="4" placeholder="123" />
+                </div>
+              </div>
+            </div>
+
+            <div id="pago-spei" class="payment-option">
+              <div class="payment-note">
+                Realiza tu transferencia SPEI con los siguientes datos bancarios. Usa la referencia asignada para identificar tu pago.
+              </div>
+
+              <div class="payment-highlight">
+                Banco: BBVA<br>
+                CLABE: 012345678901234567<br>
+                Beneficiario: Ballers S.A. de C.V.
+              </div>
+
+              <div class="form-row">
+                <label for="spei_referencia">Referencia SPEI</label>
+                <input id="spei_referencia" type="text" readonly />
+              </div>
+            </div>
+
+            <div id="pago-oxxo" class="payment-option">
+              <div class="payment-note">
+                Completa tu pago en cualquier tienda OXXO participante utilizando la referencia y el código QR de esta orden.
+              </div>
+
+              <div class="form-row">
+                <label for="oxxo_referencia">Referencia OXXO</label>
+                <input id="oxxo_referencia" type="text" readonly />
+              </div>
+
+              <div class="form-row">
+                <label for="oxxo_limite">Fecha límite de pago</label>
+                <input id="oxxo_limite" type="text" readonly />
+              </div>
+
+              <div class="cash-qr-box">
+                <img src="../../img/efectivo-qr.png" alt="Código QR para pago en OXXO">
+                <small>Escanea este código en caja o proporciona la referencia para completar el pago.</small>
+              </div>
+
+              <p class="cash-notes">
+                Conserva tu comprobante después de pagar. Tu referencia quedará asociada a esta compra para validación.
+              </p>
+            </div>
+
+            <div id="pago-paypal" class="payment-option">
+              <div class="paypal-box">
+                <div class="paypal-brand">
+                  <div class="paypal-title">Pagar con PayPal</div>
+                  <span class="paypal-badge">Protección al comprador</span>
+                </div>
+
+                <div class="paypal-note-strong">
+                  Continúa con tu correo asociado a PayPal para autorizar el pago de forma segura.
+                </div>
+
+                <div class="form-row">
+                  <label for="paypal_correo">Correo PayPal</label>
+                  <input id="paypal_correo" type="email" placeholder="tu_correo@paypal.com" />
+                </div>
+
+                <div class="paypal-actions">
+                  <button class="paypal-preview-btn" type="button">Continuar con PayPal</button>
+                </div>
+
+                <div class="payment-note">
+                  Al confirmar tu compra, el sistema registrará el pago con la cuenta de PayPal capturada.
+                </div>
+              </div>
+            </div>
+
+            <div id="pago-efectivo" class="payment-option">
+              <div class="payment-note">
+                Puedes realizar tu pago en efectivo usando el siguiente código QR en caja o punto autorizado.
+              </div>
+
+              <div class="cash-qr-box">
+                <img src="../../img/efectivo-qr.png" alt="Código QR para pago en efectivo">
+                <small>Escanea este código en caja o cajero para completar el pago.</small>
+              </div>
+
+              <p class="cash-notes">
+                Después de realizar el pago, conserva tu comprobante. Presiona el botón cuando hayas terminado para continuar con el registro del pedido.
+              </p>
+
+              <div class="form-row">
+                <label for="efectivo_confirmacion">Estatus</label>
+                <input id="efectivo_confirmacion" type="text" value="Pago en efectivo pendiente de confirmación" readonly />
+              </div>
+            </div>
+          </section>
+
+          <div class="switch-line">
+            <input type="checkbox" id="requiere_factura" />
+            <label for="requiere_factura">¿Requiere factura electrónica?</label>
+          </div>
+
+          <section id="factura-box" class="factura-box">
+            <h3 style="margin-top:0">Datos de facturación</h3>
+
+            <div class="form-grid">
+              <div class="form-row">
+                <label for="rfc">RFC cliente</label>
+                <input id="rfc" type="text" placeholder="XAXX010101000" />
+              </div>
+
+              <div class="form-row">
+                <label for="razon_social">Razón social</label>
+                <input id="razon_social" type="text" placeholder="Nombre o razón social" />
+              </div>
+
+              <div class="form-row">
+                <label for="uso_cfdi">Uso CFDI</label>
+                <select id="uso_cfdi">
+                  <option value="G03 - Gastos en general">G03 - Gastos en general</option>
+                  <option value="P01 - Por definir">P01 - Por definir</option>
+                  <option value="S01 - Sin efectos fiscales">S01 - Sin efectos fiscales</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <label for="correo_factura">Correo de facturación</label>
+                <input id="correo_factura" type="email" placeholder="facturacion@correo.com" />
+              </div>
+            </div>
+          </section>
+
+          <div class="actions">
+            <button class="btn" type="submit" id="btn-pagar">Pagar ahora</button>
+            <a class="btn btn--ghost" href="cart.html">Volver al carrito</a>
+          </div>
+        </form>
+      </article>
+
+      <article class="section-box">
+        <h3>Resumen de compra</h3>
+
+        <div id="resumen-compra" class="cart-summary">
+          <div class="empty-box">Cargando resumen...</div>
+        </div>
+
+        <div class="total-box">
+          <div class="total-line">
+            <span>Subtotal original</span>
+            <strong id="subtotal-original">$0.00</strong>
+          </div>
+
+          <div class="total-line">
+            <span>Descuento</span>
+            <strong id="descuento-monto">$0.00</strong>
+          </div>
+
+          <div class="total-line">
+            <span>Subtotal con descuento</span>
+            <strong id="subtotal">$0.00</strong>
+          </div>
+
+          <div class="total-line">
+            <span id="impuesto-label">IVA (0%)</span>
+            <strong id="impuesto-monto">$0.00</strong>
+          </div>
+
+          <div class="total-line">
+            <span>Total</span>
+            <strong id="total" class="total-final">$0.00</strong>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+
+      <nav aria-label="Legal" style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+        <a href="../aviso_privacidad.html" style="color:#ffd166; text-decoration:none;">Aviso de privacidad</a>
+        <a href="../terminos.html" style="color:#ffd166; text-decoration:none;">Términos y condiciones</a>
+        <a href="../cumplimiento_legal.html" style="color:#ffd166; text-decoration:none;">Cumplimiento legal</a>
+        <a href="../certificacion.html" style="color:#ffd166; text-decoration:none;">Certificación digital</a>
+        <a href="../politicas_venta.html" style="color:#ffd166; text-decoration:none;">Políticas de venta</a>
+      </nav>
+
+      <div style="margin-top:8px; color:#fff;">
+        <strong>Contacto:</strong><br>
+        Teléfono: +52 449 123 4567<br>
+        Correo: contacto@ballers.com
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+  <script>
+    const mensaje = document.getElementById('mensaje');
+    const resumenCompra = document.getElementById('resumen-compra');
+    const subtotalOriginalEl = document.getElementById('subtotal-original');
+    const descuentoMontoEl = document.getElementById('descuento-monto');
+    const subtotalEl = document.getElementById('subtotal');
+    const impuestoLabelEl = document.getElementById('impuesto-label');
+    const impuestoMontoEl = document.getElementById('impuesto-monto');
+    const totalEl = document.getElementById('total');
+    const pagoForm = document.getElementById('pago-form');
+    const facturaCheck = document.getElementById('requiere_factura');
+    const facturaBox = document.getElementById('factura-box');
+    const btnPagar = document.getElementById('btn-pagar');
+    const metodoPagoSelect = document.getElementById('metodo_pago');
+
+    let clienteId = null;
+    let clienteNombre = '';
+    let clienteCorreo = '';
+    let carrito = [];
+    let promociones = [];
+    let impuestoActivo = {
+      nombre: 'IVA',
+      porcentaje: 0
+    };
+
+    function mostrarMensaje(texto, tipo = 'ok') {
+      mensaje.textContent = texto;
+      mensaje.className = `msg-box ${tipo}`;
+    }
+
+    function limpiarMensaje() {
+      mensaje.textContent = '';
+      mensaje.className = 'msg-box';
+    }
+
+    function money(n) {
+      return Number(n || 0).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN'
+      });
+    }
+
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function fechaHoy() {
+      const f = new Date();
+      const yyyy = f.getFullYear();
+      const mm = String(f.getMonth() + 1).padStart(2, '0');
+      const dd = String(f.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function sumarDias(fecha, dias) {
+      const copia = new Date(fecha);
+      copia.setDate(copia.getDate() + dias);
+      return copia.toLocaleDateString('es-MX');
+    }
+
+    function generarReferencia(prefix = 'BAL') {
+      const random = Math.floor(100000 + Math.random() * 900000);
+      return `${prefix}-${Date.now().toString().slice(-6)}-${random}`;
+    }
+
+    function actualizarBloqueMetodoPago() {
+      const metodo = metodoPagoSelect.value;
+
+      document.querySelectorAll('.payment-option').forEach(box => {
+        box.classList.remove('visible');
+      });
+
+      const activo = document.getElementById(`pago-${metodo}`);
+      if (activo) {
+        activo.classList.add('visible');
+      }
+
+      if (metodo === 'spei') {
+        document.getElementById('spei_referencia').value = generarReferencia('SPEI');
+      }
+
+      if (metodo === 'oxxo') {
+        document.getElementById('oxxo_referencia').value = generarReferencia('OXXO');
+        document.getElementById('oxxo_limite').value = sumarDias(new Date(), 2);
+      }
+
+      if (metodo === 'paypal') {
+        const paypalCorreo = document.getElementById('paypal_correo');
+        if (paypalCorreo && clienteCorreo && !paypalCorreo.value.trim()) {
+          paypalCorreo.value = clienteCorreo;
+        }
+      }
+    }
+
+    function validarMetodoPago() {
+      const metodo = metodoPagoSelect.value;
+
+      if (metodo === 'tarjeta') {
+        const titular = document.getElementById('tarjeta_titular').value.trim();
+        const numero = document.getElementById('tarjeta_numero').value.replace(/\s+/g, '');
+        const vencimiento = document.getElementById('tarjeta_vencimiento').value.trim();
+        const cvv = document.getElementById('tarjeta_cvv').value.trim();
+
+        if (!titular || !numero || !vencimiento || !cvv) {
+          return 'Completa todos los datos de la tarjeta.';
+        }
+
+        if (numero.length < 15 || numero.length > 16 || !/^\d+$/.test(numero)) {
+          return 'El número de tarjeta no es válido.';
+        }
+
+        if (!/^\d{2}\/\d{2}$/.test(vencimiento)) {
+          return 'El vencimiento debe tener formato MM/AA.';
+        }
+
+        if (!/^\d{3,4}$/.test(cvv)) {
+          return 'El CVV no es válido.';
+        }
+      }
+
+      if (metodo === 'paypal') {
+        const correoPaypal = document.getElementById('paypal_correo').value.trim();
+        if (!correoPaypal) {
+          return 'Ingresa el correo de PayPal.';
+        }
+      }
+
+      return null;
+    }
+
+    function obtenerPromocionProducto(productoId) {
+      return promociones.find(p => Number(p.producto_id) === Number(productoId)) || null;
+    }
+
+    function calcularPreciosItem(item) {
+      const precioBase = Number(item.precio_unitario || 0);
+      const cantidad = Number(item.cantidad || 0);
+      const promo = obtenerPromocionProducto(item.producto_id);
+
+      if (!promo) {
+        return {
+          promo: null,
+          precioBase,
+          precioFinal: precioBase,
+          subtotalBase: precioBase * cantidad,
+          subtotalFinal: precioBase * cantidad,
+          descuentoTotal: 0
+        };
+      }
+
+      const descuento = Number(promo.valor_descuento || 0);
+      const precioFinal = precioBase - (precioBase * (descuento / 100));
+      const subtotalBase = precioBase * cantidad;
+      const subtotalFinal = precioFinal * cantidad;
+
+      return {
+        promo,
+        precioBase,
+        precioFinal,
+        subtotalBase,
+        subtotalFinal,
+        descuentoTotal: subtotalBase - subtotalFinal
+      };
+    }
+
+    async function cargarImpuesto() {
+      try {
+        const resp = await fetch('/api/impuestos/activo');
+        const data = await resp.json();
+
+        if (resp.ok && data.ok && data.impuesto) {
+          impuestoActivo = data.impuesto;
+        } else {
+          impuestoActivo = { nombre: 'IVA', porcentaje: 0 };
+        }
+      } catch (error) {
+        console.error(error);
+        impuestoActivo = { nombre: 'IVA', porcentaje: 0 };
+      }
+    }
+
+    function renderResumen() {
+      if (!carrito.length) {
+        resumenCompra.innerHTML = `<div class="empty-box">Tu carrito está vacío.</div>`;
+        subtotalOriginalEl.textContent = money(0);
+        descuentoMontoEl.textContent = money(0);
+        subtotalEl.textContent = money(0);
+        impuestoLabelEl.textContent = `${impuestoActivo.nombre || 'IVA'} (0%)`;
+        impuestoMontoEl.textContent = money(0);
+        totalEl.textContent = money(0);
+        btnPagar.disabled = true;
+        return;
+      }
+
+      btnPagar.disabled = false;
+
+      resumenCompra.innerHTML = carrito.map(item => {
+        const precioInfo = calcularPreciosItem(item);
+
+        const promoHtml = precioInfo.promo
+          ? `
+            <div class="promo-badge">${Number(precioInfo.promo.valor_descuento || 0)}% OFF</div>
+            <div class="resumen-meta">${escaparHtml(precioInfo.promo.nombre || 'Promoción')}</div>
+          `
+          : '';
+
+        const precioHtml = precioInfo.promo
+          ? `
+            <div class="resumen-meta">
+              Cantidad: ${Number(item.cantidad || 0)} ·
+              <span class="price-old">${money(precioInfo.precioBase)}</span>
+              <span class="price-new">${money(precioInfo.precioFinal)} c/u</span>
+            </div>
+          `
+          : `
+            <div class="resumen-meta">
+              Cantidad: ${Number(item.cantidad || 0)} · Precio unitario: ${money(precioInfo.precioBase)}
+            </div>
+          `;
+
+        const subtotalHtml = precioInfo.promo
+          ? `<strong><span class="price-old">${money(precioInfo.subtotalBase)}</span> <span class="price-new">${money(precioInfo.subtotalFinal)}</span></strong>`
+          : `<strong>${money(precioInfo.subtotalFinal)}</strong>`;
+
+        return `
+          <article class="resumen-item">
+            <div class="resumen-top">
+              <span class="resumen-title">${escaparHtml(item.nombre || 'Producto')}</span>
+              ${subtotalHtml}
+            </div>
+            ${promoHtml}
+            ${precioHtml}
+          </article>
+        `;
+      }).join('');
+
+      const subtotalOriginal = carrito.reduce((acc, item) => {
+        return acc + (Number(item.precio_unitario || 0) * Number(item.cantidad || 0));
+      }, 0);
+
+      const subtotalConDescuento = carrito.reduce((acc, item) => {
+        return acc + calcularPreciosItem(item).subtotalFinal;
+      }, 0);
+
+      const descuentoTotal = subtotalOriginal - subtotalConDescuento;
+      const porcentaje = Number(impuestoActivo?.porcentaje || 0);
+      const impuesto = subtotalConDescuento * (porcentaje / 100);
+      const total = subtotalConDescuento + impuesto;
+
+      subtotalOriginalEl.textContent = money(subtotalOriginal);
+      descuentoMontoEl.textContent = money(descuentoTotal);
+      subtotalEl.textContent = money(subtotalConDescuento);
+      impuestoLabelEl.textContent = `${impuestoActivo.nombre || 'IVA'} (${porcentaje}%)`;
+      impuestoMontoEl.textContent = money(impuesto);
+      totalEl.textContent = money(total);
+    }
+
+    async function cargarCarrito() {
+      try {
+        clienteId = localStorage.getItem('ballers_user_id');
+        clienteNombre = localStorage.getItem('ballers_user_nombre') || 'Cliente';
+        clienteCorreo = localStorage.getItem('ballers_user_correo') || '';
+        const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+        const rol = localStorage.getItem('ballers_user_rol');
+
+        if (!clienteId) {
+          resumenCompra.innerHTML = `<div class="empty-box">Primero debes iniciar sesión como cliente.</div>`;
+          btnPagar.disabled = true;
+          return;
+        }
+
+        if (tipoCuenta !== 'cliente' || (rol && rol !== 'cliente')) {
+          resumenCompra.innerHTML = `<div class="empty-box">Solo un cliente puede acceder al pago.</div>`;
+          btnPagar.disabled = true;
+          return;
+        }
+
+        const [respCarrito, respPromos] = await Promise.all([
+          fetch(`/api/carrito/${Number(clienteId)}`),
+          fetch('/api/promociones/activas/catalogo')
+        ]);
+
+        const dataCarrito = await respCarrito.json();
+        const dataPromos = await respPromos.json();
+
+        if (!respCarrito.ok) {
+          throw new Error(dataCarrito.message || 'No se pudo cargar el carrito');
+        }
+
+        carrito = Array.isArray(dataCarrito) ? dataCarrito : [];
+        promociones = (respPromos.ok && dataPromos.ok && Array.isArray(dataPromos.promociones))
+          ? dataPromos.promociones
+          : [];
+
+        renderResumen();
+        actualizarBloqueMetodoPago();
+
+        const correoFactura = document.getElementById('correo_factura');
+        if (correoFactura && clienteCorreo) {
+          correoFactura.value = clienteCorreo;
+        }
+      } catch (error) {
+        console.error(error);
+        resumenCompra.innerHTML = `<div class="empty-box">Error al cargar resumen: ${escaparHtml(error.message)}</div>`;
+        btnPagar.disabled = true;
+      }
+    }
+
+    metodoPagoSelect.addEventListener('change', actualizarBloqueMetodoPago);
+
+    facturaCheck.addEventListener('change', () => {
+      facturaBox.classList.toggle('visible', facturaCheck.checked);
+    });
+
+    pagoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      limpiarMensaje();
+
+      if (!clienteId) {
+        mostrarMensaje('Primero debes iniciar sesión.', 'error');
+        return;
+      }
+
+      if (!carrito.length) {
+        mostrarMensaje('Tu carrito está vacío.', 'error');
+        return;
+      }
+
+      const errorMetodo = validarMetodoPago();
+      if (errorMetodo) {
+        mostrarMensaje(errorMetodo, 'error');
+        return;
+      }
+
+      const metodoPago = metodoPagoSelect.value;
+      const requiereFactura = facturaCheck.checked;
+
+      const datosFactura = {
+        requiere_factura: requiereFactura,
+        rfc: document.getElementById('rfc').value.trim(),
+        razon_social: document.getElementById('razon_social').value.trim(),
+        uso_cfdi: document.getElementById('uso_cfdi').value,
+        correo_factura: document.getElementById('correo_factura').value.trim()
+      };
+
+      if (requiereFactura) {
+        if (!datosFactura.rfc || !datosFactura.razon_social || !datosFactura.correo_factura) {
+          mostrarMensaje('Completa los datos fiscales obligatorios.', 'error');
+          return;
+        }
+      }
+
+      btnPagar.disabled = true;
+      btnPagar.textContent = 'Procesando...';
+
+      try {
+        const resp = await fetch('/api/pagos/procesar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            cliente_id: Number(clienteId),
+            metodo_pago: metodoPago,
+            usuario_id: 3,
+            factura: {
+              requiere_factura: requiereFactura,
+              rfc: datosFactura.rfc,
+              razon_social: datosFactura.razon_social,
+              uso_cfdi: datosFactura.uso_cfdi,
+              correo_factura: datosFactura.correo_factura
+            }
+          })
+        });
+
+        const data = await resp.json();
+
+        if (!resp.ok || !data.ok) {
+          mostrarMensaje(data.message || 'No se pudo procesar el pago.', 'error');
+          btnPagar.disabled = false;
+          btnPagar.textContent = 'Pagar ahora';
+          return;
+        }
+
+        const subtotalOriginal = carrito.reduce((acc, item) => {
+          return acc + (Number(item.precio_unitario || 0) * Number(item.cantidad || 0));
+        }, 0);
+
+        const subtotalConDescuento = carrito.reduce((acc, item) => {
+          return acc + calcularPreciosItem(item).subtotalFinal;
+        }, 0);
+
+        const descuentoTotal = subtotalOriginal - subtotalConDescuento;
+        const porcentaje = Number(impuestoActivo?.porcentaje || 0);
+        const impuesto = subtotalConDescuento * (porcentaje / 100);
+        const total = subtotalConDescuento + impuesto;
+
+        const recibo = {
+          pedido: `PED-${data.orden_id}`,
+          fecha: fechaHoy(),
+          cliente: clienteNombre,
+          negocio: 'Ballers',
+          metodo_pago: metodoPago,
+          subtotal_original: subtotalOriginal,
+          descuento_monto: descuentoTotal,
+          subtotal: subtotalConDescuento,
+          impuesto_nombre: impuestoActivo.nombre || 'IVA',
+          impuesto_porcentaje: porcentaje,
+          impuesto_monto: impuesto,
+          total_pagado: total,
+          productos: carrito
+        };
+
+        localStorage.setItem('ballers_recibo', JSON.stringify(recibo));
+        localStorage.setItem('ballers_last_order_id', String(data.orden_id));
+
+        if (requiereFactura) {
+          localStorage.setItem('ballers_factura_solicitada', 'true');
+        } else {
+          localStorage.removeItem('ballers_factura_solicitada');
+        }
+
+        localStorage.removeItem('ballers_factura');
+
+        mostrarMensaje('Pago procesado correctamente.', 'ok');
+
+        setTimeout(() => {
+          window.location.href = `recibo.html?orden_id=${encodeURIComponent(data.orden_id)}`;
+        }, 1000);
+
+      } catch (error) {
+        console.error(error);
+        mostrarMensaje('Error de conexión con el servidor.', 'error');
+        btnPagar.disabled = false;
+        btnPagar.textContent = 'Pagar ahora';
+      }
+    });
+
+    (async () => {
+      await cargarImpuesto();
+      await cargarCarrito();
+      actualizarBloqueMetodoPago();
+    })();
+  </script>
+</body>
+</html>
