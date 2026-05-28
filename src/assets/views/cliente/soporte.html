@@ -5,215 +5,238 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ayuda y soporte | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
-  <style>
-    .top-box{
-      margin:22px 0 18px;
-      padding:22px;
-      border:1px solid #23232a;
-      border-radius:18px;
-      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
-      box-shadow:var(--shadow);
-    }
+<style>
+  .header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
 
-    .top-box h2{
-      margin:0 0 8px;
-    }
+  .nav{
+    margin-left:auto;
+  }
 
-    .top-box p{
-      margin:0;
-      color:var(--muted);
-    }
+  .nav ul{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+  }
 
+  .nav ul li{
+    white-space:nowrap;
+  }
+
+  .top-box{
+    margin:22px 0 18px;
+    padding:22px;
+    border:1px solid #23232a;
+    border-radius:18px;
+    background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+    box-shadow:var(--shadow);
+  }
+
+  .top-box h2{
+    margin:0 0 8px;
+  }
+
+  .top-box p{
+    margin:0;
+    color:var(--muted);
+  }
+
+  .layout{
+    display:grid;
+    gap:18px;
+  }
+
+  @media (min-width:1100px){
     .layout{
-      display:grid;
-      gap:18px;
+      grid-template-columns:420px 1fr;
     }
+  }
 
-    @media (min-width:1100px){
-      .layout{
-        grid-template-columns:420px 1fr;
-      }
-    }
+  .section-box{
+    background:var(--panel);
+    border:1px solid #23232a;
+    border-radius:18px;
+    box-shadow:var(--shadow-soft);
+    padding:20px;
+    display:grid;
+    gap:14px;
+  }
 
-    .section-box{
-      background:var(--panel);
-      border:1px solid #23232a;
-      border-radius:18px;
-      box-shadow:var(--shadow-soft);
-      padding:20px;
-      display:grid;
-      gap:14px;
-    }
+  .section-box h3{
+    margin:0;
+  }
 
-    .section-box h3{
-      margin:0;
-    }
+  .form-grid{
+    display:grid;
+    gap:12px;
+  }
 
-    .form-grid{
-      display:grid;
-      gap:12px;
-    }
+  .form-row{
+    display:grid;
+    gap:6px;
+  }
 
-    .form-row{
-      display:grid;
-      gap:6px;
-    }
+  .form-row label{
+    font-weight:700;
+  }
 
-    .form-row label{
-      font-weight:700;
-    }
+  .form-row input,
+  .form-row select,
+  .form-row textarea{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid #2a2a32;
+    background:#141419;
+    color:var(--text);
+    box-sizing:border-box;
+    resize:vertical;
+  }
 
-    .form-row input,
-    .form-row select,
-    .form-row textarea{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid #2a2a32;
-      background:#141419;
-      color:var(--text);
-      box-sizing:border-box;
-      resize:vertical;
-    }
+  .form-row textarea{
+    min-height:120px;
+  }
 
-    .form-row textarea{
-      min-height:120px;
-    }
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:8px;
+  }
 
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:8px;
-    }
+  .msg-box{
+    margin:18px 0;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #333;
+    display:none;
+    font-weight:700;
+  }
 
-    .msg-box{
-      margin:18px 0;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid #333;
-      display:none;
-      font-weight:700;
-    }
+  .msg-box.ok{
+    display:block;
+    color:#7CFC98;
+    background:#102014;
+    border-color:#224d2d;
+  }
 
-    .msg-box.ok{
-      display:block;
-      color:#7CFC98;
-      background:#102014;
-      border-color:#224d2d;
-    }
+  .msg-box.error{
+    display:block;
+    color:#ff8b8b;
+    background:#241313;
+    border-color:#5a2323;
+  }
 
-    .msg-box.error{
-      display:block;
-      color:#ff8b8b;
-      background:#241313;
-      border-color:#5a2323;
-    }
+  .solicitudes-list{
+    display:grid;
+    gap:16px;
+  }
 
-    .solicitudes-list{
-      display:grid;
-      gap:16px;
-    }
+  .solicitud-card{
+    background:#111;
+    border:1px solid #23232a;
+    border-radius:16px;
+    padding:16px;
+    display:grid;
+    gap:12px;
+  }
 
-    .solicitud-card{
-      background:#111;
-      border:1px solid #23232a;
-      border-radius:16px;
-      padding:16px;
-      display:grid;
-      gap:12px;
-    }
+  .solicitud-head{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:flex-start;
+  }
 
-    .solicitud-head{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-    }
+  .solicitud-title{
+    font-size:1rem;
+    font-weight:800;
+    color:#fff;
+  }
 
-    .solicitud-title{
-      font-size:1rem;
-      font-weight:800;
-      color:#fff;
-    }
+  .solicitud-meta{
+    display:grid;
+    gap:5px;
+    color:var(--muted);
+    font-size:.94rem;
+  }
 
-    .solicitud-meta{
-      display:grid;
-      gap:5px;
-      color:var(--muted);
-      font-size:.94rem;
-    }
+  .badge{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:700;
+    border:1px solid #333;
+    width:max-content;
+    text-transform:capitalize;
+  }
 
-    .badge{
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
-      font-weight:700;
-      border:1px solid #333;
-      width:max-content;
-      text-transform:capitalize;
-    }
+  .estado-por_resolver{
+    color:#ffd166;
+    border-color:#6a5720;
+    background:#1e1807;
+  }
 
-    .estado-por_resolver{
-      color:#ffd166;
-      border-color:#6a5720;
-      background:#1e1807;
-    }
+  .estado-en_proceso{
+    color:#9ecbff;
+    border-color:#355c9a;
+    background:#10213d;
+  }
 
-    .estado-en_proceso{
-      color:#9ecbff;
-      border-color:#355c9a;
-      background:#10213d;
-    }
+  .estado-resuelto{
+    color:#7CFC98;
+    border-color:#2f5e3a;
+    background:#102014;
+  }
 
-    .estado-resuelto{
-      color:#7CFC98;
-      border-color:#2f5e3a;
-      background:#102014;
-    }
+  .prioridad-baja{
+    color:#7CFC98;
+    border-color:#2f5e3a;
+    background:#102014;
+  }
 
-    .prioridad-baja{
-      color:#7CFC98;
-      border-color:#2f5e3a;
-      background:#102014;
-    }
+  .prioridad-media{
+    color:#ffd166;
+    border-color:#6a5720;
+    background:#1e1807;
+  }
 
-    .prioridad-media{
-      color:#ffd166;
-      border-color:#6a5720;
-      background:#1e1807;
-    }
+  .prioridad-alta{
+    color:#ff8b8b;
+    border-color:#6d2c2c;
+    background:#241313;
+  }
 
-    .prioridad-alta{
-      color:#ff8b8b;
-      border-color:#6d2c2c;
-      background:#241313;
-    }
+  .respuesta-box{
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #2a2a32;
+    background:#15151a;
+    color:#d8d8de;
+    line-height:1.5;
+  }
 
-    .respuesta-box{
-      padding:14px;
-      border-radius:14px;
-      border:1px solid #2a2a32;
-      background:#15151a;
-      color:#d8d8de;
-      line-height:1.5;
-    }
+  .empty-box{
+    padding:22px;
+    border:1px dashed #333;
+    border-radius:16px;
+    color:var(--muted);
+    background:#111;
+  }
 
-    .empty-box{
-      padding:22px;
-      border:1px dashed #333;
-      border-radius:16px;
-      color:var(--muted);
-      background:#111;
-    }
-
-    .helper-note{
-      color:var(--muted);
-      font-size:.92rem;
-      line-height:1.45;
-    }
-  </style>
+  .helper-note{
+    color:var(--muted);
+    font-size:.92rem;
+    line-height:1.45;
+  }
+</style>
 </head>
 <body>
 <header class="header">
@@ -229,6 +252,7 @@
         <li><a href="comprados.html">Comprados</a></li>
         <li><a href="seguimiento.html">Seguimiento</a></li>
         <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="mis_interacciones.html">Mis interacciones</a></li>
         <li><a class="active" href="soporte.html" aria-current="page">Ayuda y soporte</a></li>
       </ul>
     </nav>
@@ -333,7 +357,16 @@
   </footer>
 
   <script src="../../js/app.js"></script>
-  <script>
+
+<script>
+  protegerRuta({
+    tipo: 'cliente',
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
     const mensaje = document.getElementById('mensaje');
     const form = document.getElementById('soporte-form');
     const btnEnviar = document.getElementById('btn-enviar');

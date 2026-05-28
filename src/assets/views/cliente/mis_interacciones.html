@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis interacciones | Ballers</title>
+  <link rel="stylesheet" href="../../css/base.css"/>
+<style>
+  .header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+
+  .nav{
+    margin-left:auto;
+  }
+
+  .nav ul{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .nav ul li{
+    white-space:nowrap;
+  }
+
+  .section{
+    background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+    border:1px solid #23232a;
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:var(--shadow);
+    margin:18px 0;
+  }
+
+  .toolbar{
+    display:grid;
+    gap:12px;
+    margin-bottom:16px;
+  }
+
+  @media (min-width:900px){
+    .toolbar{
+      grid-template-columns:1fr 220px;
+    }
+  }
+
+  .toolbar input,
+  .toolbar select{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid #2a2a32;
+    background:#141419;
+    color:var(--text);
+  }
+
+  .timeline{
+    display:grid;
+    gap:14px;
+  }
+
+  .timeline-item{
+    background:#111;
+    border:1px solid #23232a;
+    border-radius:14px;
+    padding:14px;
+  }
+
+  .timeline-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+
+  .tag{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:.85rem;
+    font-weight:700;
+    border:1px solid #333;
+  }
+
+  .tag.llamada{
+    color:#ffd166;
+    border-color:#70561a;
+  }
+
+  .tag.correo{
+    color:#7ec8ff;
+    border-color:#275a7d;
+  }
+
+  .tag.reunion{
+    color:#7CFC98;
+    border-color:#1f6b37;
+  }
+
+  .muted{
+    color:var(--muted);
+  }
+
+  .empty{
+    padding:18px;
+    border:1px dashed #333;
+    border-radius:14px;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="container header__inner">
+    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+
+    <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+    <nav id="mainnav" class="nav">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalog_user.html">Catálogo</a></li>
+        <li><a href="cart.html">Carrito</a></li>
+        <li><a href="comprados.html">Comprados</a></li>
+        <li><a href="seguimiento.html">Seguimiento</a></li>
+        <li><a href="editar.html">Mi perfil</a></li>
+        <li><a class="active" href="mis_interacciones.html" aria-current="page">Mis interacciones</a></li>
+        <li><a href="soporte.html">Ayuda y soporte</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+  <main class="container" style="padding:22px 0 64px">
+    <section class="section">
+      <h2 style="margin:0 0 6px">Mis interacciones</h2>
+      <p class="muted" style="margin:0">
+        Aquí puedes ver el historial de contactos e interacciones registradas con tu cuenta.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="toolbar">
+        <input id="buscar-texto" type="text" placeholder="Buscar en descripciones" />
+        <select id="filtro-tipo">
+          <option value="">Todos los tipos</option>
+          <option value="llamada">Llamada</option>
+          <option value="correo">Correo</option>
+          <option value="reunion">Reunión</option>
+        </select>
+      </div>
+
+      <div id="interacciones-wrap"></div>
+    </section>
+  </main>
+
+  <footer class="footer" style="background:#0f0f0f; color:#ccc; padding:25px 0; margin-top:40px; font-family:'Poppins',sans-serif;">
+    <div class="container footer__inner" style="display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+      <small style="color:#aaa;">© 2025 Ballers. Todos los derechos reservados.</small>
+    </div>
+  </footer>
+
+  <script src="../../js/app.js"></script>
+
+  <script>
+    protegerRuta({
+      tipo: 'cliente',
+      redirectSiNoAuth: '../login.html',
+      redirectSiNoPermitido: '../login.html'
+    });
+  </script>
+
+  <script>
+    const wrap = document.getElementById('interacciones-wrap');
+    const buscarTexto = document.getElementById('buscar-texto');
+    const filtroTipo = document.getElementById('filtro-tipo');
+
+    let interacciones = [];
+
+    function formatoFecha(fecha) {
+      return new Date(fecha).toLocaleString('es-MX', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      });
+    }
+
+    function filtrarInteracciones() {
+      const texto = buscarTexto.value.trim().toLowerCase();
+      const tipo = filtroTipo.value;
+
+      return interacciones.filter(item => {
+        const coincideTexto =
+          !texto ||
+          (item.descripcion || '').toLowerCase().includes(texto) ||
+          (item.usuario_nombre || '').toLowerCase().includes(texto);
+
+        const coincideTipo = !tipo || item.tipo === tipo;
+
+        return coincideTexto && coincideTipo;
+      });
+    }
+
+    function renderInteracciones() {
+      const lista = filtrarInteracciones();
+
+      if (!lista.length) {
+        wrap.innerHTML = `<div class="empty">No hay interacciones para mostrar.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = `
+        <div class="timeline">
+          ${lista.map(item => `
+            <article class="timeline-item">
+              <div class="timeline-top">
+                <div>
+                  <span class="tag ${item.tipo}">${item.tipo}</span>
+                </div>
+                <small class="muted">${formatoFecha(item.fecha)}</small>
+              </div>
+              <p style="margin:0 0 8px">${item.descripcion}</p>
+              <small class="muted">Registrado por: ${item.usuario_nombre || 'Equipo Ballers'}</small>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    async function cargarInteracciones() {
+      const clienteId = localStorage.getItem('ballers_user_id');
+
+      if (!clienteId) {
+        wrap.innerHTML = `<div class="empty">No se encontró una sesión activa.</div>`;
+        return;
+      }
+
+      try {
+        const resp = await fetch(`/api/mis-interacciones/${clienteId}`);
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.message || 'No se pudieron cargar las interacciones');
+        }
+
+        interacciones = Array.isArray(data) ? data : [];
+        renderInteracciones();
+      } catch (error) {
+        console.error(error);
+        wrap.innerHTML = `<div class="empty">No se pudieron cargar tus interacciones.</div>`;
+      }
+    }
+
+    buscarTexto.addEventListener('input', renderInteracciones);
+    filtroTipo.addEventListener('change', renderInteracciones);
+
+    cargarInteracciones();
+  </script>
+</body>
+</html>

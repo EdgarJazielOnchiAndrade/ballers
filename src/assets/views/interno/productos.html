@@ -76,6 +76,34 @@
     .subgrid{display:grid;gap:18px}
     @media (min-width:800px){.subgrid{grid-template-columns:1fr 1fr}}
     .muted{color:var(--muted)}
+    .preview-box{
+      margin-top:8px;
+      width:100%;
+      height:180px;
+      border:1px dashed #333;
+      border-radius:14px;
+      background:#111 center/cover no-repeat;
+      display:grid;
+      place-items:center;
+      color:var(--muted);
+      overflow:hidden;
+    }
+    .preview-box.has-image{
+      border-style:solid;
+    }
+    .preview-box span{
+      padding:10px;
+      text-align:center;
+      font-size:.92rem;
+    }
+    .img-thumb{
+      width:64px;
+      height:64px;
+      border-radius:10px;
+      background:#18181d center/cover no-repeat;
+      border:1px solid #23232a;
+      display:inline-block;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +175,14 @@
           </div>
 
           <div class="form-row">
+            <label for="imagen_url">URL de imagen</label>
+            <input id="imagen_url" type="text" placeholder="https://... o /src/assets/img/..." />
+            <div id="preview-imagen" class="preview-box">
+              <span>Vista previa de la imagen</span>
+            </div>
+          </div>
+
+          <div class="form-row">
             <label for="stock_actual">Stock actual</label>
             <input id="stock_actual" type="number" min="0" value="0" />
           </div>
@@ -212,6 +248,18 @@
   </footer>
 
   <script src="../../js/app.js"></script>
+
+  <script src="../../js/app.js"></script>
+
+<script>
+  protegerRuta({
+    tipo: 'interno',
+    roles: ['administrador', 'ventas', 'logistica', 'soporte'],
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
   <script>
     const proveedorForm = document.getElementById('proveedor-form');
     const productoForm = document.getElementById('producto-form');
@@ -224,6 +272,8 @@
     const nombre = document.getElementById('nombre');
     const descripcion = document.getElementById('descripcion');
     const categoria = document.getElementById('categoria');
+    const imagenUrl = document.getElementById('imagen_url');
+    const previewImagen = document.getElementById('preview-imagen');
     const stockActual = document.getElementById('stock_actual');
     const stockMinimo = document.getElementById('stock_minimo');
     const proveedorId = document.getElementById('proveedor_id');
@@ -237,11 +287,36 @@
     let proveedores = [];
     let productos = [];
 
+    function escaparHtml(texto) {
+      return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function actualizarPreviewImagen() {
+      const url = imagenUrl.value.trim();
+
+      if (!url) {
+        previewImagen.classList.remove('has-image');
+        previewImagen.style.backgroundImage = 'none';
+        previewImagen.innerHTML = '<span>Vista previa de la imagen</span>';
+        return;
+      }
+
+      previewImagen.classList.add('has-image');
+      previewImagen.style.backgroundImage = `url('${url.replace(/'/g, "%27")}')`;
+      previewImagen.innerHTML = '';
+    }
+
     function limpiarProductoForm() {
       productoId.value = '';
       nombre.value = '';
       descripcion.value = '';
       categoria.value = '';
+      imagenUrl.value = '';
       stockActual.value = 0;
       stockMinimo.value = 0;
       proveedorId.value = '';
@@ -249,6 +324,7 @@
       estrategia.value = 'PULL';
       msgProducto.textContent = '';
       msgProducto.className = 'msg';
+      actualizarPreviewImagen();
     }
 
     function cargarSelectProveedores() {
@@ -257,8 +333,14 @@
     }
 
     function tagEstrategia(valor) {
-      const clase = valor.toLowerCase();
+      const clase = String(valor || '').toLowerCase();
       return `<span class="tag ${clase}">${valor}</span>`;
+    }
+
+    function obtenerMiniImagen(url) {
+      if (!url || String(url).trim() === '') return '-';
+      const safeUrl = String(url).trim().replace(/'/g, "%27");
+      return `<span class="img-thumb" style="background-image:url('${safeUrl}')"></span>`;
     }
 
     function filtrarProductos() {
@@ -269,8 +351,8 @@
       return productos.filter(p => {
         const coincideTexto =
           !texto ||
-          p.nombre.toLowerCase().includes(texto) ||
-          (p.categoria || '').toLowerCase().includes(texto);
+          String(p.nombre || '').toLowerCase().includes(texto) ||
+          String(p.categoria || '').toLowerCase().includes(texto);
 
         const coincideEstrategia = !est || p.estrategia_logistica === est;
 
@@ -295,6 +377,7 @@
           <thead>
             <tr>
               <th>ID</th>
+              <th>Imagen</th>
               <th>Nombre</th>
               <th>Categoría</th>
               <th>Stock</th>
@@ -309,12 +392,13 @@
             ${lista.map(p => `
               <tr>
                 <td>${p.id}</td>
-                <td>${p.nombre}</td>
-                <td>${p.categoria || '-'}</td>
+                <td>${obtenerMiniImagen(p.imagen_url)}</td>
+                <td>${escaparHtml(p.nombre || '-')}</td>
+                <td>${escaparHtml(p.categoria || '-')}</td>
                 <td>${p.stock_actual}</td>
                 <td>${p.stock_minimo}</td>
-                <td>${p.proveedor_nombre || '-'}</td>
-                <td>$${Number(p.costo_unitario).toFixed(2)}</td>
+                <td>${escaparHtml(p.proveedor_nombre || '-')}</td>
+                <td>$${Number(p.costo_unitario || 0).toFixed(2)}</td>
                 <td>${tagEstrategia(p.estrategia_logistica)}</td>
                 <td>
                   <div class="mini-actions">
@@ -406,6 +490,7 @@
         nombre: nombre.value.trim(),
         descripcion: descripcion.value.trim(),
         categoria: categoria.value.trim(),
+        imagen_url: imagenUrl.value.trim(),
         stock_actual: Number(stockActual.value || 0),
         stock_minimo: Number(stockMinimo.value || 0),
         proveedor_id: proveedorId.value || null,
@@ -463,15 +548,17 @@
       if (!producto) return;
 
       productoId.value = producto.id;
-      nombre.value = producto.nombre;
+      nombre.value = producto.nombre || '';
       descripcion.value = producto.descripcion || '';
       categoria.value = producto.categoria || '';
+      imagenUrl.value = producto.imagen_url || '';
       stockActual.value = producto.stock_actual || 0;
       stockMinimo.value = producto.stock_minimo || 0;
       proveedorId.value = producto.proveedor_id || '';
       costoUnitario.value = producto.costo_unitario || 0;
       estrategia.value = producto.estrategia_logistica || 'PULL';
 
+      actualizarPreviewImagen();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -523,6 +610,7 @@
       }
     }
 
+    imagenUrl.addEventListener('input', actualizarPreviewImagen);
     document.getElementById('btn-cancelar').addEventListener('click', limpiarProductoForm);
     buscar.addEventListener('input', renderTabla);
     filtroEstrategia.addEventListener('change', renderTabla);
@@ -532,6 +620,7 @@
     window.eliminarProducto = eliminarProducto;
     window.cambiarEstrategia = cambiarEstrategia;
 
+    actualizarPreviewImagen();
     cargarProveedores();
     cargarProductos();
   </script>

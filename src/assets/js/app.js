@@ -62,3 +62,44 @@ document.querySelectorAll('.chip').forEach(chip => {
 /* (Opcional) Evitar recargar en el buscador por ahora */
 const searchForm = document.querySelector('.search');
 if (searchForm) searchForm.addEventListener('submit', e => e.preventDefault());
+
+function protegerRuta(opciones = {}) {
+  const {
+    requiereAuth = true,
+    tipo = null,
+    roles = [],
+    redirectSiNoAuth = '/src/assets/views/login.html',
+    redirectSiNoPermitido = null
+  } = opciones;
+
+  const auth = localStorage.getItem('ballers_auth');
+  const tipoCuenta = localStorage.getItem('ballers_user_tipo');
+  const rol = localStorage.getItem('ballers_user_rol');
+
+  if (requiereAuth && auth !== 'true') {
+    window.location.href = redirectSiNoAuth;
+    return false;
+  }
+
+  if (tipo && tipoCuenta !== tipo) {
+    if (redirectSiNoPermitido) {
+      window.location.href = redirectSiNoPermitido;
+    } else {
+      alert('No tienes permiso para entrar a este apartado.');
+      history.back();
+    }
+    return false;
+  }
+
+  if (roles.length > 0 && !roles.includes(rol)) {
+    if (redirectSiNoPermitido) {
+      window.location.href = redirectSiNoPermitido;
+    } else {
+      alert('No tienes permiso para entrar a este apartado.');
+      history.back();
+    }
+    return false;
+  }
+
+  return true;
+}

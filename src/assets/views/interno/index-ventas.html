@@ -6,6 +6,29 @@
   <title>Panel de Ventas | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
+    .header__inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .nav{
+      margin-left:auto;
+    }
+
+    .nav ul{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .nav ul li{
+      white-space:nowrap;
+    }
+
     .section{
       background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
       border:1px solid #23232a;
@@ -14,8 +37,29 @@
       box-shadow:var(--shadow);
       margin:18px 0;
     }
-    .grid-2{display:grid;gap:16px}
-    @media (min-width:920px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+
+    .grid-2{
+      display:grid;
+      gap:16px;
+    }
+
+    @media (min-width:920px){
+      .grid-2{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    .grid-3{
+      display:grid;
+      gap:16px;
+    }
+
+    @media (min-width:980px){
+      .grid-3{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
     .card{
       background:var(--card);
       border:1px solid #23232a;
@@ -23,35 +67,66 @@
       overflow:hidden;
       box-shadow:var(--shadow-soft);
     }
-    .card__body{padding:16px}
-    .muted{color:var(--muted)}
-    .header__inner{display:flex;align-items:center;gap:12px}
-    .nav{margin-left:auto}
-    .kpis{display:grid;gap:14px}
-    @media (min-width:800px){.kpis{grid-template-columns:repeat(3,1fr)}}
+
+    .card__body{
+      padding:16px;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .kpis{
+      display:grid;
+      gap:14px;
+    }
+
+    @media (min-width:800px){
+      .kpis{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
     .kpi{
       background:#111;
       border:1px solid #23232a;
       border-radius:16px;
       padding:16px;
     }
-    .kpi small{display:block;color:var(--muted);margin-bottom:6px}
-    .kpi strong{font-size:1.6rem}
-    .topbar-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+    .kpi small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .kpi strong{
+      font-size:1.6rem;
+    }
+
+    .topbar-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
     .ventas-menu-wrap{
       position:relative;
       display:inline-block;
     }
+
     .ventas-toggle{
       display:flex;
       align-items:center;
       gap:10px;
     }
+
     .ventas-dropdown{
       position:absolute;
       top:110%;
       right:0;
-      min-width:220px;
+      min-width:240px;
       background:#111;
       border:1px solid #23232a;
       border-radius:14px;
@@ -60,9 +135,11 @@
       z-index:30;
       display:none;
     }
+
     .ventas-dropdown.show{
       display:block;
     }
+
     .ventas-dropdown a{
       display:block;
       padding:10px 12px;
@@ -71,10 +148,35 @@
       text-decoration:none;
       transition:.2s;
     }
+
     .ventas-dropdown a:hover{
       background:#1a1a20;
     }
-    .list-simple{margin:12px 0 0;padding-left:18px}
+
+    .list-simple{
+      margin:12px 0 0;
+      padding-left:18px;
+    }
+
+    .quick-links{
+      display:grid;
+      gap:12px;
+    }
+
+    .quick-links a{
+      display:block;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #23232a;
+      background:#111;
+      color:#fff;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .quick-links a:hover{
+      border-color:#3a3a46;
+    }
   </style>
 </head>
 <body>
@@ -86,6 +188,11 @@
       <nav id="mainnav" class="nav">
         <ul>
           <li><a class="active" href="index-ventas.html" aria-current="page">Inicio ventas</a></li>
+          <li><a href="clientes.html">Clientes</a></li>
+          <li><a href="interacciones.html">Interacciones</a></li>
+          <li><a href="metricas.html">Métricas CRM</a></li>
+          <li><a href="actividad.html">Mi actividad</a></li>
+          <li><a href="soporte.html">Soporte</a></li>
         </ul>
       </nav>
     </div>
@@ -95,11 +202,12 @@
     <section class="section">
       <h2 style="margin:0 0 6px">Panel de ventas</h2>
       <p class="muted" style="margin:0">
-        Acceso rápido al ERP comercial para consultar clientes, órdenes y métricas del área de ventas.
+        Acceso rápido al área comercial para consultar clientes, registrar interacciones, revisar métricas CRM y entrar al ERP de ventas.
       </p>
 
       <div class="topbar-actions">
-        <a class="btn" href="dashboard-erp-ventas.html">Entrar al ERP ventas</a>
+        <a class="btn" href="clientes.html">Ir a clientes</a>
+        <a class="btn btn--ghost" href="interacciones.html">Registrar interacción</a>
 
         <div class="ventas-menu-wrap">
           <button class="btn btn--ghost ventas-toggle" id="btn-ventas-erp" type="button" aria-expanded="false">
@@ -107,7 +215,9 @@
           </button>
 
           <div class="ventas-dropdown" id="ventas-dropdown">
-            <a href="dashboard-erp-ventas.html">Entrar al ERP ventas</a>
+            <a href="dashboard-erp-ventas.html">Dashboard ERP ventas</a>
+            <a href="clientes-erp-ventas.html">Clientes ERP ventas</a>
+            <a href="ordenes-erp-ventas.html">Órdenes ERP ventas</a>
           </div>
         </div>
       </div>
@@ -133,21 +243,64 @@
     <section class="grid-2">
       <article class="card">
         <div class="card__body">
-          <h3 style="margin:0 0 6px">ERP de ventas</h3>
+          <h3 style="margin:0 0 6px">Accesos comerciales</h3>
           <p class="muted">
-            Desde aquí puedes entrar al ERP comercial y navegar por clientes, órdenes y dashboard según tu perfil.
+            Desde aquí puedes entrar rápidamente a los apartados más usados del perfil de ventas.
           </p>
-          <p style="margin-top:10px"><a class="btn" href="dashboard-erp-ventas.html">Abrir ERP</a></p>
+
+          <div class="quick-links" style="margin-top:14px">
+            <a href="clientes.html">Gestión de clientes</a>
+            <a href="interacciones.html">Registro de interacciones</a>
+            <a href="metricas.html">Métricas CRM</a>
+            <a href="actividad.html">Mi actividad</a>
+            <a href="seguimiento.html">Seguimiento</a>
+            <a href="soporte.html">Soporte</a>
+          </div>
         </div>
       </article>
 
       <article class="card">
         <div class="card__body">
+          <h3 style="margin:0 0 6px">ERP de ventas</h3>
+          <p class="muted">
+            Accede al dashboard comercial, al módulo de clientes ERP y a la gestión de órdenes del área de ventas.
+          </p>
+
+          <div class="quick-links" style="margin-top:14px">
+            <a href="dashboard-erp-ventas.html">Dashboard ERP ventas</a>
+            <a href="clientes-erp-ventas.html">Clientes ERP ventas</a>
+            <a href="ordenes-erp-ventas.html">Órdenes ERP ventas</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid-3">
+      <article class="card">
+        <div class="card__body">
           <h3 style="margin:0 0 6px">Resumen comercial</h3>
-          <p class="muted">Consulta rápida de clientes con seguimiento reciente.</p>
+          <p class="muted">Consulta rápida de clientes registrados recientemente.</p>
           <ul id="lista-clientes" class="list-simple">
             <li class="muted">Cargando...</li>
           </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Trabajo diario</h3>
+          <p class="muted">
+            El rol de ventas se enfoca en atención comercial, seguimiento de clientes, interacciones y apoyo al flujo de órdenes del ERP.
+          </p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Sugerencia</h3>
+          <p class="muted">
+            Usa primero Clientes e Interacciones y después consulta Métricas CRM o el ERP de ventas para completar el seguimiento comercial.
+          </p>
         </div>
       </article>
     </section>
@@ -160,6 +313,16 @@
   </footer>
 
   <script src="../../js/app.js"></script>
+
+  <script>
+    protegerRuta({
+      tipo: 'interno',
+      roles: ['ventas'],
+      redirectSiNoAuth: '../login.html',
+      redirectSiNoPermitido: '../login.html'
+    });
+  </script>
+
   <script>
     async function cargarResumenVentas() {
       try {

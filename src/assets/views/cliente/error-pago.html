@@ -120,7 +120,16 @@
 
 
   <script src="../../js/app.js"></script>
-  <script>
+
+<script>
+  protegerRuta({
+    tipo: 'cliente',
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
     const params  = new URLSearchParams(window.location.search);
     const nombre  = params.get('nombre') || 'Cliente';
     const correo  = params.get('correo') || 'correo@ejemplo.com';

@@ -6,196 +6,222 @@
   <title>Catálogo | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
-    .catalog-top{
-      margin:22px 0 18px;
-      padding:22px;
-      border:1px solid #23232a;
-      border-radius:18px;
-      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
-      box-shadow:var(--shadow);
-    }
-    .catalog-top h1{
-      margin:0 0 8px;
-    }
-    .catalog-top p{
-      margin:0;
-      color:var(--muted);
-    }
+  .header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
 
+  .nav{
+    margin-left:auto;
+  }
+
+  .nav ul{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .nav ul li{
+    white-space:nowrap;
+  }
+
+  .catalog-top{
+    margin:22px 0 18px;
+    padding:22px;
+    border:1px solid #23232a;
+    border-radius:18px;
+    background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+    box-shadow:var(--shadow);
+  }
+
+  .catalog-top h1{
+    margin:0 0 8px;
+  }
+
+  .catalog-top p{
+    margin:0;
+    color:var(--muted);
+  }
+
+  .catalog-toolbar{
+    display:grid;
+    gap:12px;
+    margin:18px 0 22px;
+  }
+
+  @media (min-width:900px){
     .catalog-toolbar{
-      display:grid;
-      gap:12px;
-      margin:18px 0 22px;
+      grid-template-columns:1.2fr .9fr .9fr;
     }
-    @media (min-width:900px){
-      .catalog-toolbar{
-        grid-template-columns:1.2fr .9fr .9fr;
-      }
-    }
+  }
 
-    .catalog-toolbar input,
-    .catalog-toolbar select{
-      width:100%;
-      padding:11px 12px;
-      border-radius:12px;
-      border:1px solid #2a2a32;
-      background:#141419;
-      color:var(--text);
-    }
+  .catalog-toolbar input,
+  .catalog-toolbar select{
+    width:100%;
+    padding:11px 12px;
+    border-radius:12px;
+    border:1px solid #2a2a32;
+    background:#141419;
+    color:var(--text);
+  }
 
-    .catalog-grid{
-      display:grid;
-      gap:18px;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      margin-bottom:28px;
-    }
+  .catalog-grid{
+    display:grid;
+    gap:18px;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    margin-bottom:28px;
+  }
 
-    .product-card{
-      background:var(--card);
-      border:1px solid #23232a;
-      border-radius:18px;
-      overflow:hidden;
-      box-shadow:var(--shadow-soft);
-      display:flex;
-      flex-direction:column;
-    }
+  .product-card{
+    background:var(--card);
+    border:1px solid #23232a;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:var(--shadow-soft);
+    display:flex;
+    flex-direction:column;
+  }
 
-    .product-image{
-      height:230px;
-      background:#18181d center/cover no-repeat;
-      border-bottom:1px solid #23232a;
-    }
+  .product-image{
+    height:230px;
+    background:#18181d center/cover no-repeat;
+    border-bottom:1px solid #23232a;
+  }
 
-    .product-body{
-      padding:16px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      flex:1;
-    }
+  .product-body{
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    flex:1;
+  }
 
-    .product-category{
-      display:inline-block;
-      width:max-content;
-      padding:4px 10px;
-      border-radius:999px;
-      font-size:.8rem;
-      border:1px solid #333;
-      color:#ffd166;
-    }
+  .product-category{
+    display:inline-block;
+    width:max-content;
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:.8rem;
+    border:1px solid #333;
+    color:#ffd166;
+  }
 
-    .product-title{
-      margin:0;
-      font-size:1.08rem;
-    }
+  .product-title{
+    margin:0;
+    font-size:1.08rem;
+  }
 
-    .product-desc{
-      margin:0;
-      color:var(--muted);
-      line-height:1.45;
-      min-height:44px;
-    }
+  .product-desc{
+    margin:0;
+    color:var(--muted);
+    line-height:1.45;
+    min-height:44px;
+  }
 
-    .product-meta{
-      display:grid;
-      gap:6px;
-      color:#d5d5da;
-      font-size:.95rem;
-    }
+  .product-meta{
+    display:grid;
+    gap:6px;
+    color:#d5d5da;
+    font-size:.95rem;
+  }
 
-    .product-price{
-      font-size:1.2rem;
-      font-weight:700;
-      color:#fff;
-    }
+  .product-price{
+    font-size:1.2rem;
+    font-weight:700;
+    color:#fff;
+  }
 
-    .stock-ok{
-      color:#7CFC98;
-      font-weight:700;
-    }
+  .stock-ok{
+    color:#7CFC98;
+    font-weight:700;
+  }
 
-    .stock-low{
-      color:#ffd166;
-      font-weight:700;
-    }
+  .stock-low{
+    color:#ffd166;
+    font-weight:700;
+  }
 
-    .stock-out{
-      color:#ff8b8b;
-      font-weight:700;
-    }
+  .stock-out{
+    color:#ff8b8b;
+    font-weight:700;
+  }
 
-    .product-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:auto;
-    }
+  .product-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:auto;
+  }
 
-    .empty-box{
-      padding:22px;
-      border:1px dashed #333;
-      border-radius:16px;
-      color:var(--muted);
-      background:#111;
-    }
+  .empty-box{
+    padding:22px;
+    border:1px dashed #333;
+    border-radius:16px;
+    color:var(--muted);
+    background:#111;
+  }
 
-    .counter-box{
-      margin:0 0 18px;
-      color:var(--muted);
-    }
+  .counter-box{
+    margin:0 0 18px;
+    color:var(--muted);
+  }
 
-    .msg-box{
-      margin:0 0 18px;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid #333;
-      display:none;
-      font-weight:700;
-    }
+  .msg-box{
+    margin:0 0 18px;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #333;
+    display:none;
+    font-weight:700;
+  }
 
-    .msg-box.ok{
-      display:block;
-      color:#7CFC98;
-      background:#102014;
-      border-color:#224d2d;
-    }
+  .msg-box.ok{
+    display:block;
+    color:#7CFC98;
+    background:#102014;
+    border-color:#224d2d;
+  }
 
-    .msg-box.error{
-      display:block;
-      color:#ff8b8b;
-      background:#241313;
-      border-color:#5a2323;
-    }
+  .msg-box.error{
+    display:block;
+    color:#ff8b8b;
+    background:#241313;
+    border-color:#5a2323;
+  }
 
-    .btn[disabled]{
-      opacity:.55;
-      cursor:not-allowed;
-      pointer-events:none;
-    }
+  .btn[disabled]{
+    opacity:.55;
+    cursor:not-allowed;
+    pointer-events:none;
+  }
 
-    .promo-badge{
-      display:inline-block;
-      width:max-content;
-      padding:4px 10px;
-      border-radius:999px;
-      background:#2a1408;
-      color:#ffd166;
-      font-weight:700;
-      font-size:.85rem;
-      border:1px solid #5a3418;
-    }
+  .promo-badge{
+    display:inline-block;
+    width:max-content;
+    padding:4px 10px;
+    border-radius:999px;
+    background:#2a1408;
+    color:#ffd166;
+    font-weight:700;
+    font-size:.85rem;
+    border:1px solid #5a3418;
+  }
 
-    .price-old{
-      text-decoration:line-through;
-      color:#aaa;
-      margin-right:8px;
-    }
+  .price-old{
+    text-decoration:line-through;
+    color:#aaa;
+    margin-right:8px;
+  }
 
-    .price-new{
-      color:#7CFC98;
-      font-weight:800;
-    }
-  </style>
+  .price-new{
+    color:#7CFC98;
+    font-weight:800;
+  }
+</style>
 </head>
 <body>
 <header class="header">
@@ -211,6 +237,7 @@
         <li><a href="comprados.html">Comprados</a></li>
         <li><a href="seguimiento.html">Seguimiento</a></li>
         <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="mis_interacciones.html">Mis interacciones</a></li>
         <li><a href="soporte.html">Ayuda y soporte</a></li>
       </ul>
     </nav>
@@ -271,7 +298,16 @@
   </footer>
 
   <script src="../../js/app.js"></script>
-  <script>
+
+<script>
+  protegerRuta({
+    tipo: 'cliente',
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
     const grid = document.getElementById('catalogo-grid');
     const buscarInput = document.getElementById('buscar');
     const categoriaSelect = document.getElementById('categoria');

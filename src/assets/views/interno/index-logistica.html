@@ -6,6 +6,29 @@
   <title>Panel de Logística | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
+    .header__inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .nav{
+      margin-left:auto;
+    }
+
+    .nav ul{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .nav ul li{
+      white-space:nowrap;
+    }
+
     .section{
       background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
       border:1px solid #23232a;
@@ -14,8 +37,29 @@
       box-shadow:var(--shadow);
       margin:18px 0;
     }
-    .grid-2{display:grid;gap:16px}
-    @media (min-width:920px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+
+    .grid-2{
+      display:grid;
+      gap:16px;
+    }
+
+    @media (min-width:920px){
+      .grid-2{
+        grid-template-columns:repeat(2,1fr);
+      }
+    }
+
+    .grid-3{
+      display:grid;
+      gap:16px;
+    }
+
+    @media (min-width:980px){
+      .grid-3{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
     .card{
       background:var(--card);
       border:1px solid #23232a;
@@ -23,35 +67,66 @@
       overflow:hidden;
       box-shadow:var(--shadow-soft);
     }
-    .card__body{padding:16px}
-    .muted{color:var(--muted)}
-    .header__inner{display:flex;align-items:center;gap:12px}
-    .nav{margin-left:auto}
-    .kpis{display:grid;gap:14px}
-    @media (min-width:800px){.kpis{grid-template-columns:repeat(4,1fr)}}
+
+    .card__body{
+      padding:16px;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .kpis{
+      display:grid;
+      gap:14px;
+    }
+
+    @media (min-width:800px){
+      .kpis{
+        grid-template-columns:repeat(4,1fr);
+      }
+    }
+
     .kpi{
       background:#111;
       border:1px solid #23232a;
       border-radius:16px;
       padding:16px;
     }
-    .kpi small{display:block;color:var(--muted);margin-bottom:6px}
-    .kpi strong{font-size:1.6rem}
-    .topbar-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+
+    .kpi small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .kpi strong{
+      font-size:1.6rem;
+    }
+
+    .topbar-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
     .log-menu-wrap{
       position:relative;
       display:inline-block;
     }
+
     .log-toggle{
       display:flex;
       align-items:center;
       gap:10px;
     }
+
     .log-dropdown{
       position:absolute;
       top:110%;
       right:0;
-      min-width:230px;
+      min-width:240px;
       background:#111;
       border:1px solid #23232a;
       border-radius:14px;
@@ -60,9 +135,11 @@
       z-index:30;
       display:none;
     }
+
     .log-dropdown.show{
       display:block;
     }
+
     .log-dropdown a{
       display:block;
       padding:10px 12px;
@@ -71,10 +148,35 @@
       text-decoration:none;
       transition:.2s;
     }
+
     .log-dropdown a:hover{
       background:#1a1a20;
     }
-    .list-simple{margin:12px 0 0;padding-left:18px}
+
+    .list-simple{
+      margin:12px 0 0;
+      padding-left:18px;
+    }
+
+    .quick-links{
+      display:grid;
+      gap:12px;
+    }
+
+    .quick-links a{
+      display:block;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #23232a;
+      background:#111;
+      color:#fff;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .quick-links a:hover{
+      border-color:#3a3a46;
+    }
   </style>
 </head>
 <body>
@@ -86,6 +188,12 @@
       <nav id="mainnav" class="nav">
         <ul>
           <li><a class="active" href="index-logistica.html" aria-current="page">Inicio logística</a></li>
+          <li><a href="productos.html">Productos</a></li>
+          <li><a href="inventario.html">Inventario</a></li>
+          <li><a href="pedidos.html">Pedidos</a></li>
+          <li><a href="impuestos.html">Impuestos / IVA</a></li>
+          <li><a href="analytics.html">Analytics</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
         </ul>
       </nav>
     </div>
@@ -95,11 +203,12 @@
     <section class="section">
       <h2 style="margin:0 0 6px">Panel de logística</h2>
       <p class="muted" style="margin:0">
-        Acceso rápido al ERP logístico para consultar inventario, órdenes, procesos y recursos operativos.
+        Acceso rápido al área logística para consultar productos, inventario, pedidos, impuestos y módulos ERP operativos.
       </p>
 
       <div class="topbar-actions">
-        <a class="btn" href="dashboard-erp-logistica.html">Entrar al ERP logística</a>
+        <a class="btn" href="inventario.html">Ir a inventario</a>
+        <a class="btn btn--ghost" href="pedidos.html">Ir a pedidos</a>
 
         <div class="log-menu-wrap">
           <button class="btn btn--ghost log-toggle" id="btn-log-erp" type="button" aria-expanded="false">
@@ -107,7 +216,11 @@
           </button>
 
           <div class="log-dropdown" id="log-dropdown">
-            <a href="dashboard-erp-logistica.html">Entrar al ERP logística</a>
+            <a href="dashboard-erp-logistica.html">Dashboard ERP logística</a>
+            <a href="inventario-erp-logistica.html">Inventario ERP logística</a>
+            <a href="ordenes-erp-logistica.html">Órdenes ERP logística</a>
+            <a href="procesos-erp-logistica.html">Procesos ERP logística</a>
+            <a href="recursos-erp-logistica.html">Recursos ERP logística</a>
           </div>
         </div>
       </div>
@@ -138,14 +251,41 @@
     <section class="grid-2">
       <article class="card">
         <div class="card__body">
-          <h3 style="margin:0 0 6px">ERP de logística</h3>
+          <h3 style="margin:0 0 6px">Accesos logísticos</h3>
           <p class="muted">
-            Desde aquí puedes entrar al ERP logístico y navegar por inventario, órdenes, procesos y recursos según tu perfil.
+            Desde aquí puedes entrar rápidamente a los apartados más usados del perfil de logística.
           </p>
-          <p style="margin-top:10px"><a class="btn" href="dashboard-erp-logistica.html">Abrir ERP</a></p>
+
+          <div class="quick-links" style="margin-top:14px">
+            <a href="productos.html">Gestión de productos</a>
+            <a href="inventario.html">Gestión de inventario</a>
+            <a href="pedidos.html">Gestión de pedidos</a>
+            <a href="impuestos.html">Impuestos / IVA</a>
+            <a href="analytics.html">Analytics</a>
+            <a href="seguimiento.html">Seguimiento</a>
+          </div>
         </div>
       </article>
 
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">ERP de logística</h3>
+          <p class="muted">
+            Accede al dashboard operativo, inventario ERP, órdenes, procesos y recursos del área logística.
+          </p>
+
+          <div class="quick-links" style="margin-top:14px">
+            <a href="dashboard-erp-logistica.html">Dashboard ERP logística</a>
+            <a href="inventario-erp-logistica.html">Inventario ERP logística</a>
+            <a href="ordenes-erp-logistica.html">Órdenes ERP logística</a>
+            <a href="procesos-erp-logistica.html">Procesos ERP logística</a>
+            <a href="recursos-erp-logistica.html">Recursos ERP logística</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid-3">
       <article class="card">
         <div class="card__body">
           <h3 style="margin:0 0 6px">Productos en riesgo</h3>
@@ -153,6 +293,24 @@
           <ul id="lista-criticos" class="list-simple">
             <li class="muted">Cargando...</li>
           </ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Trabajo operativo</h3>
+          <p class="muted">
+            El perfil de logística se enfoca en productos, inventario, reposición, pedidos y operación interna del ERP.
+          </p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card__body">
+          <h3 style="margin:0 0 6px">Sugerencia</h3>
+          <p class="muted">
+            Usa primero Productos e Inventario y después Pedidos o el ERP de logística para completar el flujo operativo.
+          </p>
         </div>
       </article>
     </section>
@@ -165,6 +323,16 @@
   </footer>
 
   <script src="../../js/app.js"></script>
+
+  <script>
+    protegerRuta({
+      tipo: 'interno',
+      roles: ['logistica'],
+      redirectSiNoAuth: '../login.html',
+      redirectSiNoPermitido: '../login.html'
+    });
+  </script>
+
   <script>
     async function cargarResumenLogistica() {
       try {
@@ -188,7 +356,8 @@
         document.getElementById('kpi-inventario').textContent = erp.inventario_disponible ?? 0;
         document.getElementById('kpi-ordenes').textContent = erp.ordenes_procesadas ?? 0;
         document.getElementById('kpi-criticos').textContent = criticos.length;
-        document.getElementById('kpi-recursos').textContent = Array.isArray(recursos) && recursos.length ? recursos.length : 4;
+        document.getElementById('kpi-recursos').textContent =
+          Array.isArray(recursos) && recursos.length ? recursos.length : 4;
 
         const lista = document.getElementById('lista-criticos');
 

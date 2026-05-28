@@ -6,188 +6,211 @@
   <title>Comprados | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
-    .top-box{
-      margin:22px 0 18px;
-      padding:22px;
-      border:1px solid #23232a;
-      border-radius:18px;
-      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
-      box-shadow:var(--shadow);
-    }
+  .header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
 
-    .top-box h2{
-      margin:0 0 8px;
-    }
+  .nav{
+    margin-left:auto;
+  }
 
-    .top-box p{
-      margin:0;
-      color:var(--muted);
-    }
+  .nav ul{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+  }
 
-    .msg-box{
-      margin:18px 0;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid #333;
-      display:none;
-      font-weight:700;
-    }
+  .nav ul li{
+    white-space:nowrap;
+  }
 
-    .msg-box.error{
-      display:block;
-      color:#ff8b8b;
-      background:#241313;
-      border-color:#5a2323;
-    }
+  .top-box{
+    margin:22px 0 18px;
+    padding:22px;
+    border:1px solid #23232a;
+    border-radius:18px;
+    background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+    box-shadow:var(--shadow);
+  }
 
-    .compras-list{
-      display:grid;
-      gap:18px;
-    }
+  .top-box h2{
+    margin:0 0 8px;
+  }
 
-    .orden-card{
-      background:var(--panel);
-      border:1px solid #23232a;
-      border-radius:18px;
-      box-shadow:var(--shadow-soft);
-      padding:20px;
-      display:grid;
-      gap:16px;
-    }
+  .top-box p{
+    margin:0;
+    color:var(--muted);
+  }
 
-    .orden-head{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+  .msg-box{
+    margin:18px 0;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #333;
+    display:none;
+    font-weight:700;
+  }
 
-    .orden-title{
-      font-size:1.08rem;
-      font-weight:800;
-      color:#fff;
-    }
+  .msg-box.error{
+    display:block;
+    color:#ff8b8b;
+    background:#241313;
+    border-color:#5a2323;
+  }
 
-    .orden-meta{
-      color:var(--muted);
-      display:grid;
-      gap:4px;
-    }
+  .compras-list{
+    display:grid;
+    gap:18px;
+  }
 
-    .estado-badge{
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
-      font-weight:700;
-      border:1px solid #333;
-      width:max-content;
-      text-transform:capitalize;
-    }
+  .orden-card{
+    background:var(--panel);
+    border:1px solid #23232a;
+    border-radius:18px;
+    box-shadow:var(--shadow-soft);
+    padding:20px;
+    display:grid;
+    gap:16px;
+  }
 
-    .estado-procesada{
-      color:#7CFC98;
-      border-color:#2f5e3a;
-      background:#102014;
-    }
+  .orden-head{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
 
-    .estado-pendiente{
-      color:#ffd166;
-      border-color:#6a5720;
-      background:#1e1807;
-    }
+  .orden-title{
+    font-size:1.08rem;
+    font-weight:800;
+    color:#fff;
+  }
 
-    .estado-cancelada{
-      color:#ff8b8b;
-      border-color:#6d2c2c;
-      background:#241313;
-    }
+  .orden-meta{
+    color:var(--muted);
+    display:grid;
+    gap:4px;
+  }
 
-    .estado-general{
-      color:#9ecbff;
-      border-color:#355c9a;
-      background:#10213d;
-    }
+  .estado-badge{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:700;
+    border:1px solid #333;
+    width:max-content;
+    text-transform:capitalize;
+  }
 
-    .items-list{
-      display:grid;
-      gap:12px;
-    }
+  .estado-procesada{
+    color:#7CFC98;
+    border-color:#2f5e3a;
+    background:#102014;
+  }
 
+  .estado-pendiente{
+    color:#ffd166;
+    border-color:#6a5720;
+    background:#1e1807;
+  }
+
+  .estado-cancelada{
+    color:#ff8b8b;
+    border-color:#6d2c2c;
+    background:#241313;
+  }
+
+  .estado-general{
+    color:#9ecbff;
+    border-color:#355c9a;
+    background:#10213d;
+  }
+
+  .items-list{
+    display:grid;
+    gap:12px;
+  }
+
+  .item-card{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    gap:14px;
+    padding:14px;
+    border:1px solid #23232a;
+    border-radius:14px;
+    background:#111;
+  }
+
+  .item-img{
+    height:95px;
+    border-radius:12px;
+    background:#18181d center/cover no-repeat;
+    border:1px solid #23232a;
+  }
+
+  .item-title{
+    margin:0 0 6px;
+    font-weight:700;
+    color:#fff;
+  }
+
+  .item-meta{
+    display:grid;
+    gap:5px;
+    color:var(--muted);
+    font-size:.95rem;
+  }
+
+  .orden-footer{
+    padding-top:10px;
+    border-top:1px solid #23232a;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .orden-total{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:1.08rem;
+    font-weight:800;
+    color:#fff;
+  }
+
+  .orden-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .empty-box{
+    padding:22px;
+    border:1px dashed #333;
+    border-radius:16px;
+    color:var(--muted);
+    background:#111;
+  }
+
+  @media (max-width:700px){
     .item-card{
-      display:grid;
-      grid-template-columns:110px 1fr;
-      gap:14px;
-      padding:14px;
-      border:1px solid #23232a;
-      border-radius:14px;
-      background:#111;
-    }
-
-    .item-img{
-      height:95px;
-      border-radius:12px;
-      background:#18181d center/cover no-repeat;
-      border:1px solid #23232a;
-    }
-
-    .item-title{
-      margin:0 0 6px;
-      font-weight:700;
-      color:#fff;
-    }
-
-    .item-meta{
-      display:grid;
-      gap:5px;
-      color:var(--muted);
-      font-size:.95rem;
+      grid-template-columns:1fr;
     }
 
     .orden-footer{
-      padding-top:10px;
-      border-top:1px solid #23232a;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
+      align-items:flex-start;
+      flex-direction:column;
     }
-
-    .orden-total{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      font-size:1.08rem;
-      font-weight:800;
-      color:#fff;
-    }
-
-    .orden-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    .empty-box{
-      padding:22px;
-      border:1px dashed #333;
-      border-radius:16px;
-      color:var(--muted);
-      background:#111;
-    }
-
-    @media (max-width:700px){
-      .item-card{
-        grid-template-columns:1fr;
-      }
-
-      .orden-footer{
-        align-items:flex-start;
-        flex-direction:column;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 <header class="header">
@@ -203,6 +226,7 @@
         <li><a class="active" href="comprados.html" aria-current="page">Comprados</a></li>
         <li><a href="seguimiento.html">Seguimiento</a></li>
         <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="mis_interacciones.html">Mis interacciones</a></li>
         <li><a href="soporte.html">Ayuda y soporte</a></li>
       </ul>
     </nav>
@@ -243,7 +267,16 @@
   </footer>
 
   <script src="../../js/app.js"></script>
-  <script>
+
+<script>
+  protegerRuta({
+    tipo: 'cliente',
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
     const mensaje = document.getElementById('mensaje');
     const comprasList = document.getElementById('compras-list');
 

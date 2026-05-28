@@ -6,69 +6,92 @@
   <title>Mi perfil | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
-    .section{
-      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
-      border:1px solid #23232a;
-      border-radius:var(--radius);
-      padding:22px;
-      box-shadow:var(--shadow);
-      margin:18px 0;
-    }
+  .header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
 
+  .nav{
+    margin-left:auto;
+  }
+
+  .nav ul{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .nav ul li{
+    white-space:nowrap;
+  }
+
+  .section{
+    background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+    border:1px solid #23232a;
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:var(--shadow);
+    margin:18px 0;
+  }
+
+  .grid-2{
+    display:grid;
+    gap:14px;
+  }
+
+  @media (min-width:860px){
     .grid-2{
-      display:grid;
-      gap:14px;
+      grid-template-columns:1fr 1fr;
     }
+  }
 
-    @media (min-width:860px){
-      .grid-2{
-        grid-template-columns:1fr 1fr;
-      }
-    }
+  .row{
+    margin-top:12px;
+  }
 
-    .row{
-      margin-top:12px;
-    }
+  .row label{
+    display:block;
+    font-weight:700;
+    margin:0 0 6px;
+  }
 
-    .row label{
-      display:block;
-      font-weight:700;
-      margin:0 0 6px;
-    }
+  .row input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid #2a2a32;
+    background:#141419;
+    color:var(--text);
+    box-sizing:border-box;
+  }
 
-    .row input{
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid #2a2a32;
-      background:#141419;
-      color:var(--text);
-      box-sizing:border-box;
-    }
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:16px;
+  }
 
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:16px;
-    }
+  .muted{
+    color:var(--muted);
+  }
 
-    .muted{
-      color:var(--muted);
-    }
+  .ok{
+    color:#9de2b2;
+  }
 
-    .ok{
-      color:#9de2b2;
-    }
+  .warn{
+    color:#ffd4a8;
+  }
 
-    .warn{
-      color:#ffd4a8;
-    }
-
-    .error{
-      color:#ff8b8b;
-    }
-  </style>
+  .error{
+    color:#ff8b8b;
+  }
+</style>
 </head>
 <body>
 <header class="header">
@@ -84,6 +107,7 @@
         <li><a href="comprados.html">Comprados</a></li>
         <li><a href="seguimiento.html">Seguimiento</a></li>
         <li><a class="active" href="editar.html" aria-current="page">Mi perfil</a></li>
+        <li><a href="mis_interacciones.html">Mis interacciones</a></li>
         <li><a href="soporte.html">Ayuda y soporte</a></li>
       </ul>
     </nav>
@@ -187,7 +211,16 @@
 </footer>
 
   <script src="../../js/app.js"></script>
-  <script>
+
+<script>
+  protegerRuta({
+    tipo: 'cliente',
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
   (function(){
     const $ = s => document.querySelector(s);
 

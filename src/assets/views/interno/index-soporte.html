@@ -3,9 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Soporte | Ballers</title>
+  <title>Panel de Soporte | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
+    .header__inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .nav{
+      margin-left:auto;
+    }
+
+    .nav ul{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .nav ul li{
+      white-space:nowrap;
+    }
+
     .section{
       background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
       border:1px solid #23232a;
@@ -14,60 +37,183 @@
       box-shadow:var(--shadow);
       margin:18px 0;
     }
+
     .cards{
       display:grid;
       gap:18px;
     }
+
     @media (min-width:900px){
       .cards{
         grid-template-columns:1fr 1fr;
       }
     }
+
     .card{
       background:#111;
       border:1px solid #23232a;
       border-radius:16px;
       padding:18px;
+      box-shadow:var(--shadow-soft);
     }
+
     .card h3{
       margin:0 0 8px;
     }
+
     .card p{
       margin:0 0 14px;
+      color:var(--muted);
+    }
+
+    .kpis{
+      display:grid;
+      gap:14px;
+      margin:18px 0;
+    }
+
+    @media (min-width:800px){
+      .kpis{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .kpi{
+      background:#111;
+      border:1px solid #23232a;
+      border-radius:16px;
+      padding:16px;
+    }
+
+    .kpi small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .kpi strong{
+      font-size:1.6rem;
+    }
+
+    .topbar-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .list-simple{
+      margin:12px 0 0;
+      padding-left:18px;
+    }
+
+    .quick-links{
+      display:grid;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .quick-links a{
+      display:block;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #23232a;
+      background:#111;
+      color:#fff;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .quick-links a:hover{
+      border-color:#3a3a46;
+    }
+
+    .muted{
       color:var(--muted);
     }
   </style>
 </head>
 <body>
-<header class="internal-header">
-  <div class="container internal-header__inner">
-    <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="../../../../index.html">Ballers <span aria-hidden="true">🏀👟</span></a>
 
-    <button class="btn btn--ghost internal-back" type="button" onclick="history.back()">
-      ← Volver
-    </button>
-  </div>
-</header>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="mainnav">☰</button>
+      <nav id="mainnav" class="nav">
+        <ul>
+          <li><a class="active" href="index-soporte.html" aria-current="page">Inicio soporte</a></li>
+          <li><a href="soporte.html">Soporte</a></li>
+          <li><a href="interacciones.html">Interacciones</a></li>
+          <li><a href="actividad.html">Mi actividad</a></li>
+          <li><a href="seguimiento.html">Seguimiento</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
   <main class="container" style="padding:22px 0 64px">
     <section class="section">
       <h2 style="margin:0 0 8px">Panel de soporte</h2>
       <p style="margin:0;color:var(--muted);">
-        Desde aquí puedes revisar solicitudes de clientes y dar seguimiento a los casos.
+        Desde aquí puedes revisar solicitudes de clientes, dar seguimiento a los casos y consultar tus actividades de soporte.
       </p>
+
+      <div class="topbar-actions">
+        <a class="btn" href="soporte.html">Ir a soporte</a>
+        <a class="btn btn--ghost" href="seguimiento.html">Ir a seguimiento</a>
+      </div>
+    </section>
+
+    <section class="kpis">
+      <article class="kpi">
+        <small>Solicitudes activas</small>
+        <strong id="kpi-soportes">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Interacciones registradas</small>
+        <strong id="kpi-interacciones">0</strong>
+      </article>
+
+      <article class="kpi">
+        <small>Casos resueltos</small>
+        <strong id="kpi-resueltos">0</strong>
+      </article>
+    </section>
+
+    <section class="cards">
+      <article class="card">
+        <h3>Accesos de soporte</h3>
+        <p>Consulta rápidamente los módulos principales que utiliza el área de soporte.</p>
+
+        <div class="quick-links">
+          <a href="soporte.html">Solicitudes de soporte</a>
+          <a href="interacciones.html">Registro de interacciones</a>
+          <a href="actividad.html">Mi actividad</a>
+          <a href="seguimiento.html">Seguimiento de pedidos</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>Resumen de atención</h3>
+        <p>Vista rápida de los últimos clientes o casos atendidos por el área.</p>
+        <ul id="lista-resumen" class="list-simple">
+          <li class="muted">Cargando...</li>
+        </ul>
+      </article>
     </section>
 
     <section class="cards">
       <article class="card">
         <h3>Solicitudes de soporte</h3>
         <p>Revisa los casos enviados por clientes, actualiza estado y responde.</p>
-        <a class="btn" href="soporte.html">Ir a soporte</a>
+        <a class="btn" href="soporte.html">Abrir soporte</a>
       </article>
 
       <article class="card">
         <h3>Seguimiento de pedidos</h3>
         <p>Consulta pedidos y apoya en incidencias relacionadas con entrega.</p>
-        <a class="btn btn--ghost" href="seguimiento.html">Ir a seguimiento</a>
+        <a class="btn btn--ghost" href="seguimiento.html">Abrir seguimiento</a>
       </article>
     </section>
   </main>
@@ -79,5 +225,55 @@
   </footer>
 
   <script src="../../js/app.js"></script>
+
+  <script>
+    protegerRuta({
+      tipo: 'interno',
+      roles: ['soporte'],
+      redirectSiNoAuth: '../login.html',
+      redirectSiNoPermitido: '../login.html'
+    });
+  </script>
+
+  <script>
+    async function cargarResumenSoporte() {
+      try {
+        const [soporteResp, actividadResp] = await Promise.all([
+          fetch('/api/soporte'),
+          fetch(`/api/usuarios/${localStorage.getItem('ballers_user_id')}/actividad`)
+        ]);
+
+        const soportes = soporteResp.ok ? await soporteResp.json() : [];
+        const actividad = actividadResp.ok ? await actividadResp.json() : [];
+
+        const listaSoportes = Array.isArray(soportes) ? soportes : [];
+        const listaActividad = Array.isArray(actividad) ? actividad : [];
+
+        const resueltos = listaSoportes.filter(s => s.estado === 'resuelto').length;
+
+        document.getElementById('kpi-soportes').textContent = listaSoportes.length;
+        document.getElementById('kpi-interacciones').textContent = listaActividad.length;
+        document.getElementById('kpi-resueltos').textContent = resueltos;
+
+        const lista = document.getElementById('lista-resumen');
+
+        if (!listaSoportes.length) {
+          lista.innerHTML = '<li class="muted">No hay solicitudes registradas.</li>';
+          return;
+        }
+
+        lista.innerHTML = listaSoportes
+          .slice(0, 5)
+          .map(item => `<li>${item.asunto || 'Solicitud'} - ${item.estado || 'sin estado'}</li>`)
+          .join('');
+      } catch (error) {
+        console.error(error);
+        document.getElementById('lista-resumen').innerHTML =
+          '<li class="muted">No se pudo cargar la información.</li>';
+      }
+    }
+
+    cargarResumenSoporte();
+  </script>
 </body>
 </html>

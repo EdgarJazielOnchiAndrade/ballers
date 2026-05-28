@@ -299,7 +299,18 @@
     </main>
   </div>
 
-  <script>
+  <script src="../../js/app.js"></script>
+
+<script>
+  protegerRuta({
+    tipo: 'interno',
+    roles: ['administrador', 'ventas', 'logistica', 'soporte'],
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
     function cargarUsuario() {
       const nombre = localStorage.getItem('ballers_user_name') || localStorage.getItem('ballers_user_nombre') || 'Administrador';
       const rol = localStorage.getItem('ballers_user_rol') || 'administrador';

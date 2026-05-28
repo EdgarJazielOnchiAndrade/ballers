@@ -6,171 +6,194 @@
   <title>Seguimiento | Ballers</title>
   <link rel="stylesheet" href="../../css/base.css"/>
   <style>
-    .top-box{
-      margin:22px 0 18px;
-      padding:22px;
-      border:1px solid #23232a;
-      border-radius:18px;
-      background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
-      box-shadow:var(--shadow);
-    }
+  .header__inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
 
-    .top-box h2{
-      margin:0 0 8px;
-    }
+  .nav{
+    margin-left:auto;
+  }
 
-    .top-box p{
-      margin:0;
-      color:var(--muted);
-    }
+  .nav ul{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    flex-wrap:wrap;
+  }
 
-    .msg-box{
-      margin:18px 0;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid #333;
-      display:none;
-      font-weight:700;
-    }
+  .nav ul li{
+    white-space:nowrap;
+  }
 
-    .msg-box.error{
-      display:block;
-      color:#ff8b8b;
-      background:#241313;
-      border-color:#5a2323;
-    }
+  .top-box{
+    margin:22px 0 18px;
+    padding:22px;
+    border:1px solid #23232a;
+    border-radius:18px;
+    background:linear-gradient(180deg,rgba(255,106,0,.06),transparent 60%),var(--panel);
+    box-shadow:var(--shadow);
+  }
 
-    .seguimiento-list{
-      display:grid;
-      gap:18px;
-    }
+  .top-box h2{
+    margin:0 0 8px;
+  }
 
-    .pedido-card{
-      background:var(--panel);
-      border:1px solid #23232a;
-      border-radius:18px;
-      box-shadow:var(--shadow-soft);
-      padding:20px;
-      display:grid;
-      gap:16px;
-    }
+  .top-box p{
+    margin:0;
+    color:var(--muted);
+  }
 
-    .pedido-head{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+  .msg-box{
+    margin:18px 0;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #333;
+    display:none;
+    font-weight:700;
+  }
 
-    .pedido-title{
-      font-size:1.08rem;
-      font-weight:800;
-      color:#fff;
-    }
+  .msg-box.error{
+    display:block;
+    color:#ff8b8b;
+    background:#241313;
+    border-color:#5a2323;
+  }
 
-    .pedido-meta{
-      display:grid;
-      gap:6px;
-      color:var(--muted);
-    }
+  .seguimiento-list{
+    display:grid;
+    gap:18px;
+  }
 
-    .estado-badge{
-      display:inline-block;
-      padding:6px 12px;
-      border-radius:999px;
-      font-weight:700;
-      border:1px solid #333;
-      width:max-content;
-      text-transform:capitalize;
-    }
+  .pedido-card{
+    background:var(--panel);
+    border:1px solid #23232a;
+    border-radius:18px;
+    box-shadow:var(--shadow-soft);
+    padding:20px;
+    display:grid;
+    gap:16px;
+  }
 
-    .estado-preparacion{
-      color:#ffd166;
-      border-color:#6a5720;
-      background:#1e1807;
-    }
+  .pedido-head{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
 
-    .estado-camino{
-      color:#7cc7ff;
-      border-color:#24506c;
-      background:#0f1b24;
-    }
+  .pedido-title{
+    font-size:1.08rem;
+    font-weight:800;
+    color:#fff;
+  }
 
-    .estado-entregado{
-      color:#7CFC98;
-      border-color:#2f5e3a;
-      background:#102014;
-    }
+  .pedido-meta{
+    display:grid;
+    gap:6px;
+    color:var(--muted);
+  }
 
+  .estado-badge{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:700;
+    border:1px solid #333;
+    width:max-content;
+    text-transform:capitalize;
+  }
+
+  .estado-preparacion{
+    color:#ffd166;
+    border-color:#6a5720;
+    background:#1e1807;
+  }
+
+  .estado-camino{
+    color:#7cc7ff;
+    border-color:#24506c;
+    background:#0f1b24;
+  }
+
+  .estado-entregado{
+    color:#7CFC98;
+    border-color:#2f5e3a;
+    background:#102014;
+  }
+
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+  }
+
+  .step{
+    padding:12px;
+    border-radius:14px;
+    border:1px solid #333;
+    background:#111;
+    text-align:center;
+    font-weight:700;
+    color:#aaa;
+  }
+
+  .step.active-preparacion{
+    color:#ffd166;
+    border-color:#6a5720;
+    background:#1e1807;
+  }
+
+  .step.active-camino{
+    color:#7cc7ff;
+    border-color:#24506c;
+    background:#0f1b24;
+  }
+
+  .step.active-entregado{
+    color:#7CFC98;
+    border-color:#2f5e3a;
+    background:#102014;
+  }
+
+  .comentario-box{
+    padding:14px;
+    border:1px solid #23232a;
+    border-radius:14px;
+    background:#111;
+    color:var(--muted);
+    line-height:1.5;
+  }
+
+  .pedido-total{
+    padding-top:10px;
+    border-top:1px solid #23232a;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:1.05rem;
+    font-weight:800;
+    color:#fff;
+  }
+
+  .empty-box{
+    padding:22px;
+    border:1px dashed #333;
+    border-radius:16px;
+    color:var(--muted);
+    background:#111;
+  }
+
+  @media (max-width:700px){
     .steps{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
+      grid-template-columns:1fr;
     }
-
-    .step{
-      padding:12px;
-      border-radius:14px;
-      border:1px solid #333;
-      background:#111;
-      text-align:center;
-      font-weight:700;
-      color:#aaa;
-    }
-
-    .step.active-preparacion{
-      color:#ffd166;
-      border-color:#6a5720;
-      background:#1e1807;
-    }
-
-    .step.active-camino{
-      color:#7cc7ff;
-      border-color:#24506c;
-      background:#0f1b24;
-    }
-
-    .step.active-entregado{
-      color:#7CFC98;
-      border-color:#2f5e3a;
-      background:#102014;
-    }
-
-    .comentario-box{
-      padding:14px;
-      border:1px solid #23232a;
-      border-radius:14px;
-      background:#111;
-      color:var(--muted);
-      line-height:1.5;
-    }
-
-    .pedido-total{
-      padding-top:10px;
-      border-top:1px solid #23232a;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      font-size:1.05rem;
-      font-weight:800;
-      color:#fff;
-    }
-
-    .empty-box{
-      padding:22px;
-      border:1px dashed #333;
-      border-radius:16px;
-      color:var(--muted);
-      background:#111;
-    }
-
-    @media (max-width:700px){
-      .steps{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
 <header class="header">
@@ -186,6 +209,7 @@
         <li><a href="comprados.html">Comprados</a></li>
         <li><a class="active" href="seguimiento.html" aria-current="page">Seguimiento</a></li>
         <li><a href="editar.html">Mi perfil</a></li>
+        <li><a href="mis_interacciones.html">Mis interacciones</a></li>
         <li><a href="soporte.html">Ayuda y soporte</a></li>
       </ul>
     </nav>
@@ -226,7 +250,16 @@
   </footer>
 
   <script src="../../js/app.js"></script>
-  <script>
+
+<script>
+  protegerRuta({
+    tipo: 'cliente',
+    redirectSiNoAuth: '../login.html',
+    redirectSiNoPermitido: '../login.html'
+  });
+</script>
+
+<script>
     const mensaje = document.getElementById('mensaje');
     const seguimientoList = document.getElementById('seguimiento-list');
 

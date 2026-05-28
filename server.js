@@ -245,41 +245,67 @@ app.post('/api/login', (req, res) => {
 ========================= */
 
 /* Crear cliente */
-app.post('/api/clientes', (req, res) => {
-  const { nombre, correo, telefono, empresa, estado, etapa_crm } = req.body;
+app.post('/api/clientes', async (req, res) => {
+  try {
+    const { nombre, correo, telefono, empresa, password, estado, etapa_crm } = req.body;
 
-  if (!nombre || !correo) {
-    return res.status(400).json({
-      ok: false,
-      message: 'Nombre y correo son obligatorios'
-    });
-  }
-
-  const sql = `
-    INSERT INTO clientes (nombre, correo, telefono, empresa, estado, etapa_crm)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(
-    sql,
-    [
-      nombre,
-      correo,
-      telefono || null,
-      empresa || null,
-      estado || 'activo',
-      etapa_crm || 'Prospecto'
-    ],
-    (err, result) => {
-      if (err) return enviarError(res, err);
-
-      return res.json({
-        ok: true,
-        message: 'Cliente creado correctamente',
-        id: result.insertId
+    if (!nombre || !correo || !password) {
+      return res.status(400).json({
+        ok: false,
+        message: 'Nombre, correo y contraseña son obligatorios'
       });
     }
-  );
+
+    db.query('SELECT id FROM usuarios WHERE correo = ?', [correo], async (errUser, userRes) => {
+      if (errUser) return enviarError(res, errUser);
+
+      if (userRes.length > 0) {
+        return res.status(409).json({
+          ok: false,
+          message: 'El correo ya está registrado'
+        });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const sqlUsuario = `
+        INSERT INTO usuarios (nombre, correo, password, tipo_cuenta, rol)
+        VALUES (?, ?, ?, 'cliente', 'cliente')
+      `;
+
+      db.query(sqlUsuario, [nombre, correo, passwordHash], (err2) => {
+        if (err2) return enviarError(res, err2);
+
+        const sqlCliente = `
+          INSERT INTO clientes (nombre, correo, telefono, empresa, estado, etapa_crm)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(
+          sqlCliente,
+          [
+            nombre,
+            correo,
+            telefono || null,
+            empresa || null,
+            estado || 'activo',
+            etapa_crm || 'Prospecto'
+          ],
+          (err3, result) => {
+            if (err3) return enviarError(res, err3);
+
+            return res.json({
+              ok: true,
+              message: 'Cliente creado correctamente',
+              id: result.insertId
+            });
+          }
+        );
+      });
+    });
+  } catch (error) {
+    return enviarError(res, error);
+  }
 });
 
 /* Obtener todos los clientes */
@@ -315,36 +341,91 @@ app.put('/api/clientes/:id', (req, res) => {
   const { id } = req.params;
   const { nombre, correo, telefono, empresa, estado, etapa_crm } = req.body;
 
-  const sql = `
-    UPDATE clientes
-    SET nombre = ?, correo = ?, telefono = ?, empresa = ?, estado = ?, etapa_crm = ?
-    WHERE id = ?
-  `;
+  db.query('SELECT * FROM clientes WHERE id = ? LIMIT 1', [id], (errCliente, clienteRes) => {
+    if (errCliente) return enviarError(res, errCliente);
 
-  db.query(
-    sql,
-    [nombre, correo, telefono || null, empresa || null, estado, etapa_crm, id],
-    (err) => {
-      if (err) return enviarError(res, err);
-
-      return res.json({
-        ok: true,
-        message: 'Cliente actualizado correctamente'
+    if (!clienteRes.length) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Cliente no encontrado'
       });
     }
-  );
+
+    const clienteActual = clienteRes[0];
+
+    db.query(
+      'SELECT id FROM usuarios WHERE correo = ? AND correo <> ? LIMIT 1',
+      [correo, clienteActual.correo],
+      (errCorreo, correoRes) => {
+        if (errCorreo) return enviarError(res, errCorreo);
+
+        if (correoRes.length) {
+          return res.status(400).json({
+            ok: false,
+            message: 'Ese correo ya está registrado por otro usuario'
+          });
+        }
+
+        db.query(
+          `UPDATE clientes
+           SET nombre = ?, correo = ?, telefono = ?, empresa = ?, estado = ?, etapa_crm = ?
+           WHERE id = ?`,
+          [nombre, correo, telefono || null, empresa || null, estado, etapa_crm, id],
+          (errUpdateCliente) => {
+            if (errUpdateCliente) return enviarError(res, errUpdateCliente);
+
+            db.query(
+              `UPDATE usuarios
+               SET nombre = ?, correo = ?
+               WHERE correo = ? AND tipo_cuenta = 'cliente'`,
+              [nombre, correo, clienteActual.correo],
+              (errUpdateUsuario) => {
+                if (errUpdateUsuario) return enviarError(res, errUpdateUsuario);
+
+                return res.json({
+                  ok: true,
+                  message: 'Cliente actualizado correctamente'
+                });
+              }
+            );
+          }
+        );
+      }
+    );
+  });
 });
 
 /* Eliminar cliente */
 app.delete('/api/clientes/:id', (req, res) => {
   const { id } = req.params;
 
-  db.query('DELETE FROM clientes WHERE id = ?', [id], (err) => {
-    if (err) return enviarError(res, err);
+  db.query('SELECT * FROM clientes WHERE id = ? LIMIT 1', [id], (errCliente, clienteRes) => {
+    if (errCliente) return enviarError(res, errCliente);
 
-    return res.json({
-      ok: true,
-      message: 'Cliente eliminado correctamente'
+    if (!clienteRes.length) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Cliente no encontrado'
+      });
+    }
+
+    const cliente = clienteRes[0];
+
+    db.query('DELETE FROM clientes WHERE id = ?', [id], (errDeleteCliente) => {
+      if (errDeleteCliente) return enviarError(res, errDeleteCliente);
+
+      db.query(
+        "DELETE FROM usuarios WHERE correo = ? AND tipo_cuenta = 'cliente'",
+        [cliente.correo],
+        (errDeleteUsuario) => {
+          if (errDeleteUsuario) return enviarError(res, errDeleteUsuario);
+
+          return res.json({
+            ok: true,
+            message: 'Cliente eliminado correctamente'
+          });
+        }
+      );
     });
   });
 });
@@ -431,6 +512,24 @@ app.get('/api/clientes/:id/interacciones', (req, res) => {
   `;
 
   db.query(sql, [id], (err, results) => {
+    if (err) return enviarError(res, err);
+    return res.json(results);
+  });
+});
+
+/* Ver mis interacciones como cliente */
+app.get('/api/mis-interacciones/:cliente_id', (req, res) => {
+  const { cliente_id } = req.params;
+
+  const sql = `
+    SELECT i.*, u.nombre AS usuario_nombre
+    FROM interacciones i
+    INNER JOIN usuarios u ON i.usuario_id = u.id
+    WHERE i.cliente_id = ?
+    ORDER BY i.fecha DESC
+  `;
+
+  db.query(sql, [cliente_id], (err, results) => {
     if (err) return enviarError(res, err);
     return res.json(results);
   });
@@ -1022,18 +1121,105 @@ app.put('/api/pedidos/:id/estado', (req, res) => {
     });
   }
 
-  db.query(
-    'UPDATE pedidos SET estado = ? WHERE id = ?',
-    [estado, id],
-    (err) => {
-      if (err) return enviarError(res, err);
+  db.query('SELECT * FROM pedidos WHERE id = ? LIMIT 1', [id], (err, pedidoRes) => {
+    if (err) return enviarError(res, err);
 
-      return res.json({
-        ok: true,
-        message: 'Estado del pedido actualizado correctamente'
+    if (!pedidoRes.length) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Pedido no encontrado'
       });
     }
-  );
+
+    const pedido = pedidoRes[0];
+
+    if (pedido.estado === estado) {
+      return res.json({
+        ok: true,
+        message: 'El pedido ya tenía ese estado'
+      });
+    }
+
+    // Si vuelve a pendiente, solo cambia estado
+    if (estado === 'pendiente') {
+      db.query(
+        'UPDATE pedidos SET estado = ? WHERE id = ?',
+        [estado, id],
+        (err2) => {
+          if (err2) return enviarError(res, err2);
+
+          return res.json({
+            ok: true,
+            message: 'Estado del pedido actualizado correctamente'
+          });
+        }
+      );
+      return;
+    }
+
+    // Si pasa a surtido, actualizar inventario
+    db.query('SELECT * FROM productos WHERE id = ? LIMIT 1', [pedido.producto_id], (err3, prodRes) => {
+      if (err3) return enviarError(res, err3);
+
+      if (!prodRes.length) {
+        return res.status(404).json({
+          ok: false,
+          message: 'Producto no encontrado'
+        });
+      }
+
+      const producto = prodRes[0];
+      let nuevoStock = Number(producto.stock_actual);
+
+      if (pedido.tipo === 'reposicion') {
+        nuevoStock += Number(pedido.cantidad);
+      } else if (pedido.tipo === 'venta') {
+        nuevoStock -= Number(pedido.cantidad);
+
+        if (nuevoStock < 0) {
+          return res.status(400).json({
+            ok: false,
+            message: 'No hay suficiente stock para surtir este pedido'
+          });
+        }
+      }
+
+      db.query(
+        'UPDATE productos SET stock_actual = ? WHERE id = ?',
+        [nuevoStock, pedido.producto_id],
+        (err4) => {
+          if (err4) return enviarError(res, err4);
+
+          const tipoMovimiento = pedido.tipo === 'reposicion' ? 'entrada' : 'salida';
+          const motivoMovimiento = pedido.tipo === 'reposicion'
+            ? 'surtido de pedido de reposicion'
+            : 'surtido de pedido de venta';
+
+          db.query(
+            `INSERT INTO movimientos_inventario (producto_id, tipo, cantidad, motivo)
+             VALUES (?, ?, ?, ?)`,
+            [pedido.producto_id, tipoMovimiento, pedido.cantidad, motivoMovimiento],
+            (err5) => {
+              if (err5) return enviarError(res, err5);
+
+              db.query(
+                'UPDATE pedidos SET estado = ? WHERE id = ?',
+                [estado, id],
+                (err6) => {
+                  if (err6) return enviarError(res, err6);
+
+                  return res.json({
+                    ok: true,
+                    message: 'Pedido surtido y stock actualizado correctamente'
+                  });
+                }
+              );
+            }
+          );
+        }
+      );
+    });
+  });
 });
 
 /* =========================
